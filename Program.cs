@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using TestWebAPI.Config;
 using TestWebAPI.Data;
 using TestWebAPI.Helpers;
 using TestWebAPI.Middlewares;
@@ -31,6 +35,27 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BookStore"));
 });
 
+// JWT config
+var jwtSection = builder.Configuration.GetSection("AppSettings");
+builder.Services.Configure<TokenSettings>(jwtSection);
+
+var jwtSettings = jwtSection.Get<TokenSettings>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = false;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret))
+        };
+    });
+
 // AutoMapper
 #region Auto mapper
 builder.Services.AddSingleton(provider => new MapperConfiguration(options =>
@@ -39,11 +64,16 @@ builder.Services.AddSingleton(provider => new MapperConfiguration(options =>
 }).CreateMapper());
 #endregion
 
-// Add services to the container.
-builder.Services.AddScoped<IRoleService, RoleService>();
-
 // Add Repositories to the container.
 builder.Services.AddScoped<IRoleRepositories, RoleRepositories>();
+builder.Services.AddScoped<IAuthRepositories, AuthRepositories>();
+
+// Add services to the container.
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+// Register JWTHelper
+builder.Services.AddScoped<IJWTHelper, JWTHelper>();
 
 var app = builder.Build();
 
@@ -69,7 +99,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
 app.Run();

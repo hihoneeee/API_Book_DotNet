@@ -13,4 +13,13 @@ namespace TestWebAPI.DTOs.Role
         public string value { get; set; }
         public string code { get; set; }
     }
+    //public class RoleDTO
+    //{
+    ///[JsonIgnore]
+    //public int id { get; set; }
+    //[Required(ErrorMessage = "The 'value' field is required.")]
+    //public string value { get; set; }
+    //[JsonIgnore]
+    //public string code { get; set; }
+    //}
 }

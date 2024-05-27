@@ -5,11 +5,11 @@ namespace TestWebAPI.Repositories.Interfaces
 {
     public interface IRoleRepositories
     {
-        IQueryable<Role> GetAllRoles();
+        Task<List<Role>> GetAllRoles();
         Task<Role> GetRolesById(int id);
         Task<Role> GetRoleByValueAsync(string value);
         Task<Role> AddRoleAsync(Role role);
-        Task<Role> DeleteRoleAsync(int id);
-        Task<Role> UpdateRoleAsync(int id, Role role);
+        Task<object> DeleteRoleAsync(Role role);
+        Task<Role> UpdateRoleAsync(Role oldRole, Role newRole);
     }
 }

@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using TestWebAPI.Data;
-using TestWebAPI.Models;
 using TestWebAPI.Helpers;
 using TestWebAPI.Repositories.Interfaces;
 using TestWebAPI.DTOs.Role;
 using AutoMapper;
 using TestWebAPI.Services.Interfaces;
-using TestWebAPI.Middlewares;
 
 namespace TestWebAPI.Controllers
 {
@@ -21,14 +13,10 @@ namespace TestWebAPI.Controllers
     public class RolesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly IRoleRepositories _roleRepo;
-        private readonly IMapper _mapper;
         private readonly IRoleService _roleService;
-        public RolesController(ApplicationDbContext context, IRoleRepositories roleRepo, IMapper mapper, IRoleService roleService)
+        public RolesController(ApplicationDbContext context, IRoleService roleService)
         {
             _context = context;
-            _roleRepo = roleRepo;
-            _mapper = mapper;
             _roleService = roleService;
         }
 
@@ -41,11 +29,11 @@ namespace TestWebAPI.Controllers
                 var serviceResponse = await _roleService.GetAllRoles();
                 if (serviceResponse.success)
                 {
-                    return Ok(serviceResponse);
+                    return Ok(serviceResponse.getData());
                 }
                 else
                 {
-                    return BadRequest(serviceResponse);
+                    return BadRequest(serviceResponse.getMessage());
                 }
             }
             catch
@@ -63,11 +51,11 @@ namespace TestWebAPI.Controllers
                 var serviceResponse = await _roleService.GetRolesById(id);
                 if (serviceResponse.success)
                 {
-                    return Ok(serviceResponse);
+                    return Ok(serviceResponse.getData());
                 }
                 else
                 {
-                    return BadRequest(serviceResponse);
+                    return BadRequest(serviceResponse.getMessage());
                 }
             }
             catch
@@ -89,7 +77,7 @@ namespace TestWebAPI.Controllers
                 }
                 else
                 {
-                    return BadRequest(serviceResponse);
+                    return BadRequest(serviceResponse.getMessage());
                 }
             }
             catch
@@ -113,7 +101,7 @@ namespace TestWebAPI.Controllers
                     }
                     else
                     {
-                        return BadRequest(serviceResponse);
+                        return BadRequest(serviceResponse.getMessage());
                     }
                 }
                 else
@@ -141,7 +129,7 @@ namespace TestWebAPI.Controllers
                 }
                 else
                 {
-                    return BadRequest(serviceResponse);
+                    return BadRequest(serviceResponse.getMessage());
                 }
             }
             catch

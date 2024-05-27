@@ -255,3 +255,6 @@ D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\AutoMapper.Extensions.Micros
 D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\FluentValidation.dll
 D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\FluentValidation.AspNetCore.dll
 D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\FluentValidation.DependencyInjectionExtensions.dll
+D:\code\.NET\TestWebAPI\TestWebAPI\obj\Debug\net8.0\TestWebAPI.sourcelink.json
+D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\BCrypt.Net-Core.dll
+D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

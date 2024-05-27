@@ -31,7 +31,6 @@ namespace TestWebAPI.Services
                     serviceResponse.statusCode = EHttpType.BadRequest;
                     serviceResponse.success = false;
                     serviceResponse.message = "Role already exists.";
-                    return serviceResponse;
                 }
 
                 var role = _mapper.Map<Role>(roleDTO);
@@ -54,20 +53,17 @@ namespace TestWebAPI.Services
             var serviceResponse = new ServiceResponse<List<RoleDTO>>();
             try
             {
-                var roles = await Task.FromResult(_roleRepo.GetAllRoles().ToList());
+                var roles = await _roleRepo.GetAllRoles();
                 if (roles == null)
                 {
                     serviceResponse.statusCode = EHttpType.NotFound;
                     serviceResponse.success = false;
                     serviceResponse.message = "No roles found in the database.";
                 }
-                else
-                {
-                    serviceResponse.data = roles.Select(r => _mapper.Map<RoleDTO>(r)).ToList();
-                    serviceResponse.statusCode = EHttpType.Success;
-                    serviceResponse.success = true;
-                    serviceResponse.message = "Get all roles successfully.";
-                }
+                serviceResponse.data = _mapper.Map<List<RoleDTO>>(roles);
+                serviceResponse.statusCode = EHttpType.Success;
+                serviceResponse.success = true;
+                serviceResponse.message = "Get all roles successfully.";
             }
             catch (Exception ex)
             {
@@ -91,13 +87,10 @@ namespace TestWebAPI.Services
                     serviceResponse.success = false;
                     serviceResponse.message = "No role found in the database.";
                 }
-                else
-                {
-                    serviceResponse.data = _mapper.Map<RoleDTO>(role);
-                    serviceResponse.statusCode = EHttpType.Success;
-                    serviceResponse.success = true;
-                    serviceResponse.message = "Role retrieved successfully.";
-                }
+                serviceResponse.data = _mapper.Map<RoleDTO>(role);
+                serviceResponse.statusCode = EHttpType.Success;
+                serviceResponse.success = true;
+                serviceResponse.message = "Role retrieved successfully.";
             }
             catch (Exception ex)
             {
@@ -113,21 +106,19 @@ namespace TestWebAPI.Services
             var serviceResponse = new ServiceResponse<RoleDTO>();
             try
             {
-                var role = _mapper.Map<Role>(roleDTO);
-                role.code = CodeGenerator.GenerateCode(roleDTO.value);
-                Role updatedRole = await _roleRepo.UpdateRoleAsync(id, role);
-                if (updatedRole == null)
+                var oldRole = await _roleRepo.GetRolesById(id);
+                if(oldRole == null)
                 {
                     serviceResponse.statusCode = EHttpType.NotFound;
                     serviceResponse.success = false;
                     serviceResponse.message = "Role not found.";
                 }
-                else
-                {
-                    serviceResponse.statusCode = EHttpType.Success;
-                    serviceResponse.success = true;
-                    serviceResponse.message = "Role updated successfully.";
-                }
+                var role = _mapper.Map<Role>(roleDTO);
+                role.code = CodeGenerator.GenerateCode(roleDTO.value);
+                var updatedRole = await _roleRepo.UpdateRoleAsync(oldRole, role);
+                serviceResponse.statusCode = EHttpType.Success;
+                serviceResponse.success = true;
+                serviceResponse.message = "Role updated successfully.";
             }
             catch (Exception ex)
             {
@@ -142,19 +133,17 @@ namespace TestWebAPI.Services
             var serviceResponse = new ServiceResponse<RoleDTO>();
             try
             {
-                var deletedRole = await _roleRepo.DeleteRoleAsync(id);
-                if(deletedRole == null)
+                var deletedRole = await _roleRepo.GetRolesById(id);
+                if (deletedRole == null)
                 {
                     serviceResponse.statusCode = EHttpType.NotFound;
                     serviceResponse.success = false;
                     serviceResponse.message = "Role not found.";
                 }
-                else
-                {
-                    serviceResponse.statusCode = EHttpType.Success;
-                    serviceResponse.success = true;
-                    serviceResponse.message = "Role delete successfully.";
-                }
+                await _roleRepo.DeleteRoleAsync(deletedRole);
+                serviceResponse.statusCode = EHttpType.Success;
+                serviceResponse.success = true;
+                serviceResponse.message = "Role delete successfully.";
             }
             catch (Exception ex)
             {

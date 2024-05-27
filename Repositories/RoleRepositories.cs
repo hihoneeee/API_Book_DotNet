@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Data;
 using TestWebAPI.Data;
 using TestWebAPI.DTOs.Role;
@@ -11,11 +10,9 @@ namespace TestWebAPI.Repositories
     public class RoleRepositories : IRoleRepositories
     {
         private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
-        public RoleRepositories(ApplicationDbContext context, IMapper mapper)
+        public RoleRepositories(ApplicationDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
         public async Task<Role> GetRoleByValueAsync(string value)
         {
@@ -29,9 +26,9 @@ namespace TestWebAPI.Repositories
 
         }
 
-        public IQueryable<Role> GetAllRoles()
+        public async Task<List<Role>> GetAllRoles()
         {
-            return _context.Roles.AsQueryable();
+            return await _context.Roles.ToListAsync();
         }
 
 
@@ -40,29 +37,17 @@ namespace TestWebAPI.Repositories
             return await _context.Roles.FirstOrDefaultAsync(r => r.Id == id);
         }
 
-        public async Task<Role> DeleteRoleAsync(int id)
+        public async Task<object> DeleteRoleAsync(Role role)
         {
-            var existingRole = await _context.Roles.FindAsync(id);
-            if (existingRole == null)
-            {
-                return null;
-            }
-            _context.Roles!.Remove(existingRole);
-            await _context.SaveChangesAsync();
-            return existingRole;
+            _context.Roles!.Remove(role);
+            return await _context.SaveChangesAsync();
         }
 
-        public async Task<Role>UpdateRoleAsync(int id, Role role)
+        public async Task<Role> UpdateRoleAsync(Role oldRole, Role newRole)
         {
-            var existingRole = await _context.Roles.FindAsync(id);
-            if (existingRole == null)
-            {
-                return null;
-            }
-            existingRole.value = role.value;
-            _context.Roles.Update(existingRole);
+            oldRole.value = newRole.value;
             await _context.SaveChangesAsync();
-            return existingRole;
+            return oldRole;
         }
     }
 }
