@@ -12,7 +12,8 @@
             Forbid = 403,
             BadRequest = 400,
             Unauthorized = 401,
-            InternalError = 500
+            InternalError = 500,
+            Conflict = 409
         }
     }
 }

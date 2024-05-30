@@ -5,18 +5,19 @@ using TestWebAPI.Repositories.Interfaces;
 using TestWebAPI.DTOs.Role;
 using AutoMapper;
 using TestWebAPI.Services.Interfaces;
+using static TestWebAPI.Response.HttpStatus;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TestWebAPI.Controllers
 {
+    [Authorize(Roles = "MSAIDS")]
     [Route("api/[controller]")]
     [ApiController]
     public class RolesController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
         private readonly IRoleService _roleService;
-        public RolesController(ApplicationDbContext context, IRoleService roleService)
+        public RolesController( IRoleService roleService)
         {
-            _context = context;
             _roleService = roleService;
         }
 
@@ -24,21 +25,14 @@ namespace TestWebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllRoles()
         {
-            try
+            var serviceResponse = await _roleService.GetAllRoles();
+            if (serviceResponse.statusCode == EHttpType.Success)
             {
-                var serviceResponse = await _roleService.GetAllRoles();
-                if (serviceResponse.success)
-                {
-                    return Ok(serviceResponse.getData());
-                }
-                else
-                {
-                    return BadRequest(serviceResponse.getMessage());
-                }
+                return Ok(new { serviceResponse.success, serviceResponse.message, serviceResponse.data });
             }
-            catch
+            else
             {
-                throw new HttpStatusException(500, "Something went wrong");
+                return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
             }
         }
 
@@ -46,21 +40,14 @@ namespace TestWebAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetRolesById(int id)
         {
-            try
+            var serviceResponse = await _roleService.GetRolesById(id);
+            if (serviceResponse.statusCode == EHttpType.Success)
             {
-                var serviceResponse = await _roleService.GetRolesById(id);
-                if (serviceResponse.success)
-                {
-                    return Ok(serviceResponse.getData());
-                }
-                else
-                {
-                    return BadRequest(serviceResponse.getMessage());
-                }
+                return Ok(new { serviceResponse.success, serviceResponse.message, serviceResponse.data });
             }
-            catch
+            else
             {
-                throw new HttpStatusException(500, "Something went wrong");
+                return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
             }
         }
 
@@ -68,50 +55,30 @@ namespace TestWebAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateRoleAsync(int id, AddRoleDTO roleDTO)
         {
-            try
+            var serviceResponse = await _roleService.UpdateRoleAsync(id, roleDTO);
+            if (serviceResponse.statusCode == EHttpType.Success)
             {
-                var serviceResponse = await _roleService.UpdateRoleAsync(id, roleDTO);
-                if (serviceResponse.success)
-                {
-                    return Ok(serviceResponse.getMessage());
-                }
-                else
-                {
-                    return BadRequest(serviceResponse.getMessage());
-                }
+                return Ok(new { serviceResponse.success, serviceResponse.message });
             }
-            catch
+            else
             {
-                throw new HttpStatusException(500, "Something went wrong");
+                return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
             }
+
         }
 
         // POST: api/Roles
         [HttpPost]
         public async Task<IActionResult> AddNewRole([FromBody] AddRoleDTO roleDTO)
         {
-            try
+            var serviceResponse = await _roleService.AddRoleAsync(roleDTO);
+            if (serviceResponse.statusCode == EHttpType.Success)
             {
-                var serviceResponse = await _roleService.AddRoleAsync(roleDTO);
-                if (ModelState.IsValid)
-                {
-                    if (serviceResponse.success)
-                    {
-                        return Ok(serviceResponse.getMessage());
-                    }
-                    else
-                    {
-                        return BadRequest(serviceResponse.getMessage());
-                    }
-                }
-                else
-                {
-                    return BadRequest("Invalid role data.");
-                }
+                return Ok(new { serviceResponse.success, serviceResponse.message });
             }
-            catch
+            else
             {
-                throw new HttpStatusException(500, "Something went wrong");
+                return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
             }
         }
 
@@ -120,27 +87,15 @@ namespace TestWebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRole(int id)
         {
-            try
-            {
                 var serviceResponse = await _roleService.DeleteRoleAsync(id);
-                if (serviceResponse.success)
+                if (serviceResponse.statusCode == EHttpType.Success)
                 {
-                    return Ok(serviceResponse.getMessage());
+                    return Ok(new { serviceResponse.success, serviceResponse.message });
                 }
                 else
                 {
-                    return BadRequest(serviceResponse.getMessage());
+                    return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
                 }
-            }
-            catch
-            {
-                throw new HttpStatusException(500, "Something went wrong");
-            }
-        }
-
-        private bool RoleExists(int id)
-        {
-            return _context.Roles.Any(e => e.Id == id);
         }
     }
 }

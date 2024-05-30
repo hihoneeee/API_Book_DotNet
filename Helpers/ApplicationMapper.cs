@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using TestWebAPI.DTOs.Auth;
+using TestWebAPI.DTOs.JWT;
 using TestWebAPI.DTOs.Role;
 using TestWebAPI.DTOs.User;
 using TestWebAPI.Models;
@@ -20,6 +21,9 @@ namespace TestWebAPI.Helpers
 
             //user
             CreateMap<User, UserDTO>().ReverseMap();
+
+            //JWT
+            CreateMap<JWT, jwtDTO>().ReverseMap();
         }
     }
 }

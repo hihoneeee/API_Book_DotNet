@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 using TestWebAPI.Config;
 using TestWebAPI.Data;
@@ -15,11 +16,7 @@ using TestWebAPI.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add<ValidatorFilterAttribute>();
-});
+builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -52,7 +49,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = false,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
+            RoleClaimType = "roleCode"
         };
     });
 
@@ -67,14 +65,18 @@ builder.Services.AddSingleton(provider => new MapperConfiguration(options =>
 // Add Repositories to the container.
 builder.Services.AddScoped<IRoleRepositories, RoleRepositories>();
 builder.Services.AddScoped<IAuthRepositories, AuthRepositories>();
+builder.Services.AddScoped<IJwtRepositories, JwtRepositories>();
 
 // Add services to the container.
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IJwtService, JwtService>();
 
 // Register JWTHelper
 builder.Services.AddScoped<IJWTHelper, JWTHelper>();
 
+//Htttp cookie
+builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 
 app.UseExceptionHandler(errorApp =>
@@ -91,12 +93,16 @@ app.UseExceptionHandler(errorApp =>
     });
 });
 
+app.UseMiddleware<ErrorHandlingToken>();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ErrorHandlingToken>();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

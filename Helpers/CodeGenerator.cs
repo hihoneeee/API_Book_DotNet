@@ -1,15 +1,11 @@
-﻿using System.Globalization;
-using System.Text;
-using System.Security.Cryptography;
-using System.Text;
+﻿using System.Text;
 namespace TestWebAPI.Helpers
 {
     public static class CodeGenerator
     {
         public static string GenerateCode(string value)
         {
-            var output = new StringBuilder();
-
+            // Normalize input value
             value = value.Normalize(NormalizationForm.FormD)
                          .Replace("\u0300", "")
                          .Replace("\u0301", "")
@@ -20,7 +16,14 @@ namespace TestWebAPI.Helpers
                          .Replace("\u031B", "")
                          .Replace(" ", "");
 
-            string merge = value + "jashdjkashd0qwlkajd092";
+            // Add timestamp to ensure uniqueness
+            string timestamp = DateTime.UtcNow.ToString("yyyyMMddHHmmssfff");
+
+            // Combine value and timestamp
+            string merge = value + timestamp;
+
+            // Take characters from the merged string to generate the code
+            var output = new StringBuilder();
             int length = merge.Length;
 
             for (int i = 0; i < 5; i++)
@@ -30,8 +33,10 @@ namespace TestWebAPI.Helpers
                 length = index;
             }
 
-            string result = value[2].ToString() + output.ToString();
+            // Combine with the second character of the original value to form the final code
+            string result = value[1].ToString() + output.ToString();
             return result.ToUpper();
         }
+
     }
 }

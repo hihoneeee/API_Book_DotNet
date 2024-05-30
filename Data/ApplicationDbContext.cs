@@ -11,6 +11,8 @@ namespace TestWebAPI.Data
         {
             modelBuilder.Entity<Book>().HasOne(b=>b.Category).WithMany(c => c.Books).HasForeignKey(b=>b.CategoryId);
             modelBuilder.Entity<User>().HasOne(u => u.Role).WithMany(r => r.Users).HasForeignKey(u => u.roleCode).HasPrincipalKey(r => r.code);
+            modelBuilder.Entity<JWT>().HasOne(j => j.user).WithMany(u => u.JWTs).HasForeignKey(j => j.user_id).HasPrincipalKey(u => u.id);
+
             base.OnModelCreating(modelBuilder);
         }
 
@@ -18,5 +20,7 @@ namespace TestWebAPI.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<JWT> JWTs { get; set; }
+
     }
 }

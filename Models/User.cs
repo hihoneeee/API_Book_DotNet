@@ -29,5 +29,8 @@ namespace TestWebAPI.Models
         public required string roleCode { get; set; }
 
         public virtual Role Role { get; set; }
+
+        public virtual ICollection<JWT>? JWTs { get; set; }
+
     }
 }

@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure;
+using Microsoft.AspNetCore.Mvc;
 using TestWebAPI.DTOs.Auth;
 using TestWebAPI.Helpers;
 using TestWebAPI.Services.Interfaces;
+using static TestWebAPI.Response.HttpStatus;
 
 namespace TestWebAPI.Controllers
 {
@@ -20,43 +22,46 @@ namespace TestWebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] AuthRegisterDTO authRegisterDTO)
         {
-            try
-            {
                 var serviceResponse = await _authService.Register(authRegisterDTO);
-                if (serviceResponse.success)
+                if (serviceResponse.statusCode == EHttpType.Success)
                 {
-                    return Ok(serviceResponse.getMessage());
+                    return Ok(new { serviceResponse.success, serviceResponse.message });
                 }
                 else
                 {
-                    return BadRequest(serviceResponse);
+                    return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
                 }
-            }
-            catch
-            {
-                throw new HttpStatusException(500, "Something went wrong");
-            }
         }
         [Route("login")]
         [HttpPost]
+        
         public async Task<IActionResult> Login([FromBody] AuthLoginDTO authLoginDTO)
         {
-            try
-            {
                 var serviceResponse = await _authService.Login(authLoginDTO);
-                if (serviceResponse.success)
+                if (serviceResponse.statusCode == EHttpType.Success)
                 {
-                    return Ok(serviceResponse.getData());
+                    return Ok(new { serviceResponse.success, serviceResponse.message, serviceResponse.access_token });
                 }
                 else
                 {
-                    return BadRequest(serviceResponse);
+                    return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
                 }
-            }
-            catch
+        }
+
+        [Route("refresh-token")]
+        [HttpPost]
+        public async Task<IActionResult> refreshTokenAsync ([FromBody] refreshToken refreshToken)
+        {
+            var serviceResponse = await _authService.refreshTokenAsync(refreshToken.token);
+            if (serviceResponse.statusCode == EHttpType.Success)
             {
-                throw new HttpStatusException(500, "Something went wrong");
+                return Ok(new { serviceResponse.success, serviceResponse.message, serviceResponse.access_token });
             }
+            else
+            {
+                return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
+            }
+
         }
     }
 }

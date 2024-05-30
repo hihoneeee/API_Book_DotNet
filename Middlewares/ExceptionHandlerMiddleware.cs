@@ -55,7 +55,7 @@ namespace TestWebAPI.Middlewares
             {
                 statusCode = context.Response.StatusCode,
                 Message = "An error occurred while processing your request.",
-                Detailed = exception.Message // You might not want to expose exception details in production
+                Detailed = exception.Message
             };
 
             return context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(response));

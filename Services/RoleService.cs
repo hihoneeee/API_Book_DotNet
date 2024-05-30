@@ -28,9 +28,10 @@ namespace TestWebAPI.Services
                 var existingRole = await _roleRepo.GetRoleByValueAsync(roleDTO.value);
                 if (existingRole != null)
                 {
-                    serviceResponse.statusCode = EHttpType.BadRequest;
+                    serviceResponse.statusCode = EHttpType.Conflict;
                     serviceResponse.success = false;
                     serviceResponse.message = "Role already exists.";
+                    return serviceResponse;
                 }
 
                 var role = _mapper.Map<Role>(roleDTO);
@@ -44,6 +45,7 @@ namespace TestWebAPI.Services
             {
                 serviceResponse.success = false;
                 serviceResponse.message = $"An unexpected error occurred: {ex.Message}";
+                serviceResponse.statusCode = EHttpType.InternalError;
             }
             return serviceResponse;
         }
@@ -56,13 +58,14 @@ namespace TestWebAPI.Services
                 var roles = await _roleRepo.GetAllRoles();
                 if (roles == null)
                 {
-                    serviceResponse.statusCode = EHttpType.NotFound;
                     serviceResponse.success = false;
+                    serviceResponse.statusCode = EHttpType.NotFound;
                     serviceResponse.message = "No roles found in the database.";
+                    return serviceResponse;
                 }
                 serviceResponse.data = _mapper.Map<List<RoleDTO>>(roles);
-                serviceResponse.statusCode = EHttpType.Success;
                 serviceResponse.success = true;
+                serviceResponse.statusCode = EHttpType.Success;
                 serviceResponse.message = "Get all roles successfully.";
             }
             catch (Exception ex)
@@ -83,20 +86,21 @@ namespace TestWebAPI.Services
                 var role = await _roleRepo.GetRolesById(id);
                 if (role == null)
                 {
-                    serviceResponse.statusCode = EHttpType.NotFound;
                     serviceResponse.success = false;
+                    serviceResponse.statusCode = EHttpType.NotFound;
                     serviceResponse.message = "No role found in the database.";
+                    return serviceResponse;
                 }
                 serviceResponse.data = _mapper.Map<RoleDTO>(role);
-                serviceResponse.statusCode = EHttpType.Success;
                 serviceResponse.success = true;
+                serviceResponse.statusCode = EHttpType.Success;
                 serviceResponse.message = "Role retrieved successfully.";
             }
             catch (Exception ex)
             {
                 serviceResponse.success = false;
-                serviceResponse.message = $"An unexpected error occurred: {ex.Message}";
                 serviceResponse.statusCode = EHttpType.InternalError;
+                serviceResponse.message = $"An unexpected error occurred: {ex.Message}";
             }
             return serviceResponse;
         }
@@ -109,15 +113,24 @@ namespace TestWebAPI.Services
                 var oldRole = await _roleRepo.GetRolesById(id);
                 if(oldRole == null)
                 {
-                    serviceResponse.statusCode = EHttpType.NotFound;
                     serviceResponse.success = false;
                     serviceResponse.message = "Role not found.";
+                    serviceResponse.statusCode = EHttpType.NotFound;
+                    return serviceResponse;
+                }
+                var existingRole = await _roleRepo.GetRoleByValueAsync(roleDTO.value);
+                if (existingRole != null)
+                {
+                    serviceResponse.statusCode = EHttpType.Conflict;
+                    serviceResponse.success = false;
+                    serviceResponse.message = "Role already exists.";
+                    return serviceResponse;
                 }
                 var role = _mapper.Map<Role>(roleDTO);
                 role.code = CodeGenerator.GenerateCode(roleDTO.value);
                 var updatedRole = await _roleRepo.UpdateRoleAsync(oldRole, role);
-                serviceResponse.statusCode = EHttpType.Success;
                 serviceResponse.success = true;
+                serviceResponse.statusCode = EHttpType.Success;
                 serviceResponse.message = "Role updated successfully.";
             }
             catch (Exception ex)
@@ -136,14 +149,15 @@ namespace TestWebAPI.Services
                 var deletedRole = await _roleRepo.GetRolesById(id);
                 if (deletedRole == null)
                 {
-                    serviceResponse.statusCode = EHttpType.NotFound;
                     serviceResponse.success = false;
                     serviceResponse.message = "Role not found.";
+                    serviceResponse.statusCode = EHttpType.NotFound;
+                    return serviceResponse;
                 }
                 await _roleRepo.DeleteRoleAsync(deletedRole);
-                serviceResponse.statusCode = EHttpType.Success;
                 serviceResponse.success = true;
                 serviceResponse.message = "Role delete successfully.";
+                serviceResponse.statusCode = EHttpType.Success;
             }
             catch (Exception ex)
             {
