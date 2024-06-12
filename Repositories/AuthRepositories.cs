@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.Data;
 using TestWebAPI.Data;
 using TestWebAPI.Models;
@@ -25,6 +26,26 @@ namespace TestWebAPI.Repositories
             await _context.SaveChangesAsync();
             return user;
         }
+        public async Task<User> InsertChangePasswordAsyn(User user)
+        {
+            var token = Guid.NewGuid().ToString();
+            user.passwordChangeAt = DateTime.UtcNow;
+            user.passwordResetExpires = DateTime.UtcNow.Add(TimeSpan.FromMinutes(15));
+            user.passwordResetToken = token;
+            await _context.SaveChangesAsync();
+            return user;
+        }
 
+        public async Task<User> FindPasswordResetTokenAsyn(string token)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.passwordResetToken == token);
+        }
+
+        public async Task<User> ChangeNewPassword(string newPassword, User user)
+        {
+           user.password = newPassword;
+           await _context.SaveChangesAsync();
+           return user;
+        }
     }
 }

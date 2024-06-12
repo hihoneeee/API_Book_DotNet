@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "slP/Sm1/HxRNI8eEiI6uFL+GTNbWpsYwtOrhZ4L9iQtNse3/sepXbznoJVoFORlisyMwI59c0/KUNR0H67Zz7g==",
+  "dgSpecHash": "zw/airM9vKSJxBJmbTd3yMqjIKGtZaVARzlKcq9ARWBBukQoni2dLh7rweE6dRsjjxTPIc3IDoMH239oZjW6+Q==",
   "success": true,
   "projectFilePath": "D:\\code\\.NET\\TestWebAPI\\TestWebAPI\\TestWebAPI.csproj",
   "expectedPackageFiles": [
@@ -62,6 +62,7 @@
     "C:\\Users\\Huy\\.nuget\\packages\\humanizer.core.zh-cn\\2.14.1\\humanizer.core.zh-cn.2.14.1.nupkg.sha512",
     "C:\\Users\\Huy\\.nuget\\packages\\humanizer.core.zh-hans\\2.14.1\\humanizer.core.zh-hans.2.14.1.nupkg.sha512",
     "C:\\Users\\Huy\\.nuget\\packages\\humanizer.core.zh-hant\\2.14.1\\humanizer.core.zh-hant.2.14.1.nupkg.sha512",
+    "C:\\Users\\Huy\\.nuget\\packages\\mailkit\\3.2.0\\mailkit.3.2.0.nupkg.sha512",
     "C:\\Users\\Huy\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.5\\microsoft.aspnetcore.authentication.jwtbearer.8.0.5.nupkg.sha512",
     "C:\\Users\\Huy\\.nuget\\packages\\microsoft.aspnetcore.razor.language\\6.0.24\\microsoft.aspnetcore.razor.language.6.0.24.nupkg.sha512",
     "C:\\Users\\Huy\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\7.0.0\\microsoft.bcl.asyncinterfaces.7.0.0.nupkg.sha512",
@@ -121,7 +122,9 @@
     "C:\\Users\\Huy\\.nuget\\packages\\microsoft.visualstudio.web.codegeneration.utils\\8.0.2\\microsoft.visualstudio.web.codegeneration.utils.8.0.2.nupkg.sha512",
     "C:\\Users\\Huy\\.nuget\\packages\\microsoft.visualstudio.web.codegenerators.mvc\\8.0.2\\microsoft.visualstudio.web.codegenerators.mvc.8.0.2.nupkg.sha512",
     "C:\\Users\\Huy\\.nuget\\packages\\microsoft.win32.systemevents\\7.0.0\\microsoft.win32.systemevents.7.0.0.nupkg.sha512",
+    "C:\\Users\\Huy\\.nuget\\packages\\mimekit\\3.2.0\\mimekit.3.2.0.nupkg.sha512",
     "C:\\Users\\Huy\\.nuget\\packages\\mono.texttemplating\\2.3.1\\mono.texttemplating.2.3.1.nupkg.sha512",
+    "C:\\Users\\Huy\\.nuget\\packages\\netcore.mailkit\\2.1.0\\netcore.mailkit.2.1.0.nupkg.sha512",
     "C:\\Users\\Huy\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
     "C:\\Users\\Huy\\.nuget\\packages\\nuget.common\\6.9.1\\nuget.common.6.9.1.nupkg.sha512",
     "C:\\Users\\Huy\\.nuget\\packages\\nuget.configuration\\6.9.1\\nuget.configuration.6.9.1.nupkg.sha512",
@@ -132,6 +135,7 @@
     "C:\\Users\\Huy\\.nuget\\packages\\nuget.projectmodel\\6.9.1\\nuget.projectmodel.6.9.1.nupkg.sha512",
     "C:\\Users\\Huy\\.nuget\\packages\\nuget.protocol\\6.9.1\\nuget.protocol.6.9.1.nupkg.sha512",
     "C:\\Users\\Huy\\.nuget\\packages\\nuget.versioning\\6.9.1\\nuget.versioning.6.9.1.nupkg.sha512",
+    "C:\\Users\\Huy\\.nuget\\packages\\portable.bouncycastle\\1.9.0\\portable.bouncycastle.1.9.0.nupkg.sha512",
     "C:\\Users\\Huy\\.nuget\\packages\\swashbuckle.aspnetcore\\6.6.1\\swashbuckle.aspnetcore.6.6.1.nupkg.sha512",
     "C:\\Users\\Huy\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.6.1\\swashbuckle.aspnetcore.swagger.6.6.1.nupkg.sha512",
     "C:\\Users\\Huy\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.6.1\\swashbuckle.aspnetcore.swaggergen.6.6.1.nupkg.sha512",

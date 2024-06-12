@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using NuGet.Common;
-using System.IdentityModel.Tokens.Jwt;
 using TestWebAPI.DTOs.Auth;
 using TestWebAPI.DTOs.JWT;
-using TestWebAPI.DTOs.User;
 using TestWebAPI.Helpers;
 using TestWebAPI.Middlewares;
 using TestWebAPI.Models;
@@ -23,7 +19,8 @@ namespace TestWebAPI.Services
         private readonly IJWTHelper _jWTHelper;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthService(IMapper mapper, IAuthRepositories authRepo, IJWTHelper jWTHelper, IJwtService jwtService, IHttpContextAccessor httpContextAccessor) { 
+        public AuthService(IMapper mapper, IAuthRepositories authRepo, IJWTHelper jWTHelper, IJwtService jwtService, IHttpContextAccessor httpContextAccessor)
+        {
             _mapper = mapper;
             _jwtService = jwtService;
             _authRepo = authRepo ?? throw new ArgumentNullException(nameof(authRepo));
@@ -152,6 +149,67 @@ namespace TestWebAPI.Services
 
             }
             return serviceResponse;
+        }
+        public async Task<ServiceResponse<AuthChangePasswordDTO>> ForgotPassword(string email)
+        {
+            var serviceResponse = new ServiceResponse<AuthChangePasswordDTO>();
+            try
+            {
+                var existsEmail = await _authRepo.getByEmail(email);
+                if (existsEmail == null)
+                {
+                    serviceResponse.success = false;
+                    serviceResponse.message = "Email not found.";
+                    serviceResponse.statusCode = EHttpType.NotFound;
+                    return serviceResponse;
+                }
+
+                var authChangePassword = await _authRepo.InsertChangePasswordAsyn(existsEmail);
+
+                // Here we add the token to the service response
+                serviceResponse.data = _mapper.Map<AuthChangePasswordDTO>(authChangePassword);
+                serviceResponse.success = true;
+                serviceResponse.message = "Password reset token generated.";
+                serviceResponse.statusCode = EHttpType.Success;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.success = false;
+                serviceResponse.message = $"An error occurred while processing your request: {ex.Message}";
+                serviceResponse.statusCode = EHttpType.InternalError;
+            }
+
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<AuthChangePasswordDTO>> ResetPasswordAsync(string password, string token)
+        {
+            var serviceResponse = new ServiceResponse<AuthChangePasswordDTO>();
+            try
+            {
+                var newPassword = HashPasswordHelper.HashPassword(password);
+                var findPasswordToken = await _authRepo.FindPasswordResetTokenAsyn(token);
+                if (findPasswordToken == null)
+                {
+                    serviceResponse.success = false;
+                    serviceResponse.message = "Token don't have existing!";
+                    serviceResponse.statusCode = EHttpType.NotFound;
+                    return serviceResponse;
+                }
+                var restPassword = await _authRepo.ChangeNewPassword(newPassword, findPasswordToken);
+                serviceResponse.success = true;
+                serviceResponse.message = "Password change succssefully!";
+                serviceResponse.statusCode = EHttpType.Success;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.success = false;
+                serviceResponse.message = $"An error occurred while processing your request: {ex.Message}";
+                serviceResponse.statusCode = EHttpType.InternalError;
+            }
+
+            return serviceResponse;
+
         }
     }
 }

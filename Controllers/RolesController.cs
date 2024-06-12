@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace TestWebAPI.Controllers
 {
-    [Authorize(Roles = "MSAIDS")]
     [Route("api/[controller]")]
     [ApiController]
     public class RolesController : ControllerBase

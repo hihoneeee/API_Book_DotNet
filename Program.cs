@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
 using System.Text;
 using TestWebAPI.Config;
 using TestWebAPI.Data;
+using TestWebAPI.DTOs.Common;
 using TestWebAPI.Helpers;
 using TestWebAPI.Middlewares;
 using TestWebAPI.Repositories;
@@ -17,6 +17,7 @@ using TestWebAPI.Services.Interfaces;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -31,6 +32,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("BookStore"));
 });
+
 
 // JWT config
 var jwtSection = builder.Configuration.GetSection("AppSettings");
@@ -62,15 +64,20 @@ builder.Services.AddSingleton(provider => new MapperConfiguration(options =>
 }).CreateMapper());
 #endregion
 
+builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("EmailConfiguration"));
+
 // Add Repositories to the container.
 builder.Services.AddScoped<IRoleRepositories, RoleRepositories>();
 builder.Services.AddScoped<IAuthRepositories, AuthRepositories>();
 builder.Services.AddScoped<IJwtRepositories, JwtRepositories>();
+builder.Services.AddScoped<IPermisstionRepositories, PermisstionRepositories>();
 
 // Add services to the container.
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IPermissionServices, PermissionServices>();
+builder.Services.AddScoped<ISendMailService, SendMailServices>();
 
 // Register JWTHelper
 builder.Services.AddScoped<IJWTHelper, JWTHelper>();

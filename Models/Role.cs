@@ -12,6 +12,7 @@ namespace TestWebAPI.Models
         public DateTime Created { get; set; } = DateTime.Now;
         public DateTime Updated { get; set; }
         public virtual ICollection<User>? Users { get; set; }
+        public virtual ICollection<Role_Permission>? Role_Permissions { get; set; }
 
     }
 }

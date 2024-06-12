@@ -258,3 +258,7 @@ D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\FluentValidation.DependencyI
 D:\code\.NET\TestWebAPI\TestWebAPI\obj\Debug\net8.0\TestWebAPI.sourcelink.json
 D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\BCrypt.Net-Core.dll
 D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\MailKit.dll
+D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\MimeKit.dll
+D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\NETCore.MailKit.dll
+D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\BouncyCastle.Crypto.dll

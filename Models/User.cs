@@ -30,7 +30,12 @@ namespace TestWebAPI.Models
 
         public virtual Role Role { get; set; }
 
+        public DateTime? passwordChangeAt { get; set; }
+        public string? passwordResetToken { get; set; }
+        public DateTime? passwordResetExpires { get; set; }
+
         public virtual ICollection<JWT>? JWTs { get; set; }
+        public virtual ICollection<Post>? Posts { get; set; }
 
     }
 }
