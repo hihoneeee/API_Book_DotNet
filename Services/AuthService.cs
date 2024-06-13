@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using NuGet.Common;
 using TestWebAPI.DTOs.Auth;
 using TestWebAPI.DTOs.JWT;
 using TestWebAPI.Helpers;
@@ -26,7 +27,6 @@ namespace TestWebAPI.Services
             _authRepo = authRepo ?? throw new ArgumentNullException(nameof(authRepo));
             _jWTHelper = jWTHelper ?? throw new ArgumentNullException(nameof(jWTHelper));
             _httpContextAccessor = httpContextAccessor;
-
         }
 
         public async Task<ServiceResponse<AuthRegisterDTO>> Register(AuthRegisterDTO authRegisterDTO)
@@ -79,7 +79,7 @@ namespace TestWebAPI.Services
                     return serviceResponse;
                 }
                 // Tạo JWT token và refresh token
-                string token = await _jWTHelper.GenerateJWTToken(existingUser.id, existingUser.roleCode, DateTime.UtcNow.AddMinutes(10));
+                string token = await _jWTHelper.GenerateJWTToken(existingUser.id, existingUser.roleCode, DateTime.UtcNow.AddSeconds(10));
                 string refresh_token = await _jWTHelper.GenerateJWTRefreshToken(existingUser.id, DateTime.UtcNow.AddMonths(30));
 
                 // Thêm refresh token vào trong bảng JWT
@@ -114,9 +114,9 @@ namespace TestWebAPI.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<refreshToken>> refreshTokenAsync(string refreshToken)
+        public async Task<ServiceResponse<RefreshTokenDTO>> refreshTokenAsync(string refreshToken)
         {
-            var serviceResponse = new ServiceResponse<refreshToken>();
+            var serviceResponse = new ServiceResponse<RefreshTokenDTO>();
             try
             {
                 // Kiểm tra tính hợp lệ của refresh token
@@ -150,9 +150,9 @@ namespace TestWebAPI.Services
             }
             return serviceResponse;
         }
-        public async Task<ServiceResponse<AuthChangePasswordDTO>> ForgotPassword(string email)
+        public async Task<ServiceResponse<AuthResetPasswordDTO>> ForgotPassword(string email)
         {
-            var serviceResponse = new ServiceResponse<AuthChangePasswordDTO>();
+            var serviceResponse = new ServiceResponse<AuthResetPasswordDTO>();
             try
             {
                 var existsEmail = await _authRepo.getByEmail(email);
@@ -167,7 +167,7 @@ namespace TestWebAPI.Services
                 var authChangePassword = await _authRepo.InsertChangePasswordAsyn(existsEmail);
 
                 // Here we add the token to the service response
-                serviceResponse.data = _mapper.Map<AuthChangePasswordDTO>(authChangePassword);
+                serviceResponse.data = _mapper.Map<AuthResetPasswordDTO>(authChangePassword);
                 serviceResponse.success = true;
                 serviceResponse.message = "Password reset token generated.";
                 serviceResponse.statusCode = EHttpType.Success;
@@ -182,9 +182,9 @@ namespace TestWebAPI.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<AuthChangePasswordDTO>> ResetPasswordAsync(string password, string token)
+        public async Task<ServiceResponse<AuthResetPasswordDTO>> ResetPasswordAsync(string password, string token)
         {
-            var serviceResponse = new ServiceResponse<AuthChangePasswordDTO>();
+            var serviceResponse = new ServiceResponse<AuthResetPasswordDTO>();
             try
             {
                 var newPassword = HashPasswordHelper.HashPassword(password);
@@ -196,7 +196,7 @@ namespace TestWebAPI.Services
                     serviceResponse.statusCode = EHttpType.NotFound;
                     return serviceResponse;
                 }
-                var restPassword = await _authRepo.ChangeNewPassword(newPassword, findPasswordToken);
+                var restPassword = await _authRepo.ResetNewPasswordAsync(newPassword, findPasswordToken);
                 serviceResponse.success = true;
                 serviceResponse.message = "Password change succssefully!";
                 serviceResponse.statusCode = EHttpType.Success;
@@ -209,7 +209,23 @@ namespace TestWebAPI.Services
             }
 
             return serviceResponse;
-
         }
+        /*
+        public async Task<ServiceResponse<AuthChangePasswordDTO>> ChangePasswordasync(string newPassword, string oldPassword, int id)
+        {
+            var serviceResponse = new ServiceResponse<AuthResetPasswordDTO>();
+            try
+            {
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.success = false;
+                serviceResponse.message = $"An error occurred while processing your request: {ex.Message}";
+                serviceResponse.statusCode = EHttpType.InternalError;
+            }
+
+            return serviceResponse;
+        }
+        */
     }
 }

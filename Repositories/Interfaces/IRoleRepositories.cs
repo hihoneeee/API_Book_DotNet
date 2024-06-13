@@ -11,5 +11,6 @@ namespace TestWebAPI.Repositories.Interfaces
         Task<Role> AddRoleAsync(Role role);
         Task<object> DeleteRoleAsync(Role role);
         Task<Role> UpdateRoleAsync(Role oldRole, Role newRole);
+        Task<Role> GetRoleByCodeAsyn(string code);
     }
 }

@@ -46,5 +46,10 @@ namespace TestWebAPI.Repositories
             return await _context.SaveChangesAsync();
         }
 
+        public async Task<Permission> GetPermissionByCodeAsyn(string code)
+        {
+            return await _context.Permissions.FirstOrDefaultAsync(p => p.code == code);
+        }
+
     }
 }

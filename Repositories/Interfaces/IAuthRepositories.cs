@@ -9,6 +9,7 @@ namespace TestWebAPI.Repositories.Interfaces
         Task<User> InsertChangePasswordAsyn(User user);
 
         Task<User> FindPasswordResetTokenAsyn(string token);
-        Task<User> ChangeNewPassword(string newPassword, User user);
+        Task<User> ResetNewPasswordAsync(string newPassword, User user);
+        // Task<User> ChangePasswordAsync(string newPassword, User user);
     }
 }

@@ -15,12 +15,15 @@ namespace TestWebAPI.Data
             modelBuilder.Entity<Role_Permission>()
                 .HasOne(rp => rp.Role)
                 .WithMany(r => r.Role_Permissions)
-                .HasForeignKey(rp => rp.codeRole);
+                .HasForeignKey(rp => rp.codeRole)
+                .HasPrincipalKey(r => r.code);
 
             modelBuilder.Entity<Role_Permission>()
                 .HasOne(rp => rp.Permission)
                 .WithMany(p => p.Role_Permissions)
-                .HasForeignKey(rp => rp.codePermission);
+                .HasForeignKey(rp => rp.codePermission)
+                .HasPrincipalKey(p => p.code);
+
             modelBuilder.Entity<Post>().HasOne(p => p.User).WithMany(u => u.Posts).HasForeignKey(p => p.user_id).HasPrincipalKey(u => u.id);
 
             base.OnModelCreating(modelBuilder);

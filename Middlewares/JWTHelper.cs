@@ -1,13 +1,12 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net;
 using System.Security.Claims;
 using System.Text;
 using TestWebAPI.Config;
-using TestWebAPI.Repositories;
+using TestWebAPI.Data;
 using TestWebAPI.Repositories.Interfaces;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace TestWebAPI.Middlewares
 {
@@ -15,32 +14,53 @@ namespace TestWebAPI.Middlewares
     {
         private readonly TokenSettings _tokenSettings;
         private readonly IJwtRepositories _jwtRepositories;
+        private readonly ApplicationDbContext _context;
 
-        public JWTHelper(IOptions<TokenSettings> tokenSettings, IJwtRepositories jwtRepositories)
+        public JWTHelper(IOptions<TokenSettings> tokenSettings, IJwtRepositories jwtRepositories, ApplicationDbContext context)
         {
             _tokenSettings = tokenSettings.Value;
             _jwtRepositories = jwtRepositories;
+            _context = context;
         }
 
         public async Task<string> GenerateJWTToken(int id, string roleCode, DateTime expire)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var secretKeyBytes = Encoding.UTF8.GetBytes(_tokenSettings.Secret);
-            var claims = new[]
+
+            // Initialize claims as a List<Claim> to allow dynamic additions
+            var claims = new List<Claim>
             {
                 new Claim("id", id.ToString()),
                 new Claim("roleCode", roleCode),
                 new Claim("iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
             };
 
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: expire,
-                signingCredentials: new SigningCredentials(new SymmetricSecurityKey(secretKeyBytes), SecurityAlgorithms.HmacSha256Signature)
-            );
+            // Fetch user permissions based on the role code
+            var userPermissions = await _context.RolePermissions
+                                     .Where(rp => rp.codeRole == roleCode)
+                                     .Select(rp => rp.Permission.value)  // Assuming Permission.value contains the permission name
+                                     .ToListAsync();
 
+            // Add permissions to the claims
+            foreach (var permission in userPermissions)
+            {
+                claims.Add(new Claim("permission", permission));
+            }
+
+            // Create token descriptor with the claims
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims.ToArray()),  // Convert List<Claim> to array
+                Expires = expire,
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKeyBytes), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            // Create the token
+            var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+
 
         public async Task<string> GenerateJWTRefreshToken(int id, DateTime expire)
         {

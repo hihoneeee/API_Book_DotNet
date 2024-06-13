@@ -7,6 +7,8 @@ using AutoMapper;
 using TestWebAPI.Services.Interfaces;
 using static TestWebAPI.Response.HttpStatus;
 using Microsoft.AspNetCore.Authorization;
+using TestWebAPI.Services;
+using TestWebAPI.DTOs.RoleHasPermission;
 
 namespace TestWebAPI.Controllers
 {
@@ -15,12 +17,16 @@ namespace TestWebAPI.Controllers
     public class RolesController : ControllerBase
     {
         private readonly IRoleService _roleService;
-        public RolesController( IRoleService roleService)
+        private readonly IRoleHasPermissionServices _roleHasPermissionSv;
+
+        public RolesController( IRoleService roleService, IRoleHasPermissionServices roleHasPermissionSv)
         {
             _roleService = roleService;
+            _roleHasPermissionSv = roleHasPermissionSv;
         }
 
         // GET: api/Roles
+        [Authorize(Policy = "get_role")]
         [HttpGet]
         public async Task<IActionResult> GetAllRoles()
         {
@@ -95,6 +101,20 @@ namespace TestWebAPI.Controllers
                 {
                     return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
                 }
+        }
+        [Route("assign-permission")]
+        [HttpPost]
+        public async Task<IActionResult> AssignPermissionAsyn([FromBody] RoleHasPermissionDTO roleHasPermissionDTO)
+        {
+            var serviceResponse = await _roleHasPermissionSv.AssignPermissionAsyn(roleHasPermissionDTO.codeRole, roleHasPermissionDTO.codePermission, roleHasPermissionDTO);
+            if (serviceResponse.statusCode == EHttpType.Success)
+            {
+                return Ok(new { serviceResponse.success, serviceResponse.message });
+            }
+            else
+            {
+                return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
+            }
         }
     }
 }

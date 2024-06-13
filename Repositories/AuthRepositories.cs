@@ -41,11 +41,18 @@ namespace TestWebAPI.Repositories
             return await _context.Users.FirstOrDefaultAsync(u => u.passwordResetToken == token);
         }
 
-        public async Task<User> ChangeNewPassword(string newPassword, User user)
+        public async Task<User> ResetNewPasswordAsync(string newPassword, User user)
         {
            user.password = newPassword;
            await _context.SaveChangesAsync();
            return user;
         }
+        public async Task<User> ChangePasswordasync(string newPassword, User user)
+        {
+            user.password = newPassword;
+            await _context.SaveChangesAsync();
+            return user;
+        }
+
     }
 }

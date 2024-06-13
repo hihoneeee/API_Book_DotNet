@@ -10,5 +10,6 @@ namespace TestWebAPI.Repositories.Interfaces
         Task<Permission> GetPermissionByIdAsyn(int id);
         Task<Permission> UpdatePermissionAsyn(Permission oldPer, Permission newPer);
         Task<Object> DeletePermissionAsyn(Permission permission);
+        Task<Permission> GetPermissionByCodeAsyn(string code);
     }
 }

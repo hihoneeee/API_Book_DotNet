@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TestWebAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class DBinit : Migration
+    public partial class DBInit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,7 +33,7 @@ namespace TestWebAPI.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    code = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    code = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     value = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     created = table.Column<DateTime>(type: "datetime2", nullable: false),
                     updated = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -41,6 +41,7 @@ namespace TestWebAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Permissions", x => x.id);
+                    table.UniqueConstraint("AK_Permissions_code", x => x.code);
                 });
 
             migrationBuilder.CreateTable(
@@ -89,10 +90,8 @@ namespace TestWebAPI.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    codeRole = table.Column<int>(type: "int", nullable: false),
-                    codePermission = table.Column<int>(type: "int", nullable: false),
-                    created = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    updated = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    codeRole = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    codePermission = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -101,13 +100,13 @@ namespace TestWebAPI.Migrations
                         name: "FK_RolePermissions_Permissions_codePermission",
                         column: x => x.codePermission,
                         principalTable: "Permissions",
-                        principalColumn: "id",
+                        principalColumn: "code",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_RolePermissions_Roles_codeRole",
                         column: x => x.codeRole,
                         principalTable: "Roles",
-                        principalColumn: "Id",
+                        principalColumn: "code",
                         onDelete: ReferentialAction.Cascade);
                 });
 

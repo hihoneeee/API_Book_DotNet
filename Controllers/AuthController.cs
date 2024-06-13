@@ -52,7 +52,7 @@ namespace TestWebAPI.Controllers
 
         [Route("refresh-token")]
         [HttpPost]
-        public async Task<IActionResult> refreshTokenAsync ([FromBody] refreshToken refreshToken)
+        public async Task<IActionResult> refreshTokenAsync ([FromBody] RefreshTokenDTO refreshToken)
         {
             var serviceResponse = await _authService.refreshTokenAsync(refreshToken.token);
             if (serviceResponse.statusCode == EHttpType.Success)
@@ -67,7 +67,7 @@ namespace TestWebAPI.Controllers
         }
 
         [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword([FromBody] AuthChangePasswordDTO authChangePasswordDTO)
+        public async Task<IActionResult> ForgotPassword([FromBody] AuthResetPasswordDTO authChangePasswordDTO)
         {
             var serviceResponse = await _authService.ForgotPassword(authChangePasswordDTO.email);
 

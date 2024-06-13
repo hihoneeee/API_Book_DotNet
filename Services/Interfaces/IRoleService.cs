@@ -11,6 +11,5 @@ namespace TestWebAPI.Services.Interfaces
         Task<ServiceResponse<RoleDTO>> GetRolesById(int id);
         Task<ServiceResponse<RoleDTO>> UpdateRoleAsync(int id, AddRoleDTO roleDTO);
         Task<ServiceResponse<RoleDTO>> DeleteRoleAsync(int id);
-
     }
 }

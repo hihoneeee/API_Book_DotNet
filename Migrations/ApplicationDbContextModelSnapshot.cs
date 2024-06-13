@@ -119,7 +119,7 @@ namespace TestWebAPI.Migrations
 
                     b.Property<string>("code")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("created")
                         .HasColumnType("datetime2");
@@ -205,17 +205,13 @@ namespace TestWebAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<int>("codePermission")
-                        .HasColumnType("int");
+                    b.Property<string>("codePermission")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("codeRole")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("updated")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("codeRole")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("id");
 
@@ -322,12 +318,14 @@ namespace TestWebAPI.Migrations
                     b.HasOne("TestWebAPI.Models.Permission", "Permission")
                         .WithMany("Role_Permissions")
                         .HasForeignKey("codePermission")
+                        .HasPrincipalKey("code")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TestWebAPI.Models.Role", "Role")
                         .WithMany("Role_Permissions")
                         .HasForeignKey("codeRole")
+                        .HasPrincipalKey("code")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

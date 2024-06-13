@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using TestWebAPI.DTOs.Permisstion;
 
 namespace TestWebAPI.DTOs.Role
 {
@@ -12,14 +13,6 @@ namespace TestWebAPI.DTOs.Role
         public int id { get; set; }
         public string value { get; set; }
         public string code { get; set; }
+        public List<PermisstionDTO> dataPermission { get; set; }
     }
-    //public class RoleDTO
-    //{
-    ///[JsonIgnore]
-    //public int id { get; set; }
-    //[Required(ErrorMessage = "The 'value' field is required.")]
-    //public string value { get; set; }
-    //[JsonIgnore]
-    //public string code { get; set; }
-    //}
 }

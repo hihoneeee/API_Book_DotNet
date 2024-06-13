@@ -16,7 +16,10 @@ namespace TestWebAPI.Repositories
         }
         public async Task<Role> GetRoleByValueAsync(string value)
         {
-            return await _context.Roles.FirstOrDefaultAsync(r => r.value == value);
+            return await _context.Roles
+                .Include(r => r.Role_Permissions)
+                .ThenInclude(rp => rp.Permission)
+                .FirstOrDefaultAsync(r => r.value == value);
         }
         public async Task<Role> AddRoleAsync(Role role)
         {
@@ -34,7 +37,10 @@ namespace TestWebAPI.Repositories
 
         public async Task<Role> GetRolesById(int id)
         {
-            return await _context.Roles.FirstOrDefaultAsync(r => r.Id == id);
+            return await _context.Roles
+                .Include(r => r.Role_Permissions)
+                .ThenInclude(rp => rp.Permission)
+                .FirstOrDefaultAsync(r => r.Id == id);
         }
 
         public async Task<object> DeleteRoleAsync(Role role)
@@ -48,6 +54,11 @@ namespace TestWebAPI.Repositories
             oldRole.value = newRole.value;
             await _context.SaveChangesAsync();
             return oldRole;
+        }
+
+        public async Task<Role> GetRoleByCodeAsyn(string code)
+        {
+            return await _context.Roles.FirstOrDefaultAsync(r => r.code == code);
         }
     }
 }

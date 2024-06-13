@@ -1,19 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-using TestWebAPI.Helpers;
 
 namespace TestWebAPI.DTOs.Auth
 {
     public class AuthChangePasswordDTO
     {
-        [Required(ErrorMessage = "The email field is required.")]
-        [RegularExpression(RegexUtilities.EMAIL, ErrorMessage = "Email format is not Valid!")]
-        public string email { get; set; }
-        [JsonIgnore]
-        public DateTime? passwordChangeAt { get; set; }
-        [JsonIgnore]
-        public string? passwordResetToken { get; set; }
-        [JsonIgnore]
-        public DateTime? passwordResetExpires { get; set; }
+        public string id { get; set; }
+        [Required(ErrorMessage = "The old password field is required.")]
+        [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must contain atleast 8 character")]
+        public string oldPassword { get; set; }
+        [Required(ErrorMessage = "The new password field is required.")]
+        [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must contain atleast 8 character")]
+        public string newPassword { get; set; }
     }
 }

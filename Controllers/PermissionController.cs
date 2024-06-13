@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TestWebAPI.DTOs.Permisstion;
 using TestWebAPI.DTOs.Role;
@@ -17,7 +18,6 @@ namespace TestWebAPI.Controllers
         {
             _permissionServices = permissionServices;
         }
-
         [HttpGet]
         public async Task<IActionResult> GetAllRoles()
         {
@@ -31,7 +31,6 @@ namespace TestWebAPI.Controllers
                 return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
             }
         }
-
         [HttpPost]
         public async Task<IActionResult> CreatePermissionAsyn([FromBody] PermisstionDTO permisstionDTO)
         {
