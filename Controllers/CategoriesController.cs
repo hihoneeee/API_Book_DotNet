@@ -47,7 +47,7 @@ namespace TestWebAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCategory(int id, Category category)
         {
-            if (id != category.Id)
+            if (id != category.id)
             {
                 return BadRequest();
             }
@@ -81,7 +81,7 @@ namespace TestWebAPI.Controllers
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCategory", new { id = category.Id }, category);
+            return CreatedAtAction("GetCategory", new { id = category.id }, category);
         }
 
         // DELETE: api/Categories/5
@@ -102,7 +102,7 @@ namespace TestWebAPI.Controllers
 
         private bool CategoryExists(int id)
         {
-            return _context.Categories.Any(e => e.Id == id);
+            return _context.Categories.Any(e => e.id == id);
         }
     }
 }

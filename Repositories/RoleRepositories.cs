@@ -40,7 +40,7 @@ namespace TestWebAPI.Repositories
             return await _context.Roles
                 .Include(r => r.Role_Permissions)
                 .ThenInclude(rp => rp.Permission)
-                .FirstOrDefaultAsync(r => r.Id == id);
+                .FirstOrDefaultAsync(r => r.id == id);
         }
 
         public async Task<object> DeleteRoleAsync(Role role)

@@ -16,6 +16,5 @@ namespace TestWebAPI.Models
         [Required]
         public DateTime updatedAt { get; set; }
         public virtual ICollection<Role_Permission>? Role_Permissions { get; set; }
-
     }
 }

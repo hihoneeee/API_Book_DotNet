@@ -18,13 +18,21 @@ namespace TestWebAPI.Models
     public class Property
     {
         [Key]
-        public string id { get; set; }
+        public int id { get; set; }
         [Required]
         public string title { get; set; }
         [Required]
         public long description { get; set; }
         [Required]
         public int price { get; set; }
+        [Required]
+        public string province { get; set; }
+        [Required]
+        public string city { get; set; }
+        [Required]
+        public string avatar { get; set; }
+        [Required]
+        public long images { get; set; }
         [Required]
         public string address { get; set; }
         [Required]
@@ -40,9 +48,9 @@ namespace TestWebAPI.Models
         {
             isAvailable = true;
         }
-        public int owner { get; set; }
-        [ForeignKey("owner")]
-        public virtual User user { get; set; }
+        public int seller_id { get; set; }
+        [ForeignKey("seller_id")]
+        public virtual User seller { get; set; }
 
         public int category_id { get; set; }
         [ForeignKey("category_id")]
@@ -53,6 +61,11 @@ namespace TestWebAPI.Models
         public DateTime createdAt { get; set; } = DateTime.Now;
         public DateTime updatedAt { get; set; }
         public virtual ICollection<Nofication>? Nofications { get; set; }
+        public virtual ICollection<Evaluate>? Evaluates { get; set; }
+        public virtual ICollection<Contract>? Contracts { get; set; }
+        public virtual ICollection<Submission>? Submissions { get; set; }
+        public virtual ICollection<Appointment>? Appointments { get; set; }
+        public virtual ICollection<Wishlist>? Wishlists { get; set; }
 
     }
 }
