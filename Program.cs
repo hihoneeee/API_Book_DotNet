@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 using TestWebAPI.Config;
 using TestWebAPI.Data;
@@ -20,8 +21,44 @@ builder.Services.AddControllers();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+// config swapgger token
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
+                      Enter your token in the text input below.
+                      \r\n\r\nExample: '12345abcdef'",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+          new OpenApiSecurityScheme
+          {
+            Reference = new OpenApiReference
+            {
+                Type = ReferenceType.SecurityScheme,
+                Id = "Bearer"
+            },
+            Scheme = "Bearer",
+            Name = "Bearer",
+            In = ParameterLocation.Header,
+          },
+          new List<string>()
+        }
+    });
+
+    c.OperationFilter<AddBearerTokenConfig>();
+});
+
+
 
 // Set Cors
 builder.Services.AddCors(opt => opt.AddDefaultPolicy(policy =>
@@ -30,7 +67,7 @@ builder.Services.AddCors(opt => opt.AddDefaultPolicy(policy =>
 // Connect DB
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("BookStore"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("GoodRest"));
 });
 
 
@@ -60,18 +97,51 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             OnMessageReceived = context =>
             {
                 return Task.CompletedTask;
+            },
+            OnChallenge = context =>
+            {
+                // Override the response status code and message
+                context.HandleResponse();
+                context.Response.StatusCode = 401;
+                context.Response.ContentType = "application/json";
+                var result = Newtonsoft.Json.JsonConvert.SerializeObject(new
+                {
+                    Success = "false",
+                    message = "Token Invalid"
+                });
+                return context.Response.WriteAsync(result);
             }
         };
+
     });
 
 //config permission 
 builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("add_role", policy =>
-        policy.Requirements.Add(new AuthorizationConfig("add_role")));
-    options.AddPolicy("get_role", policy =>
-    policy.Requirements.Add(new AuthorizationConfig("get_role")));
+    // Policy role
+    options.AddPolicy("add-role", policy =>
+        policy.Requirements.Add(new AuthorizationConfig("add-role")));
+    options.AddPolicy("get-role", policy =>
+        policy.Requirements.Add(new AuthorizationConfig("get-role")));
+    options.AddPolicy("get-only-role", policy =>
+        policy.Requirements.Add(new AuthorizationConfig("get-only-role")));
+    options.AddPolicy("update-role", policy =>
+        policy.Requirements.Add(new AuthorizationConfig("update-role")));
+    options.AddPolicy("delete-role", policy =>
+        policy.Requirements.Add(new AuthorizationConfig("delete-role")));
+    options.AddPolicy("role-has-permission", policy =>
+        policy.Requirements.Add(new AuthorizationConfig("role-has-permission")));
+
+    // Policy permission
+    options.AddPolicy("add-permission", policy =>
+    policy.Requirements.Add(new AuthorizationConfig("add-permission")));
+    options.AddPolicy("get-permission", policy =>
+        policy.Requirements.Add(new AuthorizationConfig("get-permission")));
+    options.AddPolicy("update-permissio", policy =>
+        policy.Requirements.Add(new AuthorizationConfig("update-permission")));
+    options.AddPolicy("delete-permission", policy =>
+        policy.Requirements.Add(new AuthorizationConfig("delete-permission")));
 });
 
 // AutoMapper
@@ -81,6 +151,8 @@ builder.Services.AddSingleton(provider => new MapperConfiguration(options =>
     options.AddProfile(new ApplicationMapper());
 }).CreateMapper());
 #endregion
+
+
 builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("EmailConfiguration"));
 
 // Add Repositories to the container.
@@ -112,14 +184,20 @@ app.UseExceptionHandler(errorApp =>
     errorApp.Run(async context =>
     {
         var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
-        var exception = exceptionHandlerPathFeature.Error;
+        var exception = exceptionHandlerPathFeature?.Error;
 
-        // Xử lý ngoại lệ ở đây
-        // Ví dụ:
+        // Handle exception here
         context.Response.StatusCode = 500;
-        await context.Response.WriteAsync("Internal Server Error");
+        context.Response.ContentType = "application/json";
+        var result = Newtonsoft.Json.JsonConvert.SerializeObject(new
+        {
+            Success = "false",
+            message = "Internal Server Error"
+        });
+        await context.Response.WriteAsync(result);
     });
 });
+
 
 app.UseMiddleware<ErrorHandlingToken>();
 

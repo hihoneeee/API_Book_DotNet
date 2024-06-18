@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
-using System.Data;
 using TestWebAPI.Data;
 using TestWebAPI.Models;
 using TestWebAPI.Repositories.Interfaces;
@@ -47,7 +45,7 @@ namespace TestWebAPI.Repositories
            await _context.SaveChangesAsync();
            return user;
         }
-        public async Task<User> ChangePasswordasync(string newPassword, User user)
+        public async Task<User> ChangePasswordAsync(string newPassword, User user)
         {
             user.password = newPassword;
             await _context.SaveChangesAsync();

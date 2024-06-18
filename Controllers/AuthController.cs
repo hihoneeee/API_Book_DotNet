@@ -1,7 +1,6 @@
 ﻿using Azure;
 using Microsoft.AspNetCore.Mvc;
 using TestWebAPI.DTOs.Auth;
-using TestWebAPI.Response;
 using TestWebAPI.Services.Interfaces;
 using static TestWebAPI.Response.HttpStatus;
 
@@ -41,8 +40,8 @@ namespace TestWebAPI.Controllers
         {
                 var serviceResponse = await _authService.Login(authLoginDTO);
                 if (serviceResponse.statusCode == EHttpType.Success)
-                {
-                    return Ok(new { serviceResponse.success, serviceResponse.message, serviceResponse.access_token });
+                {                   
+                return Ok(new { serviceResponse.success, serviceResponse.message, serviceResponse.access_token });
                 }
                 else
                 {
@@ -67,7 +66,7 @@ namespace TestWebAPI.Controllers
         }
 
         [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword([FromBody] AuthResetPasswordDTO authChangePasswordDTO)
+        public async Task<IActionResult> ForgotPassword([FromBody] AuthForgotPasswordDTO authChangePasswordDTO)
         {
             var serviceResponse = await _authService.ForgotPassword(authChangePasswordDTO.email);
 
@@ -84,9 +83,34 @@ namespace TestWebAPI.Controllers
         }
 
         [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPasswordAsync([FromBody] AuthResetPassword authResetPassword, [FromQuery] string token )
+        public async Task<IActionResult> ResetPasswordAsync([FromBody] AuthResetPasswordDTO authChangePasswordDTO, [FromQuery] string token )
         {
-            var serviceResponse = await _authService.ResetPasswordAsync(authResetPassword.password, token);
+            var serviceResponse = await _authService.ResetPasswordAsync(authChangePasswordDTO.password, token);
+            if (serviceResponse.statusCode == EHttpType.Success)
+            {
+                return Ok(new { serviceResponse.success, serviceResponse.message });
+            }
+            else
+            {
+                return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
+            }
+        }
+
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePasswordasync([FromBody] AuthChangePasswordDTO authChangePasswordDTO)
+        {
+            var userIdClaim = HttpContext.User.FindFirst("id")?.Value;
+            if (userIdClaim == null)
+            {
+                return Unauthorized(new { success = false, message = "Invalid token!" });
+            }
+
+            if (!int.TryParse(userIdClaim, out int userId))
+            {
+                return BadRequest(new { success = false, message = "Invalid user in token!" });
+            }
+            authChangePasswordDTO.id = userId;
+            var serviceResponse = await _authService.ChangePasswordasync(authChangePasswordDTO);
             if (serviceResponse.statusCode == EHttpType.Success)
             {
                 return Ok(new { serviceResponse.success, serviceResponse.message });

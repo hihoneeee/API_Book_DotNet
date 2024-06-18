@@ -11,7 +11,6 @@ namespace TestWebAPI.Services
     {
         private readonly IMapper _mapper;
         private readonly IUserRepositories _userRepo;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public UserServices(IUserRepositories userRepo, IMapper mapper)
         {

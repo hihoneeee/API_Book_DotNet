@@ -5,14 +5,17 @@ namespace TestWebAPI.Models
     public class Category
     {
         [Key]
-        public int Id { get; set; }
+        public int id { get; set; }
         [Required]
-        public required string Name { get; set; }
+        public string title { get; set; }
         [Required]
-        public required string Description { get; set; }
-        public DateTime Created { get; set; } = DateTime.Now;
+        public long description { get; set; }
         [Required]
-        public DateTime Updated { get; set; }
-        public ICollection<Book>? Books { get; set; }
+        public string avatar {  get; set; }
+        public DateTime createAt { get; set; } = DateTime.Now;
+        [Required]
+        public DateTime updateAt { get; set; }
+        public virtual ICollection<Property>? Properties { get; set; }
+
     }
 }

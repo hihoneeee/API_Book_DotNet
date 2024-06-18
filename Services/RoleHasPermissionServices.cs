@@ -46,10 +46,18 @@ namespace TestWebAPI.Services
                     serviceResponse.message = "Permission not existing!";
                     return serviceResponse;
                 }
+                var checkHasPermission = await _roleHasPermissionRepo.CheckRoleHasPermissonAsync(roleCode, permissionCode);
+                if (checkHasPermission)
+                {
+                    serviceResponse.statusCode = EHttpType.CannotCreate;
+                    serviceResponse.success = false;
+                    serviceResponse.message = "The role already has this permission!";
+                    return serviceResponse;
+                }
                 var create = _mapper.Map<Role_Permission>(roleHasPermissionDTO);
                 create.codePermission = permissionCode;
                 create.codeRole = roleCode;
-                var assignPermission = await _roleHasPermissionRepo.AssignPermissionAsyn(create);
+                var assignPermission = await _roleHasPermissionRepo.AssignPermissionAsync(create);
                 serviceResponse.statusCode = EHttpType.Success;
                 serviceResponse.success = true;
                 serviceResponse.message = "Permission assigned successfully.";

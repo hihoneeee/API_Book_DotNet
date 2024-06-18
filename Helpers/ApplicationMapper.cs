@@ -24,7 +24,7 @@ namespace TestWebAPI.Helpers
             // auth
             CreateMap<User, AuthRegisterDTO>().ReverseMap();
             CreateMap<User, AuthLoginDTO>().ReverseMap();
-            CreateMap<User, AuthResetPasswordDTO>().ReverseMap();
+            CreateMap<User, AuthForgotPasswordDTO>().ReverseMap();
 
             //user
             CreateMap<User, UserDTO>().ReverseMap();
@@ -34,6 +34,7 @@ namespace TestWebAPI.Helpers
 
             //Permisstion
             CreateMap<Permission, PermisstionDTO>().ReverseMap();
+            CreateMap<Permission, AddPermissionDTO>().ReverseMap();
 
             //role has permission
             CreateMap<Role_Permission, RoleHasPermissionDTO>().ReverseMap();

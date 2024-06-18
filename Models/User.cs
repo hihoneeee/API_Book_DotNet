@@ -33,9 +33,10 @@ namespace TestWebAPI.Models
         public DateTime? passwordChangeAt { get; set; }
         public string? passwordResetToken { get; set; }
         public DateTime? passwordResetExpires { get; set; }
-
         public virtual ICollection<JWT>? JWTs { get; set; }
-        public virtual ICollection<Post>? Posts { get; set; }
+        public virtual ICollection<User_Media>? User_Medias { get; set; }
+        public virtual ICollection<Nofication>? Nofications { get; set; }
+        public virtual ICollection<Property>? Properties { get; set; }
 
     }
 }

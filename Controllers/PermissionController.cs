@@ -18,8 +18,9 @@ namespace TestWebAPI.Controllers
         {
             _permissionServices = permissionServices;
         }
+        [Authorize(Policy = "get-permission")]
         [HttpGet]
-        public async Task<IActionResult> GetAllRoles()
+        public async Task<IActionResult> GetAllPermissonAsync()
         {
             var serviceResponse = await _permissionServices.GetAllPermissionAsyn();
             if (serviceResponse.statusCode == EHttpType.Success)
@@ -31,8 +32,10 @@ namespace TestWebAPI.Controllers
                 return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
             }
         }
+
+        [Authorize(Policy = "add-permission")]
         [HttpPost]
-        public async Task<IActionResult> CreatePermissionAsyn([FromBody] PermisstionDTO permisstionDTO)
+        public async Task<IActionResult> CreatePermissionAsync([FromBody] AddPermissionDTO permisstionDTO)
         {
             var serviceResponse = await _permissionServices.CreatePermissionAsyn(permisstionDTO);
             if (serviceResponse.statusCode == EHttpType.Success)
@@ -45,8 +48,9 @@ namespace TestWebAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "update-permission")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePermissionAsyn(int id, PermisstionDTO permisstionDTO)
+        public async Task<IActionResult> UpdatePermissionAsync(int id, PermisstionDTO permisstionDTO)
         {
             var serviceResponse = await _permissionServices.UpdatePermissionAsyn(id, permisstionDTO);
             if (serviceResponse.statusCode == EHttpType.Success)
@@ -60,8 +64,9 @@ namespace TestWebAPI.Controllers
 
         }
 
+        [Authorize(Policy = "delete-permission")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePermissionAsyn(int id)
+        public async Task<IActionResult> DeletePermissionAsync(int id)
         {
             var serviceResponse = await _permissionServices.DeletePermissionAsyn(id);
             if (serviceResponse.statusCode == EHttpType.Success)

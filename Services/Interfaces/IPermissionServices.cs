@@ -5,7 +5,7 @@ namespace TestWebAPI.Services.Interfaces
 {
     public interface IPermissionServices
     {
-        Task<ServiceResponse<PermisstionDTO>> CreatePermissionAsyn(PermisstionDTO permisstionDTO);
+        Task<ServiceResponse<AddPermissionDTO>> CreatePermissionAsyn(AddPermissionDTO permisstionDTO);
         Task<ServiceResponse<PermisstionDTO>> UpdatePermissionAsyn(int id, PermisstionDTO permisstion);
         Task<ServiceResponse<PermisstionDTO>> DeletePermissionAsyn(int id);
         Task<ServiceResponse<List<PermisstionDTO>>> GetAllPermissionAsyn();

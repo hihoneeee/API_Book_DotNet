@@ -12,15 +12,15 @@ using TestWebAPI.Data;
 namespace TestWebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240530070032_JWT")]
-    partial class JWT
+    [Migration("20240617030304_DbInit")]
+    partial class DbInit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.5")
+                .HasAnnotation("ProductVersion", "8.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -112,6 +112,65 @@ namespace TestWebAPI.Migrations
                     b.ToTable("JWTs");
                 });
 
+            modelBuilder.Entity("TestWebAPI.Models.Permission", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("Permissions");
+                });
+
+            modelBuilder.Entity("TestWebAPI.Models.Post", b =>
+                {
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("avatar")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("user_id")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("user_id");
+
+                    b.ToTable("Posts");
+                });
+
             modelBuilder.Entity("TestWebAPI.Models.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -139,6 +198,31 @@ namespace TestWebAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("TestWebAPI.Models.Role_Permission", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("codePermission")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("codeRole")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("codePermission");
+
+                    b.HasIndex("codeRole");
+
+                    b.ToTable("RolePermissions");
                 });
 
             modelBuilder.Entity("TestWebAPI.Models.User", b =>
@@ -174,6 +258,15 @@ namespace TestWebAPI.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("passwordChangeAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("passwordResetExpires")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("passwordResetToken")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("phone")
                         .HasMaxLength(11)
@@ -212,6 +305,38 @@ namespace TestWebAPI.Migrations
                     b.Navigation("user");
                 });
 
+            modelBuilder.Entity("TestWebAPI.Models.Post", b =>
+                {
+                    b.HasOne("TestWebAPI.Models.User", "User")
+                        .WithMany("Posts")
+                        .HasForeignKey("user_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TestWebAPI.Models.Role_Permission", b =>
+                {
+                    b.HasOne("TestWebAPI.Models.Permission", "Permission")
+                        .WithMany("Role_Permissions")
+                        .HasForeignKey("codePermission")
+                        .HasPrincipalKey("code")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TestWebAPI.Models.Role", "Role")
+                        .WithMany("Role_Permissions")
+                        .HasForeignKey("codeRole")
+                        .HasPrincipalKey("code")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("TestWebAPI.Models.User", b =>
                 {
                     b.HasOne("TestWebAPI.Models.Role", "Role")
@@ -229,14 +354,23 @@ namespace TestWebAPI.Migrations
                     b.Navigation("Books");
                 });
 
+            modelBuilder.Entity("TestWebAPI.Models.Permission", b =>
+                {
+                    b.Navigation("Role_Permissions");
+                });
+
             modelBuilder.Entity("TestWebAPI.Models.Role", b =>
                 {
+                    b.Navigation("Role_Permissions");
+
                     b.Navigation("Users");
                 });
 
             modelBuilder.Entity("TestWebAPI.Models.User", b =>
                 {
                     b.Navigation("JWTs");
+
+                    b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618
         }

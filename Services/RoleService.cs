@@ -33,7 +33,6 @@ namespace TestWebAPI.Services
                     serviceResponse.message = "Role already exists.";
                     return serviceResponse;
                 }
-
                 var role = _mapper.Map<Role>(roleDTO);
                 role.code = CodeGenerator.GenerateCode(roleDTO.value);
                 var adddRole = await _roleRepo.AddRoleAsync(role);

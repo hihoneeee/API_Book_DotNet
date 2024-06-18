@@ -19,16 +19,18 @@ namespace TestWebAPI.Services
         private readonly IAuthRepositories _authRepo;
         private readonly IJWTHelper _jWTHelper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUserRepositories _userRepo;
 
-        public AuthService(IMapper mapper, IAuthRepositories authRepo, IJWTHelper jWTHelper, IJwtService jwtService, IHttpContextAccessor httpContextAccessor)
+        public AuthService(IMapper mapper, IAuthRepositories authRepo, IJWTHelper jWTHelper, IJwtService jwtService, IHttpContextAccessor httpContextAccessor, IUserRepositories userRepo)
         {
             _mapper = mapper;
             _jwtService = jwtService;
             _authRepo = authRepo ?? throw new ArgumentNullException(nameof(authRepo));
             _jWTHelper = jWTHelper ?? throw new ArgumentNullException(nameof(jWTHelper));
             _httpContextAccessor = httpContextAccessor;
+            _userRepo = userRepo;
         }
-
+            
         public async Task<ServiceResponse<AuthRegisterDTO>> Register(AuthRegisterDTO authRegisterDTO)
         {
             var serviceResponse = new ServiceResponse<AuthRegisterDTO>();
@@ -79,7 +81,7 @@ namespace TestWebAPI.Services
                     return serviceResponse;
                 }
                 // Tạo JWT token và refresh token
-                string token = await _jWTHelper.GenerateJWTToken(existingUser.id, existingUser.roleCode, DateTime.UtcNow.AddSeconds(10));
+                string token = await _jWTHelper.GenerateJWTToken(existingUser.id, existingUser.roleCode, DateTime.UtcNow.AddMinutes(5));
                 string refresh_token = await _jWTHelper.GenerateJWTRefreshToken(existingUser.id, DateTime.UtcNow.AddMonths(30));
 
                 // Thêm refresh token vào trong bảng JWT
@@ -150,9 +152,9 @@ namespace TestWebAPI.Services
             }
             return serviceResponse;
         }
-        public async Task<ServiceResponse<AuthResetPasswordDTO>> ForgotPassword(string email)
+        public async Task<ServiceResponse<AuthForgotPasswordDTO>> ForgotPassword(string email)
         {
-            var serviceResponse = new ServiceResponse<AuthResetPasswordDTO>();
+            var serviceResponse = new ServiceResponse<AuthForgotPasswordDTO>();
             try
             {
                 var existsEmail = await _authRepo.getByEmail(email);
@@ -167,7 +169,7 @@ namespace TestWebAPI.Services
                 var authChangePassword = await _authRepo.InsertChangePasswordAsyn(existsEmail);
 
                 // Here we add the token to the service response
-                serviceResponse.data = _mapper.Map<AuthResetPasswordDTO>(authChangePassword);
+                serviceResponse.data = _mapper.Map<AuthForgotPasswordDTO>(authChangePassword);
                 serviceResponse.success = true;
                 serviceResponse.message = "Password reset token generated.";
                 serviceResponse.statusCode = EHttpType.Success;
@@ -210,12 +212,40 @@ namespace TestWebAPI.Services
 
             return serviceResponse;
         }
-        /*
-        public async Task<ServiceResponse<AuthChangePasswordDTO>> ChangePasswordasync(string newPassword, string oldPassword, int id)
+        
+        public async Task<ServiceResponse<AuthChangePasswordDTO>> ChangePasswordasync(AuthChangePasswordDTO authChangePasswordDTO)
         {
-            var serviceResponse = new ServiceResponse<AuthResetPasswordDTO>();
+            var serviceResponse = new ServiceResponse<AuthChangePasswordDTO>();
             try
             {
+                var checkUSer = await _userRepo.GetCurrentAsync(authChangePasswordDTO.id);
+                if (checkUSer == null)
+                {
+                    serviceResponse.success = false;
+                    serviceResponse.message = "User not found!";
+                    serviceResponse.statusCode = EHttpType.NotFound;
+                    return serviceResponse;
+                }
+                if (!HashPasswordHelper.VerifyPassword(authChangePasswordDTO.oldPassword, checkUSer.password))
+                {
+                    serviceResponse.success = false;
+                    serviceResponse.message = "Password is wrong!.";
+                    serviceResponse.statusCode = EHttpType.Unauthorized;
+                    return serviceResponse;
+                }
+                if (authChangePasswordDTO.newPassword != authChangePasswordDTO.enterPassword)
+                {
+                    serviceResponse.success = false;
+                    serviceResponse.message = "New password and confirmation password do not match!";
+                    serviceResponse.statusCode = EHttpType.BadRequest;
+                    return serviceResponse;
+                }
+                var HashPassword = HashPasswordHelper.HashPassword(authChangePasswordDTO.newPassword);
+                var changePassword = await _authRepo.ChangePasswordAsync(HashPassword, checkUSer);
+                serviceResponse.success = true;
+                serviceResponse.message = "Password change succssefully!";
+                serviceResponse.statusCode = EHttpType.Success;
+
             }
             catch (Exception ex)
             {
@@ -226,6 +256,6 @@ namespace TestWebAPI.Services
 
             return serviceResponse;
         }
-        */
+        
     }
 }

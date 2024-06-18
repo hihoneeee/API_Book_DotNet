@@ -1,5 +1,3 @@
-D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\appsettings.Development.json
-D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\appsettings.json
 D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\TestWebAPI.exe
 D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\TestWebAPI.deps.json
 D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\TestWebAPI.runtimeconfig.json
@@ -262,3 +260,5 @@ D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\MailKit.dll
 D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\MimeKit.dll
 D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\NETCore.MailKit.dll
 D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\BouncyCastle.Crypto.dll
+D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\appsettings.Development.json
+D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\appsettings.json

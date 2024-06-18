@@ -26,7 +26,7 @@ namespace TestWebAPI.Controllers
         }
 
         // GET: api/Roles
-        [Authorize(Policy = "get_role")]
+        [Authorize(Policy = "get-role")]
         [HttpGet]
         public async Task<IActionResult> GetAllRoles()
         {
@@ -42,6 +42,7 @@ namespace TestWebAPI.Controllers
         }
 
         // GET: api/Roles/5
+        [Authorize(Policy = "get-only-role")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetRolesById(int id)
         {
@@ -57,6 +58,7 @@ namespace TestWebAPI.Controllers
         }
 
         // PUT: api/Roles/5
+        [Authorize(Policy = "update-role")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateRoleAsync(int id, AddRoleDTO roleDTO)
         {
@@ -73,6 +75,7 @@ namespace TestWebAPI.Controllers
         }
 
         // POST: api/Roles
+        [Authorize(Policy = "add-role")]
         [HttpPost]
         public async Task<IActionResult> AddNewRole([FromBody] AddRoleDTO roleDTO)
         {
@@ -89,6 +92,7 @@ namespace TestWebAPI.Controllers
 
 
         // DELETE: api/Roles/5
+        [Authorize(Policy = "delete-role")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRole(int id)
         {
@@ -116,5 +120,7 @@ namespace TestWebAPI.Controllers
                 return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
             }
         }
+
+
     }
 }

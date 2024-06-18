@@ -20,9 +20,9 @@ namespace TestWebAPI.Services
             _mapper = mapper;
         }
 
-        public async Task<ServiceResponse<PermisstionDTO>> CreatePermissionAsyn(PermisstionDTO permisstionDTO)
+        public async Task<ServiceResponse<AddPermissionDTO>> CreatePermissionAsyn(AddPermissionDTO permisstionDTO)
         {
-            var serviceResponse = new ServiceResponse<PermisstionDTO>();
+            var serviceResponse = new ServiceResponse<AddPermissionDTO>();
             try
             {
                 var existsPermission = await _permisstionRepo.GetPermissionByValueAsyn(permisstionDTO.value);
@@ -71,7 +71,11 @@ namespace TestWebAPI.Services
                     return serviceResponse;
                 }
                 var permission = _mapper.Map<Permission>(permisstionDTO);
-
+                permission.code = CodeGenerator.GenerateCode(permisstionDTO.value);
+                var updatePermission = await _permisstionRepo.UpdatePermissionAsyn(oldPermission, permission);
+                serviceResponse.success = true;
+                serviceResponse.statusCode = EHttpType.Success;
+                serviceResponse.message = "Permission updated successfully.";
             }
             catch (Exception ex)
             {
