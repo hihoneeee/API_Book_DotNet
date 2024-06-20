@@ -8,10 +8,10 @@ namespace TestWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PermissionControllers : ControllerBase
+    public class permissionController : ControllerBase
     {
         private readonly IPermissionServices _permissionServices;
-        public PermissionControllers(IPermissionServices permissionServices)
+        public permissionController(IPermissionServices permissionServices)
         {
             _permissionServices = permissionServices;
         }

@@ -6,21 +6,21 @@ using TestWebAPI.Models;
 using TestWebAPI.Repositories.Interfaces;
 using TestWebAPI.Response;
 using TestWebAPI.Services.Interfaces;
-using static TestWebAPI.Response.HttpStatus;
 
 namespace TestWebAPI.Services
 {
     public class CategoryServices : ICategoryServices
     {
         private readonly IMapper _mapper;
-        private ICategoryRepositories _cateRepo;
-
-        public CategoryServices(IMapper mapper, ICategoryRepositories cateRepo)
+        private readonly ICategoryRepositories _cateRepo;
+        private readonly ICloudinaryServices _cloudinaryServices;
+        public CategoryServices(IMapper mapper, ICategoryRepositories cateRepo, ICloudinaryServices cloudinaryServices)
         {
             _mapper = mapper;
             _cateRepo = cateRepo;
+            _cloudinaryServices = cloudinaryServices;
         }
-        public async Task<ServiceResponse<CategoryDTO>> CreateCategoryAsync(CategoryDTO categoryDTO)
+        public async Task<ServiceResponse<CategoryDTO>> CreateCategoryAsync(CategoryDTO categoryDTO, string path, string publicId)
         {
             var serviceResponse = new ServiceResponse<CategoryDTO>();
             try
@@ -29,15 +29,19 @@ namespace TestWebAPI.Services
                 if (existingCate != null)
                 {
                     serviceResponse.SetExisting("Category");
+                    await _cloudinaryServices.DeleteImage(publicId);
+
                     return serviceResponse;
                 }
                 var category = _mapper.Map<Category>(categoryDTO);
+                category.avatar = path;
                 var addCategory = await _cateRepo.CreateCategoryAsync(category);
-                serviceResponse.SetExisting("Category created successfully!");
+                serviceResponse.SetSuccess("Category created successfully!");
             }
             catch (Exception ex)
             {
                 serviceResponse.SetError(ex.Message);
+                await _cloudinaryServices.DeleteImage(publicId);
             }
             return serviceResponse;
         }

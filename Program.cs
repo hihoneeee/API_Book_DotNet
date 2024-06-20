@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using TestWebAPI.Config;
+using TestWebAPI.Configs;
 using TestWebAPI.Data;
 using TestWebAPI.Helpers;
 using TestWebAPI.Middlewares;
@@ -14,6 +14,7 @@ using TestWebAPI.Repositories;
 using TestWebAPI.Repositories.Interfaces;
 using TestWebAPI.Services;
 using TestWebAPI.Services.Interfaces;
+using TestWebAPI.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,9 +73,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // JWT config
 var jwtSection = builder.Configuration.GetSection("AppSettings");
-builder.Services.Configure<TokenSettings>(jwtSection);
+builder.Services.Configure<TokenSetting>(jwtSection);
 
-var jwtSettings = jwtSection.Get<TokenSettings>();
+var jwtSettings = jwtSection.Get<TokenSetting>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -120,27 +121,27 @@ builder.Services.AddAuthorization(options =>
 {
     // Policy role
     options.AddPolicy("add-role", policy =>
-        policy.Requirements.Add(new AuthorizationConfig("add-role")));
+        policy.Requirements.Add(new AuthorizationSetting("add-role")));
     options.AddPolicy("get-role", policy =>
-        policy.Requirements.Add(new AuthorizationConfig("get-role")));
+        policy.Requirements.Add(new AuthorizationSetting("get-role")));
     options.AddPolicy("get-only-role", policy =>
-        policy.Requirements.Add(new AuthorizationConfig("get-only-role")));
+        policy.Requirements.Add(new AuthorizationSetting("get-only-role")));
     options.AddPolicy("update-role", policy =>
-        policy.Requirements.Add(new AuthorizationConfig("update-role")));
+        policy.Requirements.Add(new AuthorizationSetting("update-role")));
     options.AddPolicy("delete-role", policy =>
-        policy.Requirements.Add(new AuthorizationConfig("delete-role")));
+        policy.Requirements.Add(new AuthorizationSetting("delete-role")));
     options.AddPolicy("assign-permission", policy =>
-        policy.Requirements.Add(new AuthorizationConfig("assign-permission")));
+        policy.Requirements.Add(new AuthorizationSetting("assign-permission")));
 
     // Policy permission
     options.AddPolicy("add-permission", policy =>
-    policy.Requirements.Add(new AuthorizationConfig("add-permission")));
+    policy.Requirements.Add(new AuthorizationSetting("add-permission")));
     options.AddPolicy("get-permission", policy =>
-        policy.Requirements.Add(new AuthorizationConfig("get-permission")));
+        policy.Requirements.Add(new AuthorizationSetting("get-permission")));
     options.AddPolicy("update-permissio", policy =>
-        policy.Requirements.Add(new AuthorizationConfig("update-permission")));
+        policy.Requirements.Add(new AuthorizationSetting("update-permission")));
     options.AddPolicy("delete-permission", policy =>
-        policy.Requirements.Add(new AuthorizationConfig("delete-permission")));
+        policy.Requirements.Add(new AuthorizationSetting("delete-permission")));
 });
 
 // AutoMapper
@@ -151,8 +152,9 @@ builder.Services.AddSingleton(provider => new MapperConfiguration(options =>
 }).CreateMapper());
 #endregion
 
-
-builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("EmailConfiguration"));
+//builder settings
+builder.Services.Configure<SendEmailSetting>(builder.Configuration.GetSection("SendEmailSetting"));
+builder.Services.Configure<CloudinarySetting>(builder.Configuration.GetSection("CloudinarySetting"));
 
 // Add Repositories to the container.
 builder.Services.AddScoped<IRoleRepositories, RoleRepositories>();
@@ -161,6 +163,7 @@ builder.Services.AddScoped<IJwtRepositories, JwtRepositories>();
 builder.Services.AddScoped<IPermisstionRepositories, PermisstionRepositories>();
 builder.Services.AddScoped<IRoleHasPermissionRepositories, RoleHasPermissionRepositories>();
 builder.Services.AddScoped<IUserRepositories, UserRepositories>();
+builder.Services.AddScoped<ICategoryRepositories, CategoryRepositories>();
 
 // Add services to the container.
 builder.Services.AddScoped<IRoleService, RoleServices>();
@@ -170,6 +173,8 @@ builder.Services.AddScoped<IPermissionServices, PermissionServices>();
 builder.Services.AddScoped<ISendMailServices, SendMailServices>();
 builder.Services.AddScoped<IRoleHasPermissionServices, RoleHasPermissionServices>();
 builder.Services.AddScoped<IUserServices, UserServices>();
+builder.Services.AddScoped<ICategoryServices, CategoryServices>();
+builder.Services.AddScoped<ICloudinaryServices, CloudinaryServices>();
 
 // Register JWTHelper
 builder.Services.AddScoped<IJWTHelper, JWTHelper>();

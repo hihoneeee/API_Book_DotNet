@@ -4,21 +4,21 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using TestWebAPI.Config;
 using TestWebAPI.Data;
 using TestWebAPI.Repositories.Interfaces;
+using TestWebAPI.Settings;
 
 namespace TestWebAPI.Middlewares
 {
     public class JWTHelper : IJWTHelper
     {
-        private readonly TokenSettings _tokenSettings;
+        private readonly TokenSetting _tokenSetting;
         private readonly IJwtRepositories _jwtRepositories;
         private readonly ApplicationDbContext _context;
 
-        public JWTHelper(IOptions<TokenSettings> tokenSettings, IJwtRepositories jwtRepositories, ApplicationDbContext context)
+        public JWTHelper(IOptions<TokenSetting> tokenSetting, IJwtRepositories jwtRepositories, ApplicationDbContext context)
         {
-            _tokenSettings = tokenSettings.Value;
+            _tokenSetting = tokenSetting.Value;
             _jwtRepositories = jwtRepositories;
             _context = context;
         }
@@ -26,7 +26,7 @@ namespace TestWebAPI.Middlewares
         public async Task<string> GenerateJWTToken(int id, string roleCode, DateTime expire)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var secretKeyBytes = Encoding.UTF8.GetBytes(_tokenSettings.Secret);
+            var secretKeyBytes = Encoding.UTF8.GetBytes(_tokenSetting.Secret);
 
             // Initialize claims as a List<Claim> to allow dynamic additions
             var claims = new List<Claim>
@@ -65,7 +65,7 @@ namespace TestWebAPI.Middlewares
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
-            var key = Encoding.UTF8.GetBytes(_tokenSettings.Secret);
+            var key = Encoding.UTF8.GetBytes(_tokenSetting.Secret);
             var claims = new List<Claim>
             {
                 new Claim("id", id.ToString()),
@@ -88,7 +88,7 @@ namespace TestWebAPI.Middlewares
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_tokenSettings.Secret);
+            var key = Encoding.ASCII.GetBytes(_tokenSetting.Secret);
 
             try
             {
@@ -139,7 +139,7 @@ namespace TestWebAPI.Middlewares
         public int GetUserIdFromToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_tokenSettings.Secret);
+            var key = Encoding.ASCII.GetBytes(_tokenSetting.Secret);
 
             tokenHandler.ValidateToken(token, new TokenValidationParameters
             {
@@ -158,7 +158,7 @@ namespace TestWebAPI.Middlewares
         public string GetUserRoleFromToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_tokenSettings.Secret);
+            var key = Encoding.ASCII.GetBytes(_tokenSetting.Secret);
 
             tokenHandler.ValidateToken(token, new TokenValidationParameters
             {

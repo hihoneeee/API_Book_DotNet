@@ -147,7 +147,7 @@ namespace TestWebAPI.Services
                 var existsEmail = await _authRepo.getByEmail(email);
                 if (existsEmail == null)
                 {
-                    serviceResponse.SetNotFound("Token");
+                    serviceResponse.SetNotFound("Email");
                     return serviceResponse;
                 }
 

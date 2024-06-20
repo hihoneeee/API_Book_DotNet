@@ -262,3 +262,6 @@ D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\NETCore.MailKit.dll
 D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\BouncyCastle.Crypto.dll
 D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\appsettings.Development.json
 D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\appsettings.json
+D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\AWSSDK.Core.dll
+D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\AWSSDK.S3.dll
+D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\CloudinaryDotNet.dll

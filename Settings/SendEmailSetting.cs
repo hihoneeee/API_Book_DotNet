@@ -1,6 +1,6 @@
-﻿namespace TestWebAPI.Config
+﻿namespace TestWebAPI.Settings
 {
-    public class EmailConfiguration
+    public class SendEmailSetting
     {
         public string SenderName { get; set; }
         public string SenderEmail { get; set; }

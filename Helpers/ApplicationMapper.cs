@@ -43,7 +43,7 @@ namespace TestWebAPI.Helpers
             CreateMap<Role_Permission, RoleHasPermissionDTO>().ReverseMap();
 
             //category
-            CreateMap<Category, CategoryDTO>()
+            CreateMap<Category, GetCategoryDTO>()
                                 .ForMember(dest => dest.dataProperties, opt => opt.MapFrom(src => src.Properties.Select(p => new GetPropertyDTO
                                  {
                                      title = p.title,
@@ -53,9 +53,9 @@ namespace TestWebAPI.Helpers
                                      category_id = p.category_id,
                                      seller_id = p.PropertyHasDetails.FirstOrDefault().seller_id,
                                  }).ToList()));
+            CreateMap<Category, CategoryDTO>().ReverseMap();
             //property
             CreateMap<Property, GetPropertyDTO>().ReverseMap();
-
         }
     }
 }

@@ -2,7 +2,7 @@
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace TestWebAPI.Config
+namespace TestWebAPI.Configs
 {
     public class AddBearerTokenConfig : IOperationFilter
     {

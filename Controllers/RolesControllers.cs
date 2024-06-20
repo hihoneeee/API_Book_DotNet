@@ -9,12 +9,12 @@ namespace TestWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class role : ControllerBase
+    public class roleController : ControllerBase
     {
         private readonly IRoleService _roleService;
         private readonly IRoleHasPermissionServices _roleHasPermissionSv;
 
-        public role( IRoleService roleService, IRoleHasPermissionServices roleHasPermissionSv)
+        public roleController( IRoleService roleService, IRoleHasPermissionServices roleHasPermissionSv)
         {
             _roleService = roleService;
             _roleHasPermissionSv = roleHasPermissionSv;

@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace TestWebAPI.Config
+namespace TestWebAPI.Settings
 {
-    public class AuthorizationConfig : IAuthorizationRequirement
+    public class AuthorizationSetting : IAuthorizationRequirement
     {
         public string Permission { get; private set; }
 
-        public AuthorizationConfig(string permission)
+        public AuthorizationSetting(string permission)
         {
             Permission = permission;
         }

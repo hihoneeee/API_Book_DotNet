@@ -1,5 +1,4 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TestWebAPI.DTOs.Auth;
 using TestWebAPI.Services.Interfaces;
 using static TestWebAPI.Response.HttpStatus;
@@ -8,12 +7,12 @@ namespace TestWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class auth : ControllerBase
+    public class authController : ControllerBase
     {
         private readonly IAuthService _authService;
         private readonly ISendMailServices _sendMailService;
 
-        public auth(IAuthService authService, ISendMailServices sendMailService)
+        public authController(IAuthService authService, ISendMailServices sendMailService)
         {
             _authService = authService;
             _sendMailService = sendMailService;
