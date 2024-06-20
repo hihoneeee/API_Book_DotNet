@@ -1,6 +1,6 @@
 ﻿namespace TestWebAPI.Services.Interfaces
 {
-    public interface ISendMailService
+    public interface ISendMailServices
     {
         Task SendEmailAsync(string to, string subject, string html);
     }

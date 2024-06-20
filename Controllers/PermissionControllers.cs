@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TestWebAPI.DTOs.Permisstion;
-using TestWebAPI.DTOs.Role;
-using TestWebAPI.Services;
 using TestWebAPI.Services.Interfaces;
 using static TestWebAPI.Response.HttpStatus;
 
@@ -11,10 +8,10 @@ namespace TestWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PermissionController : ControllerBase
+    public class PermissionControllers : ControllerBase
     {
         private readonly IPermissionServices _permissionServices;
-        public PermissionController(IPermissionServices permissionServices)
+        public PermissionControllers(IPermissionServices permissionServices)
         {
             _permissionServices = permissionServices;
         }

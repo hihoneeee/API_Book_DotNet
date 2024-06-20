@@ -34,7 +34,6 @@ namespace TestWebAPI.Repositories
             return await _context.Roles.ToListAsync();
         }
 
-
         public async Task<Role> GetRolesById(int id)
         {
             return await _context.Roles

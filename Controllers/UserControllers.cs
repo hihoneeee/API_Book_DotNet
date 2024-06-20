@@ -6,11 +6,11 @@ namespace TestWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class user : ControllerBase
     {
         private readonly IUserServices _userServices;
 
-        public UserController(IUserServices userServices)
+        public user(IUserServices userServices)
         {
             _userServices = userServices;
         }

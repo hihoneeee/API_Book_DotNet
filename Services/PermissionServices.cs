@@ -28,23 +28,17 @@ namespace TestWebAPI.Services
                 var existsPermission = await _permisstionRepo.GetPermissionByValueAsyn(permisstionDTO.value);
                 if (existsPermission != null)
                 {
-                    serviceResponse.statusCode = EHttpType.Conflict;
-                    serviceResponse.success = false;
-                    serviceResponse.message = "Permission already exists.";
+                    serviceResponse.SetExisting("Permission already exists!");
                     return serviceResponse;
                 }
                 var permission = _mapper.Map<Permission>(permisstionDTO);
                 permission.code = CodeGenerator.GenerateCode(permisstionDTO.value);
                 var addPermission = await _permisstionRepo.CreatePermissionAsyn(permission);
-                serviceResponse.statusCode = EHttpType.Success;
-                serviceResponse.success = true;
-                serviceResponse.message = "Permission added successfully.";
+                serviceResponse.SetSuccess("Permission added successfully!");
             }
             catch (Exception ex)
             {
-                serviceResponse.success = false;
-                serviceResponse.message = $"An unexpected error occurred: {ex.Message}";
-                serviceResponse.statusCode = EHttpType.InternalError;
+                serviceResponse.SetError(ex.Message);
             }
             return serviceResponse;
         }
@@ -57,31 +51,23 @@ namespace TestWebAPI.Services
                 var oldPermission = await _permisstionRepo.GetPermissionByIdAsyn(id);
                 if (oldPermission == null)
                 {
-                    serviceResponse.success = false;
-                    serviceResponse.message = "Permission not found.";
-                    serviceResponse.statusCode = EHttpType.NotFound;
+                    serviceResponse.SetNotFound("Permission not found!");
                     return serviceResponse;
                 }
                 var existsPermission = await _permisstionRepo.GetPermissionByValueAsyn(permisstionDTO.value);
                 if (existsPermission != null)
                 {
-                    serviceResponse.statusCode = EHttpType.Conflict;
-                    serviceResponse.success = false;
-                    serviceResponse.message = "Permission already exists.";
+                    serviceResponse.SetExisting("Permission already exists!");
                     return serviceResponse;
                 }
                 var permission = _mapper.Map<Permission>(permisstionDTO);
                 permission.code = CodeGenerator.GenerateCode(permisstionDTO.value);
                 var updatePermission = await _permisstionRepo.UpdatePermissionAsyn(oldPermission, permission);
-                serviceResponse.success = true;
-                serviceResponse.statusCode = EHttpType.Success;
-                serviceResponse.message = "Permission updated successfully.";
+                serviceResponse.SetSuccess("Permission updated successfully!");
             }
             catch (Exception ex)
             {
-                serviceResponse.success = false;
-                serviceResponse.message = $"An unexpected error occurred: {ex.Message}";
-                serviceResponse.statusCode = EHttpType.InternalError;
+                serviceResponse.SetError(ex.Message);
             }
             return serviceResponse;
         }
@@ -94,21 +80,16 @@ namespace TestWebAPI.Services
                 var existsPermission = await _permisstionRepo.GetPermissionByIdAsyn(id);
                 if (existsPermission == null)
                 {
-                    serviceResponse.statusCode = EHttpType.NotFound;
-                    serviceResponse.success = false;
-                    serviceResponse.message = "Permission don't exists.";
+                    serviceResponse.SetNotFound("Permission not found!");
                     return serviceResponse;
                 }
                 await _permisstionRepo.DeletePermissionAsyn(existsPermission);
-                serviceResponse.success = true;
-                serviceResponse.message = "Permission delete successfully.";
-                serviceResponse.statusCode = EHttpType.Success;
+                serviceResponse.SetSuccess("Permission delete successfully!");
+
             }
             catch (Exception ex)
             {
-                serviceResponse.success = false;
-                serviceResponse.message = $"An unexpected error occurred: {ex.Message}";
-                serviceResponse.statusCode = EHttpType.InternalError;
+                serviceResponse.SetError(ex.Message);
             }
             return serviceResponse;
         }
@@ -120,21 +101,15 @@ namespace TestWebAPI.Services
                 var permission = await _permisstionRepo.GetAllPermissionAsyn();
                 if (permission == null)
                 {
-                    serviceResponse.success = false;
-                    serviceResponse.statusCode = EHttpType.NotFound;
-                    serviceResponse.message = "No roles found in the database.";
+                    serviceResponse.SetNotFound("Permission not found!");
                     return serviceResponse;
                 }
                 serviceResponse.data = _mapper.Map<List<PermisstionDTO>>(permission);
-                serviceResponse.success = true;
-                serviceResponse.message = "Permissions get all successfully.";
-                serviceResponse.statusCode = EHttpType.Success;
+                serviceResponse.SetSuccess("Permission get all successfully!");
             }
             catch (Exception ex)
             {
-                serviceResponse.success = false;
-                serviceResponse.message = $"An unexpected error occurred: {ex.Message}";
-                serviceResponse.statusCode = EHttpType.InternalError;
+                serviceResponse.SetError(ex.Message);
             }
             return serviceResponse;
         }

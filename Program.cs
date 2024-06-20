@@ -59,7 +59,6 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 
-
 // Set Cors
 builder.Services.AddCors(opt => opt.AddDefaultPolicy(policy =>
     policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
@@ -130,8 +129,8 @@ builder.Services.AddAuthorization(options =>
         policy.Requirements.Add(new AuthorizationConfig("update-role")));
     options.AddPolicy("delete-role", policy =>
         policy.Requirements.Add(new AuthorizationConfig("delete-role")));
-    options.AddPolicy("role-has-permission", policy =>
-        policy.Requirements.Add(new AuthorizationConfig("role-has-permission")));
+    options.AddPolicy("assign-permission", policy =>
+        policy.Requirements.Add(new AuthorizationConfig("assign-permission")));
 
     // Policy permission
     options.AddPolicy("add-permission", policy =>
@@ -164,11 +163,11 @@ builder.Services.AddScoped<IRoleHasPermissionRepositories, RoleHasPermissionRepo
 builder.Services.AddScoped<IUserRepositories, UserRepositories>();
 
 // Add services to the container.
-builder.Services.AddScoped<IRoleService, RoleService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IRoleService, RoleServices>();
+builder.Services.AddScoped<IAuthService, AuthServices>();
+builder.Services.AddScoped<IJwtServices, JwtServices>();
 builder.Services.AddScoped<IPermissionServices, PermissionServices>();
-builder.Services.AddScoped<ISendMailService, SendMailServices>();
+builder.Services.AddScoped<ISendMailServices, SendMailServices>();
 builder.Services.AddScoped<IRoleHasPermissionServices, RoleHasPermissionServices>();
 builder.Services.AddScoped<IUserServices, UserServices>();
 

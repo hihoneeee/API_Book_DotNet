@@ -3,7 +3,7 @@ using static TestWebAPI.Response.HttpStatus;
 
 namespace TestWebAPI.Response
 {
-    public class ServiceResponse<T>
+    public class ServiceResponse<T> : IServiceResponse
     {
         public string message { get; set; }
         public T data { get; set; }
@@ -12,6 +12,7 @@ namespace TestWebAPI.Response
 
         public EHttpType statusCode { get; set; }
         public bool success { get; set; }
+
         public CommonResponseMsgDTO getMessage()
         {
             return new CommonResponseMsgDTO()
@@ -44,6 +45,23 @@ namespace TestWebAPI.Response
             };
         }
 
+        // Explicit interface implementation
+        bool IServiceResponse.Success
+        {
+            get => success;
+            set => success = value;
+        }
 
+        string IServiceResponse.Message
+        {
+            get => message;
+            set => message = value;
+        }
+
+        EHttpType IServiceResponse.StatusCode
+        {
+            get => statusCode;
+            set => statusCode = value;
+        }
     }
 }

@@ -3,7 +3,7 @@ using TestWebAPI.Response;
 
 namespace TestWebAPI.Services.Interfaces
 {
-    public interface IJwtService
+    public interface IJwtServices
     {
         Task InsertJWTToken(jwtDTO jwtDTO);
     }

@@ -61,15 +61,16 @@ namespace TestWebAPI.Middlewares
             return tokenHandler.WriteToken(token);
         }
 
-
-        public async Task<string> GenerateJWTRefreshToken(int id, DateTime expire)
+        public async Task<string> GenerateJWTRefreshToken(int id, string roleCode, DateTime expire)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
             var key = Encoding.UTF8.GetBytes(_tokenSettings.Secret);
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim("id", id.ToString()),
+                new Claim("roleCode", roleCode),
+                new Claim("iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
             };
             var token = new JwtSecurityToken(
                 claims: claims,
@@ -135,7 +136,6 @@ namespace TestWebAPI.Middlewares
             }
         }
 
-
         public int GetUserIdFromToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -151,8 +151,7 @@ namespace TestWebAPI.Middlewares
             }, out SecurityToken validatedToken);
 
             var jwtToken = (JwtSecurityToken)validatedToken;
-            var userIdClaim = jwtToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-
+            var userIdClaim = jwtToken.Claims.FirstOrDefault(x => x.Type == "id");
             return userIdClaim != null ? int.Parse(userIdClaim.Value) : 0;
         }
 
@@ -171,8 +170,7 @@ namespace TestWebAPI.Middlewares
             }, out SecurityToken validatedToken);
 
             var jwtToken = (JwtSecurityToken)validatedToken;
-            var roleClaim = jwtToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role);
-
+            var roleClaim = jwtToken.Claims.FirstOrDefault(x => x.Type == "roleCode");
             return roleClaim != null ? roleClaim.Value : "";
         }
     }

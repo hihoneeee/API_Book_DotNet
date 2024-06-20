@@ -1,25 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TestWebAPI.Data;
-using TestWebAPI.Helpers;
-using TestWebAPI.Repositories.Interfaces;
 using TestWebAPI.DTOs.Role;
-using AutoMapper;
 using TestWebAPI.Services.Interfaces;
 using static TestWebAPI.Response.HttpStatus;
 using Microsoft.AspNetCore.Authorization;
-using TestWebAPI.Services;
 using TestWebAPI.DTOs.RoleHasPermission;
 
 namespace TestWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RolesController : ControllerBase
+    public class role : ControllerBase
     {
         private readonly IRoleService _roleService;
         private readonly IRoleHasPermissionServices _roleHasPermissionSv;
 
-        public RolesController( IRoleService roleService, IRoleHasPermissionServices roleHasPermissionSv)
+        public role( IRoleService roleService, IRoleHasPermissionServices roleHasPermissionSv)
         {
             _roleService = roleService;
             _roleHasPermissionSv = roleHasPermissionSv;
@@ -106,6 +101,7 @@ namespace TestWebAPI.Controllers
                     return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
                 }
         }
+        [Authorize(Policy = "assign-permission")]
         [Route("assign-permission")]
         [HttpPost]
         public async Task<IActionResult> AssignPermissionAsyn([FromBody] RoleHasPermissionDTO roleHasPermissionDTO)

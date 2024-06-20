@@ -6,11 +6,11 @@ using TestWebAPI.Services.Interfaces;
 
 namespace TestWebAPI.Services
 {
-    public class JwtService : IJwtService
+    public class JwtServices : IJwtServices
     {
         private readonly IJwtRepositories _jwtRepo;
         private readonly IMapper _mapper;
-        public JwtService(IMapper mapper, IJwtRepositories jwtRepo) { 
+        public JwtServices(IMapper mapper, IJwtRepositories jwtRepo) { 
             _mapper = mapper;
             _jwtRepo = jwtRepo;
         }

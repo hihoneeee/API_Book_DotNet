@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using TestWebAPI.DTOs.Auth;
+using TestWebAPI.DTOs.Category;
 using TestWebAPI.DTOs.JWT;
 using TestWebAPI.DTOs.Permisstion;
+using TestWebAPI.DTOs.Property;
 using TestWebAPI.DTOs.Role;
 using TestWebAPI.DTOs.RoleHasPermission;
 using TestWebAPI.DTOs.User;
@@ -19,9 +21,10 @@ namespace TestWebAPI.Helpers
                  {
                      code = rp.Permission.code,
                      value = rp.Permission.value
-                 }).ToList())); CreateMap<Role, AddRoleDTO>().ReverseMap();
+                 }).ToList())); 
+            CreateMap<Role, AddRoleDTO>().ReverseMap();
 
-            // auth
+            //auth
             CreateMap<User, AuthRegisterDTO>().ReverseMap();
             CreateMap<User, AuthLoginDTO>().ReverseMap();
             CreateMap<User, AuthForgotPasswordDTO>().ReverseMap();
@@ -32,12 +35,27 @@ namespace TestWebAPI.Helpers
             //JWT
             CreateMap<JWT, jwtDTO>().ReverseMap();
 
-            //Permisstion
+            //permisstion
             CreateMap<Permission, PermisstionDTO>().ReverseMap();
             CreateMap<Permission, AddPermissionDTO>().ReverseMap();
 
             //role has permission
             CreateMap<Role_Permission, RoleHasPermissionDTO>().ReverseMap();
+
+            //category
+            CreateMap<Category, CategoryDTO>()
+                                .ForMember(dest => dest.dataProperties, opt => opt.MapFrom(src => src.Properties.Select(p => new GetPropertyDTO
+                                 {
+                                     title = p.title,
+                                     description = p.description,
+                                     avatar = p.avatar,
+                                     price = p.price,
+                                     category_id = p.category_id,
+                                     seller_id = p.PropertyHasDetails.FirstOrDefault().seller_id,
+                                 }).ToList()));
+            //property
+            CreateMap<Property, GetPropertyDTO>().ReverseMap();
+
         }
     }
 }

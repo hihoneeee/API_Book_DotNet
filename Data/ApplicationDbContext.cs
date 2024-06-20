@@ -10,9 +10,7 @@ namespace TestWebAPI.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Property>().HasOne(p => p.category).WithMany(c => c.Properties).HasForeignKey(p => p.category_id).HasPrincipalKey(c => c.id);
-            
-            modelBuilder.Entity<Property>().HasOne(p => p.seller).WithMany(u => u.Properties).HasForeignKey(p => p.seller_id).HasPrincipalKey(u => u.id);
-            
+                        
             modelBuilder.Entity<User>().HasOne(u => u.Role).WithMany(r => r.Users).HasForeignKey(u => u.roleCode).HasPrincipalKey(r => r.code);
             
             modelBuilder.Entity<JWT>().HasOne(j => j.user).WithMany(u => u.JWTs).HasForeignKey(j => j.user_id).HasPrincipalKey(u => u.id);
@@ -31,6 +29,18 @@ namespace TestWebAPI.Data
                 .WithMany(p => p.Role_Permissions)
                 .HasForeignKey(rp => rp.codePermission)
                 .HasPrincipalKey(p => p.code);
+
+            //Wishlist
+            modelBuilder.Entity<PropertyHasDetail>()
+                .HasOne(p => p.seller)
+                .WithMany(u => u.PropertyHasDetails)
+                .HasForeignKey(p => p.seller_id)
+                .HasPrincipalKey(u => u.id);
+            modelBuilder.Entity<PropertyHasDetail>()
+                .HasOne(p => p.property)
+                .WithMany(p => p.PropertyHasDetails)
+                .HasForeignKey(p => p.property_id)
+                .HasPrincipalKey(p => p.id);
 
             //nofication
             modelBuilder.Entity<Nofication>()
@@ -56,17 +66,12 @@ namespace TestWebAPI.Data
                 .HasForeignKey(e => e.property_id)
                 .HasPrincipalKey(p => p.id);
 
-            //Evaluate
+            //Contract
             modelBuilder.Entity<Contract>()
-                .HasOne(c => c.buyer)
-                .WithMany(u => u.Contracts)
-                .HasForeignKey(c => c.buyer_id)
-                .HasPrincipalKey(u => u.id);
-            modelBuilder.Entity<Contract>()
-                .HasOne(c => c.property)
-                .WithMany(p => p.Contracts)
-                .HasForeignKey(c => c.property_id)
-                .HasPrincipalKey(p => p.id);
+                .HasOne(c => c.appointment)
+                .WithMany(a => a.Contracts)
+                .HasForeignKey(c => c.appointment_id)
+                .HasPrincipalKey(a => a.id);
 
             //Submission
             modelBuilder.Entity<Submission>()

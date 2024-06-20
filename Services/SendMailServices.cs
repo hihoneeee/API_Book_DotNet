@@ -8,7 +8,7 @@ using TestWebAPI.Config;
 
 namespace TestWebAPI.Services
 {
-    public class SendMailServices : ISendMailService
+    public class SendMailServices : ISendMailServices
     {
         private readonly EmailConfiguration _emailConfig;
 

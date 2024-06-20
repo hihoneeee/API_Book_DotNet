@@ -20,6 +20,10 @@ namespace TestWebAPI.Models
         [Required]
         public DateTime secondary_day { get; set; }
         [Required]
+        public bool is_active { get; set; }
+        [Required]
         public DateTime createdAt { get; set;} = DateTime.Now;
+        public virtual ICollection<Contract>? Contracts { get; set; }
+
     }
 }

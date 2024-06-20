@@ -2,6 +2,7 @@
 using System.Data;
 using TestWebAPI.DTOs.Role;
 using TestWebAPI.DTOs.RoleHasPermission;
+using TestWebAPI.Helpers;
 using TestWebAPI.Models;
 using TestWebAPI.Repositories.Interfaces;
 using TestWebAPI.Response;
@@ -65,9 +66,7 @@ namespace TestWebAPI.Services
             }
             catch (Exception ex)
             {
-                serviceResponse.success = false;
-                serviceResponse.message = $"An unexpected error occurred: {ex.Message}";
-                serviceResponse.statusCode = EHttpType.InternalError;
+                serviceResponse.SetError(ex.Message);
             }
             return serviceResponse;
         }

@@ -36,12 +36,11 @@ namespace TestWebAPI.Models
         public virtual ICollection<JWT>? JWTs { get; set; }
         public virtual ICollection<User_Media>? User_Medias { get; set; }
         public virtual ICollection<Nofication>? Nofications { get; set; }
-        public virtual ICollection<Property>? Properties { get; set; }
         public virtual ICollection<Evaluate>? Evaluates { get; set; }
         public virtual ICollection<Contract>? Contracts { get; set; }
         public virtual ICollection<Submission>? Submissions { get; set; }
         public virtual ICollection<Appointment>? Appointments { get; set; }
         public virtual ICollection<Wishlist>? Wishlists { get; set; }
-
+        public virtual ICollection<PropertyHasDetail>? PropertyHasDetails { get; set; }
     }
 }

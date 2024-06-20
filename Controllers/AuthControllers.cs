@@ -8,12 +8,12 @@ namespace TestWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class auth : ControllerBase
     {
         private readonly IAuthService _authService;
-        private readonly ISendMailService _sendMailService;
+        private readonly ISendMailServices _sendMailService;
 
-        public AuthController(IAuthService authService, ISendMailService sendMailService)
+        public auth(IAuthService authService, ISendMailServices sendMailService)
         {
             _authService = authService;
             _sendMailService = sendMailService;

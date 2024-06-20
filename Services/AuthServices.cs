@@ -12,16 +12,17 @@ using static TestWebAPI.Response.HttpStatus;
 
 namespace TestWebAPI.Services
 {
-    public class AuthService : IAuthService
+    public class AuthServices : IAuthService
     {
         private readonly IMapper _mapper;
-        private readonly IJwtService _jwtService;
+        private readonly IJwtServices _jwtService;
         private readonly IAuthRepositories _authRepo;
         private readonly IJWTHelper _jWTHelper;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUserRepositories _userRepo;
+        private readonly IRoleRepositories _roleRepo;
 
-        public AuthService(IMapper mapper, IAuthRepositories authRepo, IJWTHelper jWTHelper, IJwtService jwtService, IHttpContextAccessor httpContextAccessor, IUserRepositories userRepo)
+        public AuthServices(IMapper mapper, IAuthRepositories authRepo, IJWTHelper jWTHelper, IJwtServices jwtService, IHttpContextAccessor httpContextAccessor, IUserRepositories userRepo, IRoleRepositories roleRepo)
         {
             _mapper = mapper;
             _jwtService = jwtService;
@@ -29,6 +30,7 @@ namespace TestWebAPI.Services
             _jWTHelper = jWTHelper ?? throw new ArgumentNullException(nameof(jWTHelper));
             _httpContextAccessor = httpContextAccessor;
             _userRepo = userRepo;
+            _roleRepo = roleRepo;
         }
             
         public async Task<ServiceResponse<AuthRegisterDTO>> Register(AuthRegisterDTO authRegisterDTO)
@@ -39,23 +41,23 @@ namespace TestWebAPI.Services
                 var existingEmail = await _authRepo.getByEmail(authRegisterDTO.email);
                 if (existingEmail != null)
                 {
-                    serviceResponse.success = false;
-                    serviceResponse.message = "Email already exists.";
-                    serviceResponse.statusCode = EHttpType.Conflict;
+                    serviceResponse.SetExisting("Email already exists!");
+                    return serviceResponse;
+                }
+                var checkRole = await _roleRepo.GetRoleByCodeAsyn(authRegisterDTO.roleCode);
+                if (checkRole == null)
+                {
+                    serviceResponse.SetNotFound("Role");
                     return serviceResponse;
                 }
                 var newUser = _mapper.Map<User>(authRegisterDTO);
                 newUser.password = HashPasswordHelper.HashPassword(authRegisterDTO.password);
                 var Response = await _authRepo.Register(newUser);
-                serviceResponse.message = "Register successfully.";
-                serviceResponse.statusCode = EHttpType.Success;
-                serviceResponse.success = true;
+                serviceResponse.SetSuccess("Register successfully");
             }
             catch (Exception ex)
             {
-                serviceResponse.success = false;
-                serviceResponse.message = $"An unexpected error occurred: {ex.Message}";
-                serviceResponse.statusCode = EHttpType.InternalError;
+                serviceResponse.SetError(ex.Message);
             }
             return serviceResponse;
         }
@@ -68,21 +70,17 @@ namespace TestWebAPI.Services
                 var existingUser = await _authRepo.getByEmail(authLoginDTO.email);
                 if (existingUser == null)
                 {
-                    serviceResponse.success = false;
-                    serviceResponse.message = "Email does not exist.";
-                    serviceResponse.statusCode = EHttpType.Unauthorized;
+                    serviceResponse.SetNotFound("Email");
                     return serviceResponse;
                 }
                 if (!HashPasswordHelper.VerifyPassword(authLoginDTO.password, existingUser.password))
                 {
-                    serviceResponse.success = false;
-                    serviceResponse.message = "Password is wrong!.";
-                    serviceResponse.statusCode = EHttpType.Unauthorized;
+                    serviceResponse.SetUnauthorized("Password is wrong!");
                     return serviceResponse;
                 }
                 // Tạo JWT token và refresh token
                 string token = await _jWTHelper.GenerateJWTToken(existingUser.id, existingUser.roleCode, DateTime.UtcNow.AddMinutes(5));
-                string refresh_token = await _jWTHelper.GenerateJWTRefreshToken(existingUser.id, DateTime.UtcNow.AddMonths(30));
+                string refresh_token = await _jWTHelper.GenerateJWTRefreshToken(existingUser.id, existingUser.roleCode, DateTime.UtcNow.AddMonths(30));
 
                 // Thêm refresh token vào trong bảng JWT
                 await _jwtService.InsertJWTToken(new jwtDTO()
@@ -101,17 +99,13 @@ namespace TestWebAPI.Services
                     MaxAge = TimeSpan.FromDays(30) // Thời gian sống của cookie là 7 ngày
                 };
                 _httpContextAccessor.HttpContext.Response.Cookies.Append(cookieName, refresh_token, cookieOptions);
-
-                serviceResponse.success = true;
-                serviceResponse.message = "Login successful.";
                 serviceResponse.access_token = token;
-                serviceResponse.statusCode = EHttpType.Success;
+                serviceResponse.SetSuccess("Login successfully");
+               
             }
             catch (Exception ex)
             {
-                serviceResponse.success = false;
-                serviceResponse.message = $"An unexpected error occurred: {ex.Message}";
-                serviceResponse.statusCode = EHttpType.InternalError;
+                serviceResponse.SetError(ex.Message);
             }
             return serviceResponse;
         }
@@ -125,9 +119,7 @@ namespace TestWebAPI.Services
                 bool isTokenValid = await _jWTHelper.ValidateRefreshTokenAsync(refreshToken);
                 if (!isTokenValid)
                 {
-                    serviceResponse.success = false;
-                    serviceResponse.message = "Invalid refresh token.";
-                    serviceResponse.statusCode = EHttpType.Unauthorized;
+                    serviceResponse.SetUnauthorized("Invalid refresh token!");
                     return serviceResponse;
                 }
 
@@ -138,17 +130,12 @@ namespace TestWebAPI.Services
                 // Tạo mới access token
                 string accessToken = await _jWTHelper.GenerateJWTToken(userId, userRole, DateTime.UtcNow.AddMinutes(10));
 
-                serviceResponse.success = true;
-                serviceResponse.message = "Access token refreshed successfully.";
                 serviceResponse.access_token = accessToken;
-                serviceResponse.statusCode = EHttpType.Success;
+                serviceResponse.SetSuccess("Access token refreshed successfully!");
             }
             catch (Exception ex)
             {
-                serviceResponse.success = false;
-                serviceResponse.message = $"An error occurred while refreshing access token: {ex.Message}";
-                serviceResponse.statusCode = EHttpType.InternalError;
-
+                serviceResponse.SetError(ex.Message);
             }
             return serviceResponse;
         }
@@ -160,9 +147,7 @@ namespace TestWebAPI.Services
                 var existsEmail = await _authRepo.getByEmail(email);
                 if (existsEmail == null)
                 {
-                    serviceResponse.success = false;
-                    serviceResponse.message = "Email not found.";
-                    serviceResponse.statusCode = EHttpType.NotFound;
+                    serviceResponse.SetNotFound("Token");
                     return serviceResponse;
                 }
 
@@ -170,15 +155,11 @@ namespace TestWebAPI.Services
 
                 // Here we add the token to the service response
                 serviceResponse.data = _mapper.Map<AuthForgotPasswordDTO>(authChangePassword);
-                serviceResponse.success = true;
-                serviceResponse.message = "Password reset token generated.";
-                serviceResponse.statusCode = EHttpType.Success;
+                serviceResponse.SetSuccess("Password reset token generated!");
             }
             catch (Exception ex)
             {
-                serviceResponse.success = false;
-                serviceResponse.message = $"An error occurred while processing your request: {ex.Message}";
-                serviceResponse.statusCode = EHttpType.InternalError;
+                serviceResponse.SetError(ex.Message);
             }
 
             return serviceResponse;
@@ -193,21 +174,15 @@ namespace TestWebAPI.Services
                 var findPasswordToken = await _authRepo.FindPasswordResetTokenAsyn(token);
                 if (findPasswordToken == null)
                 {
-                    serviceResponse.success = false;
-                    serviceResponse.message = "Token don't have existing!";
-                    serviceResponse.statusCode = EHttpType.NotFound;
+                    serviceResponse.SetNotFound("Token");
                     return serviceResponse;
                 }
                 var restPassword = await _authRepo.ResetNewPasswordAsync(newPassword, findPasswordToken);
-                serviceResponse.success = true;
-                serviceResponse.message = "Password change succssefully!";
-                serviceResponse.statusCode = EHttpType.Success;
+                serviceResponse.SetSuccess("Password change succssefully!");
             }
             catch (Exception ex)
             {
-                serviceResponse.success = false;
-                serviceResponse.message = $"An error occurred while processing your request: {ex.Message}";
-                serviceResponse.statusCode = EHttpType.InternalError;
+                serviceResponse.SetError(ex.Message);
             }
 
             return serviceResponse;
@@ -221,39 +196,27 @@ namespace TestWebAPI.Services
                 var checkUSer = await _userRepo.GetCurrentAsync(authChangePasswordDTO.id);
                 if (checkUSer == null)
                 {
-                    serviceResponse.success = false;
-                    serviceResponse.message = "User not found!";
-                    serviceResponse.statusCode = EHttpType.NotFound;
+                    serviceResponse.SetNotFound("User");
                     return serviceResponse;
                 }
                 if (!HashPasswordHelper.VerifyPassword(authChangePasswordDTO.oldPassword, checkUSer.password))
                 {
-                    serviceResponse.success = false;
-                    serviceResponse.message = "Password is wrong!.";
-                    serviceResponse.statusCode = EHttpType.Unauthorized;
+                    serviceResponse.SetUnauthorized("Password is wrong!");
                     return serviceResponse;
                 }
                 if (authChangePasswordDTO.newPassword != authChangePasswordDTO.enterPassword)
                 {
-                    serviceResponse.success = false;
-                    serviceResponse.message = "New password and confirmation password do not match!";
-                    serviceResponse.statusCode = EHttpType.BadRequest;
+                    serviceResponse.SetBadRequest("New password and confirmation password do not match!");
                     return serviceResponse;
                 }
                 var HashPassword = HashPasswordHelper.HashPassword(authChangePasswordDTO.newPassword);
                 var changePassword = await _authRepo.ChangePasswordAsync(HashPassword, checkUSer);
-                serviceResponse.success = true;
-                serviceResponse.message = "Password change succssefully!";
-                serviceResponse.statusCode = EHttpType.Success;
-
+                serviceResponse.SetSuccess("Password change succssefully!");
             }
             catch (Exception ex)
             {
-                serviceResponse.success = false;
-                serviceResponse.message = $"An error occurred while processing your request: {ex.Message}";
-                serviceResponse.statusCode = EHttpType.InternalError;
+                serviceResponse.SetError(ex.Message);
             }
-
             return serviceResponse;
         }
         

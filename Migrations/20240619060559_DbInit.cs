@@ -63,6 +63,31 @@ namespace TestWebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Properties",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    description = table.Column<long>(type: "bigint", nullable: false),
+                    price = table.Column<int>(type: "int", nullable: false),
+                    avatar = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    category_id = table.Column<int>(type: "int", nullable: false),
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Properties", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Properties_Categories_category_id",
+                        column: x => x.category_id,
+                        principalTable: "Categories",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RolePermissions",
                 columns: table => new
                 {
@@ -118,89 +143,6 @@ namespace TestWebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "JWTs",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    value = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    issued_date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    expired_date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    user_id = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_JWTs", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_JWTs_Users_user_id",
-                        column: x => x.user_id,
-                        principalTable: "Users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Properties",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    description = table.Column<long>(type: "bigint", nullable: false),
-                    price = table.Column<int>(type: "int", nullable: false),
-                    province = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    city = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    avatar = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    images = table.Column<long>(type: "bigint", nullable: false),
-                    address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    isAvailable = table.Column<bool>(type: "bit", nullable: false),
-                    seller_id = table.Column<int>(type: "int", nullable: false),
-                    category_id = table.Column<int>(type: "int", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Properties", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Properties_Categories_category_id",
-                        column: x => x.category_id,
-                        principalTable: "Categories",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Properties_Users_seller_id",
-                        column: x => x.seller_id,
-                        principalTable: "Users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "User_Medias",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    provider = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    icon = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    link = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    user_id = table.Column<int>(type: "int", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_User_Medias", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_User_Medias_Users_user_id",
-                        column: x => x.user_id,
-                        principalTable: "Users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Appointments",
                 columns: table => new
                 {
@@ -210,6 +152,7 @@ namespace TestWebAPI.Migrations
                     property_id = table.Column<int>(type: "int", nullable: false),
                     appointment_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     secondary_day = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    is_active = table.Column<bool>(type: "bit", nullable: false),
                     createdAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -223,36 +166,6 @@ namespace TestWebAPI.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Appointments_Users_buyer_id",
-                        column: x => x.buyer_id,
-                        principalTable: "Users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Contracts",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    signature_buyer = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    signature_seller = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    buyer_id = table.Column<int>(type: "int", nullable: false),
-                    property_id = table.Column<int>(type: "int", nullable: false),
-                    transaction_date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Contracts", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Contracts_Properties_property_id",
-                        column: x => x.property_id,
-                        principalTable: "Properties",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Contracts_Users_buyer_id",
                         column: x => x.buyer_id,
                         principalTable: "Users",
                         principalColumn: "id",
@@ -290,6 +203,28 @@ namespace TestWebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "JWTs",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    value = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    issued_date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    expired_date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    user_id = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JWTs", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_JWTs_Users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "Users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Nofications",
                 columns: table => new
                 {
@@ -312,6 +247,36 @@ namespace TestWebAPI.Migrations
                     table.ForeignKey(
                         name: "FK_Nofications_Users_user_id",
                         column: x => x.user_id,
+                        principalTable: "Users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PropertyHasDetail",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    province = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    city = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    images = table.Column<long>(type: "bigint", nullable: false),
+                    address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    seller_id = table.Column<int>(type: "int", nullable: false),
+                    property_id = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PropertyHasDetail", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_PropertyHasDetail_Properties_property_id",
+                        column: x => x.property_id,
+                        principalTable: "Properties",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PropertyHasDetail_Users_seller_id",
+                        column: x => x.seller_id,
                         principalTable: "Users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -346,6 +311,30 @@ namespace TestWebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "User_Medias",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    provider = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    icon = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    link = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    user_id = table.Column<int>(type: "int", nullable: false),
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_User_Medias", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_User_Medias_Users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "Users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Wishlists",
                 columns: table => new
                 {
@@ -372,6 +361,41 @@ namespace TestWebAPI.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Contracts",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    signature_buyer = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    signature_seller = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    appointment_id = table.Column<int>(type: "int", nullable: false),
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Propertyid = table.Column<int>(type: "int", nullable: true),
+                    Userid = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Contracts", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Contracts_Appointments_appointment_id",
+                        column: x => x.appointment_id,
+                        principalTable: "Appointments",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Contracts_Properties_Propertyid",
+                        column: x => x.Propertyid,
+                        principalTable: "Properties",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_Contracts_Users_Userid",
+                        column: x => x.Userid,
+                        principalTable: "Users",
+                        principalColumn: "id");
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Appointments_buyer_id",
                 table: "Appointments",
@@ -383,14 +407,19 @@ namespace TestWebAPI.Migrations
                 column: "property_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Contracts_buyer_id",
+                name: "IX_Contracts_appointment_id",
                 table: "Contracts",
-                column: "buyer_id");
+                column: "appointment_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Contracts_property_id",
+                name: "IX_Contracts_Propertyid",
                 table: "Contracts",
-                column: "property_id");
+                column: "Propertyid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Contracts_Userid",
+                table: "Contracts",
+                column: "Userid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Evaluates_buyer_id",
@@ -423,8 +452,13 @@ namespace TestWebAPI.Migrations
                 column: "category_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Properties_seller_id",
-                table: "Properties",
+                name: "IX_PropertyHasDetail_property_id",
+                table: "PropertyHasDetail",
+                column: "property_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PropertyHasDetail_seller_id",
+                table: "PropertyHasDetail",
                 column: "seller_id");
 
             migrationBuilder.CreateIndex(
@@ -472,9 +506,6 @@ namespace TestWebAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Appointments");
-
-            migrationBuilder.DropTable(
                 name: "Contracts");
 
             migrationBuilder.DropTable(
@@ -485,6 +516,9 @@ namespace TestWebAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "Nofications");
+
+            migrationBuilder.DropTable(
+                name: "PropertyHasDetail");
 
             migrationBuilder.DropTable(
                 name: "RolePermissions");
@@ -499,16 +533,19 @@ namespace TestWebAPI.Migrations
                 name: "Wishlists");
 
             migrationBuilder.DropTable(
+                name: "Appointments");
+
+            migrationBuilder.DropTable(
                 name: "Permissions");
 
             migrationBuilder.DropTable(
                 name: "Properties");
 
             migrationBuilder.DropTable(
-                name: "Categories");
+                name: "Users");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Roles");
