@@ -30,7 +30,7 @@ namespace TestWebAPI.Controllers
             }
         }
 
-        [Authorize(Policy = "add-permission")]
+        //[Authorize(Policy = "add-permission")]
         [HttpPost]
         public async Task<IActionResult> CreatePermissionAsync([FromBody] AddPermissionDTO permisstionDTO)
         {

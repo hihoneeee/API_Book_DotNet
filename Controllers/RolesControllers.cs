@@ -70,7 +70,7 @@ namespace TestWebAPI.Controllers
         }
 
         // POST: api/Roles
-        [Authorize(Policy = "add-role")]
+        //[Authorize(Policy = "add-role")]
         [HttpPost]
         public async Task<IActionResult> AddNewRole([FromBody] AddRoleDTO roleDTO)
         {
@@ -101,7 +101,7 @@ namespace TestWebAPI.Controllers
                     return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
                 }
         }
-        [Authorize(Policy = "assign-permission")]
+        //[Authorize(Policy = "assign-permission")]
         [Route("assign-permission")]
         [HttpPost]
         public async Task<IActionResult> AssignPermissionAsyn([FromBody] RoleHasPermissionDTO roleHasPermissionDTO)

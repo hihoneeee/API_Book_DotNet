@@ -39,12 +39,20 @@ namespace TestWebAPI.Repositories
         public async Task<Category> GetCategoryByIdAsync(int id)
         {
             return await _context.Categories.FirstOrDefaultAsync(c => c.id == id);
+        }
+        public async Task<Category> GetFindAvatarAsync(string avatar)
+        {
+            return await _context.Categories.FirstOrDefaultAsync(c => c.avatar == avatar);
 
         }
 
         public async Task<Category> UpdateCategoryAsync(Category oldCate, Category newCate)
         {
             oldCate.title = newCate.title;
+            oldCate.description = newCate.description;
+            oldCate.avatar = newCate.avatar;
+            oldCate.updateAt = DateTime.Now;
+
             await _context.SaveChangesAsync();
             return oldCate;
         }

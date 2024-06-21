@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TestWebAPI.Models
@@ -16,8 +17,10 @@ namespace TestWebAPI.Models
         [ForeignKey("property_id")]
         public virtual Property property { get; set; }
         [Required]
-        public long message { get; set; }
+        public string message { get; set; }
         [Required]
         public DateTime createdAt { get; set; } = DateTime.Now;
+        [Required]
+        public DateTime updatedAt { get; set; }
     }
 }

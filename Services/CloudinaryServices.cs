@@ -1,6 +1,7 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.Extensions.Options;
+using TestWebAPI.DTOs.Common;
 using TestWebAPI.Services.Interfaces;
 using TestWebAPI.Settings;
 
@@ -36,6 +37,15 @@ namespace TestWebAPI.Services
             var deletionParams = new DeletionParams(publicId);
             var result = await _cloudinary.DestroyAsync(deletionParams);
             return result;
+        }
+
+        public string ExtractPublicIdFromUrl(string path)
+        {
+            var uri = new Uri(path);
+            var segments = uri.AbsolutePath.Split('/');
+            var publicIdWithExtension = segments[^1];
+            var publicId = Path.GetFileNameWithoutExtension(publicIdWithExtension);
+            return publicId;
         }
     }
 }

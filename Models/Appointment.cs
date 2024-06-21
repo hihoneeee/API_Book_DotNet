@@ -23,6 +23,9 @@ namespace TestWebAPI.Models
         public bool is_active { get; set; }
         [Required]
         public DateTime createdAt { get; set;} = DateTime.Now;
+        [Required]
+        public DateTime updatedAt { get; set; }
+
         public virtual ICollection<Contract>? Contracts { get; set; }
 
     }

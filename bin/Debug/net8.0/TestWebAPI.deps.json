@@ -8,10 +8,12 @@
     ".NETCoreApp,Version=v8.0": {
       "TestWebAPI/1.0.0": {
         "dependencies": {
-          "AWSSDK.S3": "3.7.309.6",
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "12.0.1",
           "BCrypt.Net-Core": "1.6.0",
+          "Bogus": "35.5.1",
           "CloudinaryDotNet": "1.26.2",
+          "Faker.NETCore": "1.0.2",
+          "Faker.Net": "2.0.163",
           "FluentValidation.AspNetCore": "11.3.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.6",
           "Microsoft.EntityFrameworkCore": "8.0.6",
@@ -45,25 +47,6 @@
           "lib/netstandard2.1/AutoMapper.Extensions.Microsoft.DependencyInjection.dll": {
             "assemblyVersion": "12.0.0.0",
             "fileVersion": "12.0.1.0"
-          }
-        }
-      },
-      "AWSSDK.Core/3.7.304.18": {
-        "runtime": {
-          "lib/net8.0/AWSSDK.Core.dll": {
-            "assemblyVersion": "3.3.0.0",
-            "fileVersion": "3.7.304.18"
-          }
-        }
-      },
-      "AWSSDK.S3/3.7.309.6": {
-        "dependencies": {
-          "AWSSDK.Core": "3.7.304.18"
-        },
-        "runtime": {
-          "lib/net8.0/AWSSDK.S3.dll": {
-            "assemblyVersion": "3.3.0.0",
-            "fileVersion": "3.7.309.6"
           }
         }
       },
@@ -109,6 +92,14 @@
           }
         }
       },
+      "Bogus/35.5.1": {
+        "runtime": {
+          "lib/net6.0/Bogus.dll": {
+            "assemblyVersion": "35.5.1.0",
+            "fileVersion": "35.5.1.0"
+          }
+        }
+      },
       "CloudinaryDotNet/1.26.2": {
         "dependencies": {
           "Newtonsoft.Json": "13.0.3",
@@ -119,6 +110,38 @@
           "lib/netstandard2.0/CloudinaryDotNet.dll": {
             "assemblyVersion": "1.26.2.0",
             "fileVersion": "1.26.2.0"
+          }
+        }
+      },
+      "Faker.Net/2.0.163": {
+        "dependencies": {
+          "NETStandard.Library": "2.0.3"
+        },
+        "runtime": {
+          "lib/net60/Faker.Net.6.0.dll": {
+            "assemblyVersion": "2.0.163.0",
+            "fileVersion": "2.0.163.0"
+          }
+        },
+        "resources": {
+          "lib/net60/de-DE/Faker.Net.6.0.resources.dll": {
+            "locale": "de-DE"
+          }
+        }
+      },
+      "Faker.NETCore/1.0.2": {
+        "dependencies": {
+          "NETStandard.Library": "2.0.3"
+        },
+        "runtime": {
+          "lib/netstandard1.6/Faker.NETCore.dll": {
+            "assemblyVersion": "1.0.1.0",
+            "fileVersion": "1.0.1.0"
+          }
+        },
+        "resources": {
+          "lib/netstandard1.6/de-DE/Faker.NETCore.resources.dll": {
+            "locale": "de-DE"
           }
         }
       },
@@ -1643,6 +1666,11 @@
           }
         }
       },
+      "NETStandard.Library/2.0.3": {
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "5.0.0"
+        }
+      },
       "Newtonsoft.Json/13.0.3": {
         "runtime": {
           "lib/net6.0/Newtonsoft.Json.dll": {
@@ -2446,20 +2474,6 @@
       "path": "automapper.extensions.microsoft.dependencyinjection/12.0.1",
       "hashPath": "automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512"
     },
-    "AWSSDK.Core/3.7.304.18": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-v1+UceFK1cWQUQOO1c8AGmErFGJlo/gxKLMw5XKIVg8tYYVpsGojBmqhYHwHGI4SHle7dzQI5O2JTTqhxnIS9A==",
-      "path": "awssdk.core/3.7.304.18",
-      "hashPath": "awssdk.core.3.7.304.18.nupkg.sha512"
-    },
-    "AWSSDK.S3/3.7.309.6": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-ZEm/f79GWFHJB5JCZifhiRWNWr408YcL/pNaSXaHopYYGHlAFBEzv3PNXimG0rA7nfbnO2WNIjpeYyKWsgMNwg==",
-      "path": "awssdk.s3/3.7.309.6",
-      "hashPath": "awssdk.s3.3.7.309.6.nupkg.sha512"
-    },
     "Azure.Core/1.35.0": {
       "type": "package",
       "serviceable": true,
@@ -2481,12 +2495,33 @@
       "path": "bcrypt.net-core/1.6.0",
       "hashPath": "bcrypt.net-core.1.6.0.nupkg.sha512"
     },
+    "Bogus/35.5.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-GBp2peww04szEJ0GlBlzCYilFDaSkL7Ja4m37YeTRjC/mgoiZnUuifmgUxVD/oLU2MC1uoXfQYK91doGp7Zkpg==",
+      "path": "bogus/35.5.1",
+      "hashPath": "bogus.35.5.1.nupkg.sha512"
+    },
     "CloudinaryDotNet/1.26.2": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-JUDOUKa7T+h0nmMhBdBxCkCldN4/DIZLOlh5p30KrcBX6Spral6vxTWhzk6OH2pGd8MGL5R379EsK7tJr/IQpw==",
       "path": "cloudinarydotnet/1.26.2",
       "hashPath": "cloudinarydotnet.1.26.2.nupkg.sha512"
+    },
+    "Faker.Net/2.0.163": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-nQZA+V19Jf6tSeFnuRWpoVZzSHRmtfOYAnX5RbkY6+HBHpLg55DYTnxUSXeFHpmsgQzmkjG7Ucomk7FisJnfhA==",
+      "path": "faker.net/2.0.163",
+      "hashPath": "faker.net.2.0.163.nupkg.sha512"
+    },
+    "Faker.NETCore/1.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-teRWZFwtBSuMRo2jxB4/DfCo3nprjMtjb7tjBfhrnz+BPhQMivW9cVo06kLr4GAJjrCOvCNQ2sJckRwGvMmK0Q==",
+      "path": "faker.netcore/1.0.2",
+      "hashPath": "faker.netcore.1.0.2.nupkg.sha512"
     },
     "FluentValidation/11.5.1": {
       "type": "package",
@@ -3306,6 +3341,13 @@
       "sha512": "sha512-+1C0sg4YJQczp/2RVrVbKLIntg7Mou7Ie5M01UBiAsxmIarjfBRlCgKK4sEbPyGask52VRKV29/Zi+41B6LPXA==",
       "path": "netcore.mailkit/2.1.0",
       "hashPath": "netcore.mailkit.2.1.0.nupkg.sha512"
+    },
+    "NETStandard.Library/2.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-st47PosZSHrjECdjeIzZQbzivYBJFv6P2nv4cj2ypdI204DO+vZ7l5raGMiX4eXMJ53RfOIg+/s4DHVZ54Nu2A==",
+      "path": "netstandard.library/2.0.3",
+      "hashPath": "netstandard.library.2.0.3.nupkg.sha512"
     },
     "Newtonsoft.Json/13.0.3": {
       "type": "package",

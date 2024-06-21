@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace TestWebAPI.Models
 {
@@ -9,7 +10,7 @@ namespace TestWebAPI.Models
         [Required]
         public string title { get; set; }
         [Required]
-        public long description { get; set; }
+        public string description { get; set; }
         [Required]
         public string avatar {  get; set; }
         public DateTime createAt { get; set; } = DateTime.Now;

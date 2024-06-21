@@ -8,6 +8,7 @@ namespace TestWebAPI.DTOs.Category
         [Required]
         public string title { get; set; }
         [Required]
-        public long description { get; set; }
+        public string description { get; set; }
+        public IFormFile avatar { get; set; }
     }
 }

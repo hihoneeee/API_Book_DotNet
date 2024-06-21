@@ -36,9 +36,9 @@ namespace TestWebAPI.Controllers
         }
         //[Authorize(Policy = "create-category")]
         [HttpPost]
-        public async Task<IActionResult> CreateCategoryAsync([FromForm] CategoryDTO categoryDTO, [FromForm] CloudinaryDTO cloudinaryDTO)
+        public async Task<IActionResult> CreateCategoryAsync([FromForm] CategoryDTO categoryDTO)
         {
-            var uploadResult = await _cloudinaryServices.UploadImage(cloudinaryDTO.file);
+            var uploadResult = await _cloudinaryServices.UploadImage(categoryDTO.avatar);
             if (uploadResult == null || string.IsNullOrEmpty(uploadResult.Url.ToString()))
             {
                 return StatusCode(500, "Image upload failed");
@@ -58,14 +58,23 @@ namespace TestWebAPI.Controllers
             }
         }
 
-        [Authorize(Policy = "update-category")]
-        [HttpPut]
-        public async Task<IActionResult> UpdateCategoryAsync(int id, [FromBody] CategoryDTO categoryDTO)
+        //[Authorize(Policy = "update-category")]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateCategoryAsync(int id, [FromForm] CategoryDTO categoryDTO)
         {
-            var serviceResponse = await _categoryServices.UpdateCategoryAsync(id, categoryDTO);
+            var uploadResult = await _cloudinaryServices.UploadImage(categoryDTO.avatar);
+            if (uploadResult == null || string.IsNullOrEmpty(uploadResult.Url.ToString()))
+            {
+                return StatusCode(500, "Image upload failed");
+            }
+
+            var path = uploadResult.Url.ToString();
+            var publicId = uploadResult.PublicId;
+
+            var serviceResponse = await _categoryServices.UpdateCategoryAsync(id, categoryDTO, path, publicId);
             if (serviceResponse.statusCode == EHttpType.Success)
             {
-                return Ok(new { serviceResponse.success, serviceResponse.message, serviceResponse.data });
+                return Ok(new { serviceResponse.success, serviceResponse.message });
             }
             else
             {
@@ -80,7 +89,7 @@ namespace TestWebAPI.Controllers
             var serviceResponse = await _categoryServices.DeleteCategoryAsync(id);
             if (serviceResponse.statusCode == EHttpType.Success)
             {
-                return Ok(new { serviceResponse.success, serviceResponse.message, serviceResponse.data });
+                return Ok(new { serviceResponse.success, serviceResponse.message });
             }
             else
             {

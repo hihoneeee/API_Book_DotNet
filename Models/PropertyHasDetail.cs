@@ -19,17 +19,17 @@ namespace TestWebAPI.Models
         [Required]
         public string city { get; set; }
         [Required]
-        public long images { get; set; }
+        public string images { get; set; }
         [Required]
         public string address { get; set; }
         [Required]
-        public int bedroom;
+        public int bedroom { get; set; }
         [Required]
-        public int bathroom;
+        public int bathroom { get; set; }
         [Required]
-        public int year_build;
+        public int year_build { get; set; }
         [Required]
-        public int size;
+        public int size { get; set; }
         [Required]
         public int seller_id { get; set; }
         [ForeignKey("seller_id")]
@@ -39,6 +39,6 @@ namespace TestWebAPI.Models
         [ForeignKey("property_id")]
         public virtual Property property { get; set; }
         [Required]
-        public typeEnum type;
+        public typeEnum type { get; set; }
     }
 }

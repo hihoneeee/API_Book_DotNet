@@ -7,7 +7,7 @@ namespace TestWebAPI.DTOs.Property
         [Required]
         public string title { get; set; }
         [Required]
-        public long description { get; set; }
+        public string description { get; set; }
         [Required]
         public int price { get; set; }
         [Required]

@@ -16,7 +16,7 @@ namespace TestWebAPI.Models
         [Required]
         public string title { get; set; }
         [Required]
-        public long description { get; set; }
+        public string description { get; set; }
         [Required]
         public int price { get; set; }
         [Required]
@@ -28,6 +28,7 @@ namespace TestWebAPI.Models
 
         public statusEnum status;
         public DateTime createdAt { get; set; } = DateTime.Now;
+        [Required]
         public DateTime updatedAt { get; set; }
         public virtual ICollection<Nofication>? Nofications { get; set; }
         public virtual ICollection<Evaluate>? Evaluates { get; set; }

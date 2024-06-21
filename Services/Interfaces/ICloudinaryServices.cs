@@ -1,4 +1,5 @@
 ﻿using CloudinaryDotNet.Actions;
+using TestWebAPI.DTOs.Common;
 
 namespace TestWebAPI.Services.Interfaces
 {
@@ -6,5 +7,6 @@ namespace TestWebAPI.Services.Interfaces
     {
         Task<ImageUploadResult> UploadImage(IFormFile file);
         Task<DeletionResult> DeleteImage(string publicId);
+        string ExtractPublicIdFromUrl(string path);
     }
 }

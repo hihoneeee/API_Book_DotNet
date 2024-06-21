@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using TestWebAPI.DTOs.Category;
-using TestWebAPI.DTOs.Role;
 using TestWebAPI.Helpers;
 using TestWebAPI.Models;
 using TestWebAPI.Repositories.Interfaces;
@@ -67,7 +66,7 @@ namespace TestWebAPI.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<CategoryDTO>> UpdateCategoryAsync(int id, CategoryDTO categoryDTO)
+        public async Task<ServiceResponse<CategoryDTO>> UpdateCategoryAsync(int id, CategoryDTO categoryDTO, string path, string publicId)
         {
             var serviceResponse = new ServiceResponse<CategoryDTO>();
             try
@@ -76,15 +75,20 @@ namespace TestWebAPI.Services
                 if (checkExist == null)
                 {
                     serviceResponse.SetNotFound("Category");
+                    await _cloudinaryServices.DeleteImage(publicId);
                     return serviceResponse;
                 }
                 var CheckValue = await _cateRepo.GetCategoryByTitleAsync(categoryDTO.title);
-                if (checkExist != null)
+                if (CheckValue != null)
                 {
                     serviceResponse.SetExisting("Category");
+                    await _cloudinaryServices.DeleteImage(publicId);
                     return serviceResponse;
                 }
+                var oldImagePublicId = _cloudinaryServices.ExtractPublicIdFromUrl(checkExist.avatar);
+                await _cloudinaryServices.DeleteImage(oldImagePublicId);
                 var category = _mapper.Map<Category>(categoryDTO);
+                category.avatar = path;
                 var updatedRole = await _cateRepo.UpdateCategoryAsync(checkExist, category);
                 serviceResponse.SetSuccess("Category updated successfully!");
             }

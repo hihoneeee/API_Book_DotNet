@@ -15,6 +15,7 @@ namespace TestWebAPI.Models
         [ForeignKey("property_id")]
         public virtual Property property { get; set; }
         public DateTime createdAt { get; set; } = DateTime.Now;
+        [Required]
         public DateTime updatedAt { get; set; }
     }
 }

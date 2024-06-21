@@ -126,6 +126,7 @@ namespace TestWebAPI.Data
         public DbSet<Contract> Contracts { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
+        public DbSet<PropertyHasDetail> propertyHasDetails { get; set; }
 
     }
 }

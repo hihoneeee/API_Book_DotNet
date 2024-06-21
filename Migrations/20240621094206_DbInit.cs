@@ -18,7 +18,7 @@ namespace TestWebAPI.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    description = table.Column<long>(type: "bigint", nullable: false),
+                    description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     avatar = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     createAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     updateAt = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -69,7 +69,7 @@ namespace TestWebAPI.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    description = table.Column<long>(type: "bigint", nullable: false),
+                    description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     price = table.Column<int>(type: "int", nullable: false),
                     avatar = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     category_id = table.Column<int>(type: "int", nullable: false),
@@ -153,7 +153,8 @@ namespace TestWebAPI.Migrations
                     appointment_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     secondary_day = table.Column<DateTime>(type: "datetime2", nullable: false),
                     is_active = table.Column<bool>(type: "bit", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -253,29 +254,34 @@ namespace TestWebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PropertyHasDetail",
+                name: "propertyHasDetails",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     province = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     city = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    images = table.Column<long>(type: "bigint", nullable: false),
+                    images = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    bedroom = table.Column<int>(type: "int", nullable: false),
+                    bathroom = table.Column<int>(type: "int", nullable: false),
+                    year_build = table.Column<int>(type: "int", nullable: false),
+                    size = table.Column<int>(type: "int", nullable: false),
                     seller_id = table.Column<int>(type: "int", nullable: false),
-                    property_id = table.Column<int>(type: "int", nullable: false)
+                    property_id = table.Column<int>(type: "int", nullable: false),
+                    type = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PropertyHasDetail", x => x.id);
+                    table.PrimaryKey("PK_propertyHasDetails", x => x.id);
                     table.ForeignKey(
-                        name: "FK_PropertyHasDetail_Properties_property_id",
+                        name: "FK_propertyHasDetails_Properties_property_id",
                         column: x => x.property_id,
                         principalTable: "Properties",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PropertyHasDetail_Users_seller_id",
+                        name: "FK_propertyHasDetails_Users_seller_id",
                         column: x => x.seller_id,
                         principalTable: "Users",
                         principalColumn: "id",
@@ -290,8 +296,9 @@ namespace TestWebAPI.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     buyer_id = table.Column<int>(type: "int", nullable: false),
                     property_id = table.Column<int>(type: "int", nullable: false),
-                    message = table.Column<long>(type: "bigint", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    message = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -342,7 +349,8 @@ namespace TestWebAPI.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     buyer_id = table.Column<int>(type: "int", nullable: false),
                     property_id = table.Column<int>(type: "int", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -372,6 +380,7 @@ namespace TestWebAPI.Migrations
                     content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     appointment_id = table.Column<int>(type: "int", nullable: false),
                     createdAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Propertyid = table.Column<int>(type: "int", nullable: true),
                     Userid = table.Column<int>(type: "int", nullable: true)
                 },
@@ -452,13 +461,13 @@ namespace TestWebAPI.Migrations
                 column: "category_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PropertyHasDetail_property_id",
-                table: "PropertyHasDetail",
+                name: "IX_propertyHasDetails_property_id",
+                table: "propertyHasDetails",
                 column: "property_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PropertyHasDetail_seller_id",
-                table: "PropertyHasDetail",
+                name: "IX_propertyHasDetails_seller_id",
+                table: "propertyHasDetails",
                 column: "seller_id");
 
             migrationBuilder.CreateIndex(
@@ -518,7 +527,7 @@ namespace TestWebAPI.Migrations
                 name: "Nofications");
 
             migrationBuilder.DropTable(
-                name: "PropertyHasDetail");
+                name: "propertyHasDetails");
 
             migrationBuilder.DropTable(
                 name: "RolePermissions");

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using NuGet.Common;
 using TestWebAPI.DTOs.Auth;
 using TestWebAPI.DTOs.JWT;
 using TestWebAPI.Helpers;
@@ -8,7 +7,6 @@ using TestWebAPI.Models;
 using TestWebAPI.Repositories.Interfaces;
 using TestWebAPI.Response;
 using TestWebAPI.Services.Interfaces;
-using static TestWebAPI.Response.HttpStatus;
 
 namespace TestWebAPI.Services
 {

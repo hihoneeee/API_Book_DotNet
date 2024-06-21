@@ -48,6 +48,9 @@ namespace TestWebAPI.Migrations
                     b.Property<DateTime>("secondary_day")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("updatedAt")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("id");
 
                     b.HasIndex("buyer_id");
@@ -72,8 +75,9 @@ namespace TestWebAPI.Migrations
                     b.Property<DateTime>("createAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("description")
-                        .HasColumnType("bigint");
+                    b.Property<string>("description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("title")
                         .IsRequired()
@@ -118,6 +122,9 @@ namespace TestWebAPI.Migrations
                     b.Property<string>("signature_seller")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("updatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("id");
 
@@ -268,8 +275,9 @@ namespace TestWebAPI.Migrations
                     b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("description")
-                        .HasColumnType("bigint");
+                    b.Property<string>("description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("price")
                         .HasColumnType("int");
@@ -300,12 +308,19 @@ namespace TestWebAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("bathroom")
+                        .HasColumnType("int");
+
+                    b.Property<int>("bedroom")
+                        .HasColumnType("int");
+
                     b.Property<string>("city")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("images")
-                        .HasColumnType("bigint");
+                    b.Property<string>("images")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("property_id")
                         .HasColumnType("int");
@@ -317,13 +332,22 @@ namespace TestWebAPI.Migrations
                     b.Property<int>("seller_id")
                         .HasColumnType("int");
 
+                    b.Property<int>("size")
+                        .HasColumnType("int");
+
+                    b.Property<int>("type")
+                        .HasColumnType("int");
+
+                    b.Property<int>("year_build")
+                        .HasColumnType("int");
+
                     b.HasKey("id");
 
                     b.HasIndex("property_id");
 
                     b.HasIndex("seller_id");
 
-                    b.ToTable("PropertyHasDetail");
+                    b.ToTable("propertyHasDetails");
                 });
 
             modelBuilder.Entity("TestWebAPI.Models.Role", b =>
@@ -394,11 +418,15 @@ namespace TestWebAPI.Migrations
                     b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("message")
-                        .HasColumnType("bigint");
+                    b.Property<string>("message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("property_id")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("updatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("id");
 
@@ -519,6 +547,9 @@ namespace TestWebAPI.Migrations
 
                     b.Property<int>("property_id")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("updatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("id");
 

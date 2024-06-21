@@ -142,6 +142,16 @@ builder.Services.AddAuthorization(options =>
         policy.Requirements.Add(new AuthorizationSetting("update-permission")));
     options.AddPolicy("delete-permission", policy =>
         policy.Requirements.Add(new AuthorizationSetting("delete-permission")));
+
+    // Policy category
+    options.AddPolicy("add-category", policy =>
+    policy.Requirements.Add(new AuthorizationSetting("add-category")));
+    options.AddPolicy("get-category", policy =>
+        policy.Requirements.Add(new AuthorizationSetting("get-category")));
+    options.AddPolicy("update-category", policy =>
+        policy.Requirements.Add(new AuthorizationSetting("update-category")));
+    options.AddPolicy("delete-category", policy =>
+        policy.Requirements.Add(new AuthorizationSetting("delete-category")));
 });
 
 // AutoMapper
@@ -164,6 +174,7 @@ builder.Services.AddScoped<IPermisstionRepositories, PermisstionRepositories>();
 builder.Services.AddScoped<IRoleHasPermissionRepositories, RoleHasPermissionRepositories>();
 builder.Services.AddScoped<IUserRepositories, UserRepositories>();
 builder.Services.AddScoped<ICategoryRepositories, CategoryRepositories>();
+builder.Services.AddScoped<FakeDataRepositories>();
 
 // Add services to the container.
 builder.Services.AddScoped<IRoleService, RoleServices>();

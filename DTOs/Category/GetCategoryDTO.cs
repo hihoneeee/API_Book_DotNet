@@ -9,7 +9,7 @@ namespace TestWebAPI.DTOs.Category
         [Required]
         public string title { get; set; }
         [Required]
-        public long description { get; set; }
+        public string description { get; set; }
         [Required]
         public string avatar { get; set; }
         [JsonIgnore]

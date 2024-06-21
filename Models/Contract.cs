@@ -19,5 +19,7 @@ namespace TestWebAPI.Models
         public virtual Appointment appointment { get; set; }
         [Required]
         public DateTime createdAt { get; set; } = DateTime.Now;
+        [Required]
+        public DateTime updatedAt { get; set; }
     }
 }

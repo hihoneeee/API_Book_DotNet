@@ -5,6 +5,9 @@ namespace TestWebAPI.DTOs.Common
     public class CloudinaryDTO
     {
         [Required]
-        public IFormFile file { get; set; }
+        public string path { get; set; }
+        [Required]
+        public string publicId { get; set; }
+
     }
 }
