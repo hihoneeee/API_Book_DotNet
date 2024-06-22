@@ -50,8 +50,8 @@ namespace TestWebAPI.Helpers
                                      description = p.description,
                                      avatar = p.avatar,
                                      price = p.price,
-                                     category_id = p.category_id,
-                                     seller_id = p.PropertyHasDetails.FirstOrDefault().seller_id,
+                                     categoryId = p.categoryId,
+                                     sellerId = p.PropertyHasDetails.FirstOrDefault().sellerId,
                                  }).ToList()));
             CreateMap<Category, CategoryDTO>().ReverseMap();
             //property

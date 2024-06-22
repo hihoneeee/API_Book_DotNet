@@ -17,13 +17,13 @@ namespace TestWebAPI.Services
 
         public async Task InsertJWTToken(jwtDTO jwt)
         {
-            var existingJwt = await _jwtRepo.GetJwtByUserId(jwt.user_id);
+            var existingJwt = await _jwtRepo.GetJwtByUserId(jwt.userId);
             if (existingJwt != null)
             {
                 // Cập nhật các trường của refresh token cũ với các giá trị mới
-                existingJwt.expired_date = jwt.expired_date;
+                existingJwt.expiredDate = jwt.expiredDate;
                 existingJwt.value = jwt.value;
-                existingJwt.issued_date = jwt.issued_date;
+                existingJwt.issuedDate = jwt.issuedDate;
 
                 // Lưu các thay đổi vào cơ sở dữ liệu
                 await _jwtRepo.UpdateJwtAsync(existingJwt);

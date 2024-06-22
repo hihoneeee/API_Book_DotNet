@@ -13,8 +13,8 @@ namespace TestWebAPI.DTOs.Property
         [Required]
         public string avatar { get; set; }
         [Required]
-        public int category_id { get; set; }
+        public int categoryId { get; set; }
         [Required]
-        public int seller_id { get; set; }
+        public int sellerId { get; set; }
     }
 }

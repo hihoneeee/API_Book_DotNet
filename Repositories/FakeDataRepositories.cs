@@ -107,7 +107,7 @@ namespace TestWebAPI.Repositories
                 .RuleFor(p => p.avatar, f => f.Image.LoremFlickrUrl(1000, 500, "realestate"))
                 .RuleFor(p => p.status, f => f.PickRandom<statusEnum>())
                 .RuleFor(p => p.description, f => f.Lorem.Paragraph())
-                .RuleFor(p => p.category_id, f => f.PickRandom(categories).id)
+                .RuleFor(p => p.categoryId, f => f.PickRandom(categories).id)
                 .RuleFor(p => p.category, f => f.PickRandom(categories))
                 .RuleFor(p => p.createdAt, f => f.Date.Past())
                 .RuleFor(p => p.updatedAt, (f, p) => p.createdAt.AddMonths(f.Random.Int(1, 12)));
@@ -124,24 +124,24 @@ namespace TestWebAPI.Repositories
                 .RuleFor(phd => phd.address, f => f.Address.FullAddress())
                 .RuleFor(phd => phd.bedroom, f => f.Random.Int(1, 10))
                 .RuleFor(phd => phd.bathroom, f => f.Random.Int(1, 5))
-                .RuleFor(phd => phd.year_build, f => f.Date.Past(50).Year)
+                .RuleFor(phd => phd.yearBuild, f => f.Date.Past(50).Year)
                 .RuleFor(phd => phd.size, f => f.Random.Int(500, 10000))
-                .RuleFor(phd => phd.seller_id, f => f.PickRandom(users).id)
+                .RuleFor(phd => phd.sellerId, f => f.PickRandom(users).id)
                 .RuleFor(phd => phd.seller, f => f.PickRandom(users))
-                .RuleFor(phd => phd.property_id, f => f.PickRandom(properties).id)
+                .RuleFor(phd => phd.propertyId, f => f.PickRandom(properties).id)
                 .RuleFor(phd => phd.property, f => f.PickRandom(properties))
                 .RuleFor(phd => phd.type, f => f.PickRandom<typeEnum>());
 
             var propertyHasDetails = propertyHasDetailFaker.Generate(60);
 
-            _context.propertyHasDetails.AddRange(propertyHasDetails);
+            _context.PropertyHasDetails.AddRange(propertyHasDetails);
             await _context.SaveChangesAsync();
 
             var userMediaFaker = new Faker<User_Media>()
                 .RuleFor(um => um.provider, f => f.Company.CompanyName())
                 .RuleFor(um => um.icon, f => f.Internet.Avatar())
                 .RuleFor(um => um.link, f => f.Internet.Url())
-                .RuleFor(um => um.user_id, f => f.PickRandom(users).id)
+                .RuleFor(um => um.userId, f => f.PickRandom(users).id)
                 .RuleFor(um => um.user, f => f.PickRandom(users))
                 .RuleFor(um => um.createdAt, f => f.Date.Past())
                 .RuleFor(um => um.updatedAt, (f, um) => um.createdAt.AddMonths(f.Random.Int(1, 12)));

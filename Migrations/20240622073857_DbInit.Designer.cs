@@ -12,7 +12,7 @@ using TestWebAPI.Data;
 namespace TestWebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240621094206_DbInit")]
+    [Migration("20240622073857_DbInit")]
     partial class DbInit
     {
         /// <inheritdoc />
@@ -33,32 +33,32 @@ namespace TestWebAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<DateTime>("appointment_date")
+                    b.Property<DateTime>("appointmentDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("buyer_id")
+                    b.Property<DateTime>("backupDay")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("buyerId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("is_active")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("property_id")
+                    b.Property<int>("propertyId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("secondary_day")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("status")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("updatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("id");
 
-                    b.HasIndex("buyer_id");
+                    b.HasIndex("buyerId");
 
-                    b.HasIndex("property_id");
+                    b.HasIndex("propertyId");
 
                     b.ToTable("Appointments");
                 });
@@ -108,9 +108,6 @@ namespace TestWebAPI.Migrations
                     b.Property<int?>("Userid")
                         .HasColumnType("int");
 
-                    b.Property<int>("appointment_id")
-                        .HasColumnType("int");
-
                     b.Property<string>("content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -118,11 +115,14 @@ namespace TestWebAPI.Migrations
                     b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("signature_buyer")
+                    b.Property<int>("offerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("signatureBuyer")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("signature_seller")
+                    b.Property<string>("signatureSeller")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -135,7 +135,8 @@ namespace TestWebAPI.Migrations
 
                     b.HasIndex("Userid");
 
-                    b.HasIndex("appointment_id");
+                    b.HasIndex("offerId")
+                        .IsUnique();
 
                     b.ToTable("Contracts");
                 });
@@ -148,13 +149,13 @@ namespace TestWebAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<int>("buyer_id")
+                    b.Property<int>("buyerId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("property_id")
+                    b.Property<int>("propertyId")
                         .HasColumnType("int");
 
                     b.Property<string>("review")
@@ -169,9 +170,9 @@ namespace TestWebAPI.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("buyer_id");
+                    b.HasIndex("buyerId");
 
-                    b.HasIndex("property_id");
+                    b.HasIndex("propertyId");
 
                     b.ToTable("Evaluates");
                 });
@@ -184,13 +185,13 @@ namespace TestWebAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<DateTime>("expired_date")
+                    b.Property<DateTime>("expiredDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("issued_date")
+                    b.Property<DateTime>("issuedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("user_id")
+                    b.Property<int>("userId")
                         .HasColumnType("int");
 
                     b.Property<string>("value")
@@ -199,7 +200,7 @@ namespace TestWebAPI.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("user_id");
+                    b.HasIndex("userId");
 
                     b.ToTable("JWTs");
                 });
@@ -215,22 +216,52 @@ namespace TestWebAPI.Migrations
                     b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("property_id")
+                    b.Property<int>("propertyId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("updatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("user_id")
+                    b.Property<int>("userId")
                         .HasColumnType("int");
 
                     b.HasKey("id");
 
-                    b.HasIndex("property_id");
+                    b.HasIndex("propertyId");
 
-                    b.HasIndex("user_id");
+                    b.HasIndex("userId");
 
                     b.ToTable("Nofications");
+                });
+
+            modelBuilder.Entity("TestWebAPI.Models.Offer", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<int>("appointmentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("createdAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("price")
+                        .HasColumnType("int");
+
+                    b.Property<int>("status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("updatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("appointmentId");
+
+                    b.ToTable("Offers");
                 });
 
             modelBuilder.Entity("TestWebAPI.Models.Permission", b =>
@@ -272,7 +303,7 @@ namespace TestWebAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("category_id")
+                    b.Property<int>("categoryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("createdAt")
@@ -285,6 +316,9 @@ namespace TestWebAPI.Migrations
                     b.Property<int>("price")
                         .HasColumnType("int");
 
+                    b.Property<int>("status")
+                        .HasColumnType("int");
+
                     b.Property<string>("title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -294,7 +328,7 @@ namespace TestWebAPI.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("category_id");
+                    b.HasIndex("categoryId");
 
                     b.ToTable("Properties");
                 });
@@ -325,14 +359,14 @@ namespace TestWebAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("property_id")
+                    b.Property<int>("propertyId")
                         .HasColumnType("int");
 
                     b.Property<string>("province")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("seller_id")
+                    b.Property<int>("sellerId")
                         .HasColumnType("int");
 
                     b.Property<int>("size")
@@ -341,16 +375,16 @@ namespace TestWebAPI.Migrations
                     b.Property<int>("type")
                         .HasColumnType("int");
 
-                    b.Property<int>("year_build")
+                    b.Property<int>("yearBuild")
                         .HasColumnType("int");
 
                     b.HasKey("id");
 
-                    b.HasIndex("property_id");
+                    b.HasIndex("propertyId");
 
-                    b.HasIndex("seller_id");
+                    b.HasIndex("sellerId");
 
-                    b.ToTable("propertyHasDetails");
+                    b.ToTable("PropertyHasDetails");
                 });
 
             modelBuilder.Entity("TestWebAPI.Models.Role", b =>
@@ -415,7 +449,7 @@ namespace TestWebAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<int>("buyer_id")
+                    b.Property<int>("buyerId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("createdAt")
@@ -425,7 +459,7 @@ namespace TestWebAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("property_id")
+                    b.Property<int>("propertyId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("updatedAt")
@@ -433,9 +467,9 @@ namespace TestWebAPI.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("buyer_id");
+                    b.HasIndex("buyerId");
 
-                    b.HasIndex("property_id");
+                    b.HasIndex("propertyId");
 
                     b.ToTable("Submissions");
                 });
@@ -524,12 +558,12 @@ namespace TestWebAPI.Migrations
                     b.Property<DateTime>("updatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("user_id")
+                    b.Property<int>("userId")
                         .HasColumnType("int");
 
                     b.HasKey("id");
 
-                    b.HasIndex("user_id");
+                    b.HasIndex("userId");
 
                     b.ToTable("User_Medias");
                 });
@@ -542,13 +576,13 @@ namespace TestWebAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<int>("buyer_id")
+                    b.Property<int>("buyerId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("property_id")
+                    b.Property<int>("propertyId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("updatedAt")
@@ -556,9 +590,9 @@ namespace TestWebAPI.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("buyer_id");
+                    b.HasIndex("buyerId");
 
-                    b.HasIndex("property_id");
+                    b.HasIndex("propertyId");
 
                     b.ToTable("Wishlists");
                 });
@@ -567,13 +601,13 @@ namespace TestWebAPI.Migrations
                 {
                     b.HasOne("TestWebAPI.Models.User", "buyer")
                         .WithMany("Appointments")
-                        .HasForeignKey("buyer_id")
+                        .HasForeignKey("buyerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TestWebAPI.Models.Property", "property")
                         .WithMany("Appointments")
-                        .HasForeignKey("property_id")
+                        .HasForeignKey("propertyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -592,26 +626,26 @@ namespace TestWebAPI.Migrations
                         .WithMany("Contracts")
                         .HasForeignKey("Userid");
 
-                    b.HasOne("TestWebAPI.Models.Appointment", "appointment")
-                        .WithMany("Contracts")
-                        .HasForeignKey("appointment_id")
+                    b.HasOne("TestWebAPI.Models.Offer", "offer")
+                        .WithOne("Contract")
+                        .HasForeignKey("TestWebAPI.Models.Contract", "offerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("appointment");
+                    b.Navigation("offer");
                 });
 
             modelBuilder.Entity("TestWebAPI.Models.Evaluate", b =>
                 {
                     b.HasOne("TestWebAPI.Models.User", "buyer")
                         .WithMany("Evaluates")
-                        .HasForeignKey("buyer_id")
+                        .HasForeignKey("buyerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TestWebAPI.Models.Property", "property")
                         .WithMany("Evaluates")
-                        .HasForeignKey("property_id")
+                        .HasForeignKey("propertyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -624,7 +658,7 @@ namespace TestWebAPI.Migrations
                 {
                     b.HasOne("TestWebAPI.Models.User", "user")
                         .WithMany("JWTs")
-                        .HasForeignKey("user_id")
+                        .HasForeignKey("userId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -635,13 +669,13 @@ namespace TestWebAPI.Migrations
                 {
                     b.HasOne("TestWebAPI.Models.Property", "property")
                         .WithMany("Nofications")
-                        .HasForeignKey("property_id")
+                        .HasForeignKey("propertyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TestWebAPI.Models.User", "user")
                         .WithMany("Nofications")
-                        .HasForeignKey("user_id")
+                        .HasForeignKey("userId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -650,11 +684,22 @@ namespace TestWebAPI.Migrations
                     b.Navigation("user");
                 });
 
+            modelBuilder.Entity("TestWebAPI.Models.Offer", b =>
+                {
+                    b.HasOne("TestWebAPI.Models.Appointment", "appointment")
+                        .WithMany("Offers")
+                        .HasForeignKey("appointmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("appointment");
+                });
+
             modelBuilder.Entity("TestWebAPI.Models.Property", b =>
                 {
                     b.HasOne("TestWebAPI.Models.Category", "category")
                         .WithMany("Properties")
-                        .HasForeignKey("category_id")
+                        .HasForeignKey("categoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -665,13 +710,13 @@ namespace TestWebAPI.Migrations
                 {
                     b.HasOne("TestWebAPI.Models.Property", "property")
                         .WithMany("PropertyHasDetails")
-                        .HasForeignKey("property_id")
+                        .HasForeignKey("propertyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TestWebAPI.Models.User", "seller")
                         .WithMany("PropertyHasDetails")
-                        .HasForeignKey("seller_id")
+                        .HasForeignKey("sellerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -705,13 +750,13 @@ namespace TestWebAPI.Migrations
                 {
                     b.HasOne("TestWebAPI.Models.User", "buyer")
                         .WithMany("Submissions")
-                        .HasForeignKey("buyer_id")
+                        .HasForeignKey("buyerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TestWebAPI.Models.Property", "property")
                         .WithMany("Submissions")
-                        .HasForeignKey("property_id")
+                        .HasForeignKey("propertyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -736,7 +781,7 @@ namespace TestWebAPI.Migrations
                 {
                     b.HasOne("TestWebAPI.Models.User", "user")
                         .WithMany("User_Medias")
-                        .HasForeignKey("user_id")
+                        .HasForeignKey("userId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -747,13 +792,13 @@ namespace TestWebAPI.Migrations
                 {
                     b.HasOne("TestWebAPI.Models.User", "buyer")
                         .WithMany("Wishlists")
-                        .HasForeignKey("buyer_id")
+                        .HasForeignKey("buyerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TestWebAPI.Models.Property", "property")
                         .WithMany("Wishlists")
-                        .HasForeignKey("property_id")
+                        .HasForeignKey("propertyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -764,12 +809,18 @@ namespace TestWebAPI.Migrations
 
             modelBuilder.Entity("TestWebAPI.Models.Appointment", b =>
                 {
-                    b.Navigation("Contracts");
+                    b.Navigation("Offers");
                 });
 
             modelBuilder.Entity("TestWebAPI.Models.Category", b =>
                 {
                     b.Navigation("Properties");
+                });
+
+            modelBuilder.Entity("TestWebAPI.Models.Offer", b =>
+                {
+                    b.Navigation("Contract")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("TestWebAPI.Models.Permission", b =>

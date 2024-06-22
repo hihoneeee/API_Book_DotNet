@@ -40,7 +40,7 @@ namespace TestWebAPI.Controllers
                 var serviceResponse = await _authService.Login(authLoginDTO);
                 if (serviceResponse.statusCode == EHttpType.Success)
                 {                   
-                return Ok(new { serviceResponse.success, serviceResponse.message, serviceResponse.access_token });
+                return Ok(new { serviceResponse.success, serviceResponse.message, serviceResponse.accessToken });
                 }
                 else
                 {
@@ -55,7 +55,7 @@ namespace TestWebAPI.Controllers
             var serviceResponse = await _authService.refreshTokenAsync(refreshToken.token);
             if (serviceResponse.statusCode == EHttpType.Success)
             {
-                return Ok(new { serviceResponse.success, serviceResponse.message, serviceResponse.access_token });
+                return Ok(new { serviceResponse.success, serviceResponse.message, serviceResponse.accessToken });
             }
             else
             {

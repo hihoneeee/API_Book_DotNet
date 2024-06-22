@@ -9,13 +9,13 @@ namespace TestWebAPI.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Property>().HasOne(p => p.category).WithMany(c => c.Properties).HasForeignKey(p => p.category_id).HasPrincipalKey(c => c.id);
+            modelBuilder.Entity<Property>().HasOne(p => p.category).WithMany(c => c.Properties).HasForeignKey(p => p.categoryId).HasPrincipalKey(c => c.id);
                         
             modelBuilder.Entity<User>().HasOne(u => u.Role).WithMany(r => r.Users).HasForeignKey(u => u.roleCode).HasPrincipalKey(r => r.code);
             
-            modelBuilder.Entity<JWT>().HasOne(j => j.user).WithMany(u => u.JWTs).HasForeignKey(j => j.user_id).HasPrincipalKey(u => u.id);
+            modelBuilder.Entity<JWT>().HasOne(j => j.user).WithMany(u => u.JWTs).HasForeignKey(j => j.userId).HasPrincipalKey(u => u.id);
             
-            modelBuilder.Entity<User_Media>().HasOne(m => m.user).WithMany(u => u.User_Medias).HasForeignKey(m => m.user_id).HasPrincipalKey(u => u.id);
+            modelBuilder.Entity<User_Media>().HasOne(m => m.user).WithMany(u => u.User_Medias).HasForeignKey(m => m.userId).HasPrincipalKey(u => u.id);
             
             //Role has permission
             modelBuilder.Entity<Role_Permission>()
@@ -34,80 +34,87 @@ namespace TestWebAPI.Data
             modelBuilder.Entity<PropertyHasDetail>()
                 .HasOne(p => p.seller)
                 .WithMany(u => u.PropertyHasDetails)
-                .HasForeignKey(p => p.seller_id)
+                .HasForeignKey(p => p.sellerId)
                 .HasPrincipalKey(u => u.id);
             modelBuilder.Entity<PropertyHasDetail>()
                 .HasOne(p => p.property)
                 .WithMany(p => p.PropertyHasDetails)
-                .HasForeignKey(p => p.property_id)
+                .HasForeignKey(p => p.propertyId)
                 .HasPrincipalKey(p => p.id);
 
             //nofication
             modelBuilder.Entity<Nofication>()
                 .HasOne(n => n.property)
                 .WithMany(p => p.Nofications)
-                .HasForeignKey(n => n.property_id)
+                .HasForeignKey(n => n.propertyId)
                 .HasPrincipalKey(p => p.id);
             modelBuilder.Entity<Nofication>()
                 .HasOne(n => n.user)
                 .WithMany(u => u.Nofications)
-                .HasForeignKey(n => n.user_id)
+                .HasForeignKey(n => n.userId)
                 .HasPrincipalKey(u => u.id);
 
             //Evaluate
             modelBuilder.Entity<Evaluate>()
                 .HasOne(e => e.buyer)
                 .WithMany(u => u.Evaluates)
-                .HasForeignKey(e => e.buyer_id)
+                .HasForeignKey(e => e.buyerId)
                 .HasPrincipalKey(u => u.id);
             modelBuilder.Entity<Evaluate>()
                 .HasOne(e => e.property)
                 .WithMany(p => p.Evaluates)
-                .HasForeignKey(e => e.property_id)
+                .HasForeignKey(e => e.propertyId)
                 .HasPrincipalKey(p => p.id);
-
-            //Contract
-            modelBuilder.Entity<Contract>()
-                .HasOne(c => c.appointment)
-                .WithMany(a => a.Contracts)
-                .HasForeignKey(c => c.appointment_id)
-                .HasPrincipalKey(a => a.id);
 
             //Submission
             modelBuilder.Entity<Submission>()
                 .HasOne(s => s.buyer)
                 .WithMany(u => u.Submissions)
-                .HasForeignKey(s => s.buyer_id)
+                .HasForeignKey(s => s.buyerId)
                 .HasPrincipalKey(u => u.id);
             modelBuilder.Entity<Submission>()
                 .HasOne(s => s.property)
                 .WithMany(p => p.Submissions)
-                .HasForeignKey(s => s.property_id)
-                .HasPrincipalKey(p => p.id);
-
-            //Appointment
-            modelBuilder.Entity<Appointment>()
-                .HasOne(a => a.buyer)
-                .WithMany(u => u.Appointments)
-                .HasForeignKey(a => a.buyer_id)
-                .HasPrincipalKey(u => u.id);
-            modelBuilder.Entity<Appointment>()
-                .HasOne(a => a.property)
-                .WithMany(p => p.Appointments)
-                .HasForeignKey(a => a.property_id)
+                .HasForeignKey(s => s.propertyId)
                 .HasPrincipalKey(p => p.id);
 
             //Wishlist
             modelBuilder.Entity<Wishlist>()
                 .HasOne(w => w.buyer)
                 .WithMany(u => u.Wishlists)
-                .HasForeignKey(w => w.buyer_id)
+                .HasForeignKey(w => w.buyerId)
                 .HasPrincipalKey(u => u.id);
             modelBuilder.Entity<Wishlist>()
                 .HasOne(w => w.property)
                 .WithMany(p => p.Wishlists)
-                .HasForeignKey(w => w.property_id)
+                .HasForeignKey(w => w.propertyId)
                 .HasPrincipalKey(p => p.id);
+
+            //Appointment
+            modelBuilder.Entity<Appointment>()
+                .HasOne(a => a.buyer)
+                .WithMany(u => u.Appointments)
+                .HasForeignKey(a => a.buyerId)
+                .HasPrincipalKey(u => u.id);
+            modelBuilder.Entity<Appointment>()
+                .HasOne(a => a.property)
+                .WithMany(p => p.Appointments)
+                .HasForeignKey(a => a.propertyId)
+                .HasPrincipalKey(p => p.id);
+
+            //offer
+            modelBuilder.Entity<Offer>()
+                .HasOne(o => o.appointment)
+                .WithMany(a => a.Offers)
+                .HasForeignKey(o => o.appointmentId)
+                .HasPrincipalKey(a => a.id);
+
+            //Contract
+            modelBuilder.Entity<Contract>()
+                .HasOne(c => c.offer)
+                .WithOne(o => o.Contract)
+                .HasForeignKey<Contract>(c => c.offerId)
+                .HasPrincipalKey<Offer>(o => o.id);
 
             base.OnModelCreating(modelBuilder);
         }
@@ -126,7 +133,8 @@ namespace TestWebAPI.Data
         public DbSet<Contract> Contracts { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
-        public DbSet<PropertyHasDetail> propertyHasDetails { get; set; }
+        public DbSet<PropertyHasDetail> PropertyHasDetails { get; set; }
+        public DbSet<Offer> Offers { get; set; }
 
     }
 }

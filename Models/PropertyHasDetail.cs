@@ -27,16 +27,16 @@ namespace TestWebAPI.Models
         [Required]
         public int bathroom { get; set; }
         [Required]
-        public int year_build { get; set; }
+        public int yearBuild { get; set; }
         [Required]
         public int size { get; set; }
         [Required]
-        public int seller_id { get; set; }
-        [ForeignKey("seller_id")]
+        public int sellerId { get; set; }
+        [ForeignKey("sellerId")]
         public virtual User seller { get; set; }
         [Required]
-        public int property_id { get; set; }
-        [ForeignKey("property_id")]
+        public int propertyId { get; set; }
+        [ForeignKey("propertyId")]
         public virtual Property property { get; set; }
         [Required]
         public typeEnum type { get; set; }

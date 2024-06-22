@@ -83,10 +83,10 @@ namespace TestWebAPI.Services
                 // Thêm refresh token vào trong bảng JWT
                 await _jwtService.InsertJWTToken(new jwtDTO()
                 {
-                    user_id = existingUser.id,
-                    expired_date = DateTime.UtcNow.AddDays(30),
+                    userId = existingUser.id,
+                    expiredDate = DateTime.UtcNow.AddDays(30),
                     value = refresh_token,
-                    issued_date = DateTime.UtcNow
+                    issuedDate = DateTime.UtcNow
                 });
 
                 // Lưu refresh token vào cookie
@@ -97,7 +97,7 @@ namespace TestWebAPI.Services
                     MaxAge = TimeSpan.FromDays(30) // Thời gian sống của cookie là 7 ngày
                 };
                 _httpContextAccessor.HttpContext.Response.Cookies.Append(cookieName, refresh_token, cookieOptions);
-                serviceResponse.access_token = token;
+                serviceResponse.accessToken = token;
                 serviceResponse.SetSuccess("Login successfully");
                
             }
@@ -128,7 +128,7 @@ namespace TestWebAPI.Services
                 // Tạo mới access token
                 string accessToken = await _jWTHelper.GenerateJWTToken(userId, userRole, DateTime.UtcNow.AddMinutes(10));
 
-                serviceResponse.access_token = accessToken;
+                serviceResponse.accessToken = accessToken;
                 serviceResponse.SetSuccess("Access token refreshed successfully!");
             }
             catch (Exception ex)

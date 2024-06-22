@@ -7,8 +7,8 @@ namespace TestWebAPI.Response
     {
         public string message { get; set; }
         public T data { get; set; }
-        public string access_token { get; set; }
-        public string refresh_token { get; set; }
+        public string accessToken { get; set; }
+        public string refreshToken { get; set; }
 
         public EHttpType statusCode { get; set; }
         public bool success { get; set; }
@@ -41,11 +41,10 @@ namespace TestWebAPI.Response
                 success = success,
                 message = message,
                 statusCode = (int)statusCode,
-                access_token = access_token
+                accessToken = accessToken
             };
         }
 
-        // Explicit interface implementation
         bool IServiceResponse.Success
         {
             get => success;

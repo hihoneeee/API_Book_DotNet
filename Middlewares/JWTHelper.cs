@@ -123,7 +123,7 @@ namespace TestWebAPI.Middlewares
                 }
 
                 // Kiểm tra user_id trong refresh token có trùng khớp với user_id trong bảng JWT hay không
-                if (existingJwt.user_id != userId)
+                if (existingJwt.userId != userId)
                 {
                     return false;
                 }

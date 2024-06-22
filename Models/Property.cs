@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Numerics;
 public enum statusEnum 
 {
    sale,
@@ -22,11 +21,12 @@ namespace TestWebAPI.Models
         [Required]
         public string avatar { get; set; }
         [Required]
-        public int category_id { get; set; }
-        [ForeignKey("category_id")]
+        public int categoryId { get; set; }
+        [ForeignKey("categoryId")]
         public virtual Category category { get; set; }
-
-        public statusEnum status;
+        [Required]
+        public statusEnum status { get; set; }
+        [Required]
         public DateTime createdAt { get; set; } = DateTime.Now;
         [Required]
         public DateTime updatedAt { get; set; }

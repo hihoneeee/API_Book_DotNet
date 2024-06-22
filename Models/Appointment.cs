@@ -1,6 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
+public enum EnumStatus
+{
+    pending,
+    rejected,
+    accepted,
+};
+
+
 namespace TestWebAPI.Models
 {
     public class Appointment
@@ -8,25 +16,25 @@ namespace TestWebAPI.Models
         [Key]
         public int id { get; set; }
         [Required]
-        public int buyer_id { get; set; }
-        [ForeignKey("buyer_id")]
+        public int buyerId { get; set; }
+        [ForeignKey("buyerId")]
         public virtual User buyer { get; set; }
         [Required]
-        public int property_id { get; set; }
-        [ForeignKey("property_id")]
+        public int propertyId { get; set; }
+        [ForeignKey("propertyId")]
         public virtual Property property { get; set; }
         [Required]
-        public DateTime appointment_date { get; set; }
+        public DateTime appointmentDate { get; set; }
         [Required]
-        public DateTime secondary_day { get; set; }
+        public DateTime backupDay { get; set; }
         [Required]
-        public bool is_active { get; set; }
+        public EnumStatus status { get; set; }
         [Required]
         public DateTime createdAt { get; set;} = DateTime.Now;
         [Required]
         public DateTime updatedAt { get; set; }
 
-        public virtual ICollection<Contract>? Contracts { get; set; }
+        public virtual ICollection<Offer>? Offers { get; set; }
 
     }
 }

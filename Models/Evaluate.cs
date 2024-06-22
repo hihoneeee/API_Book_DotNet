@@ -8,11 +8,11 @@ namespace TestWebAPI.Models
         [Key]
         public int id { get; set; }
         [Required]
-        public int buyer_id { get; set; }
-        [ForeignKey("buyer_id")]
+        public int buyerId { get; set; }
+        [ForeignKey("buyerId")]
         public virtual User buyer { get; set; }
-        public int property_id { get; set; }
-        [ForeignKey("property_id")]
+        public int propertyId { get; set; }
+        [ForeignKey("propertyId")]
         public virtual Property property { get; set; }
         [Required]
         public int star { get; set; }

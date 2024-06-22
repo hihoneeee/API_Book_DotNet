@@ -8,11 +8,11 @@ namespace TestWebAPI.Models
         [Key]
         public int id { get; set; }
         [Required]
-        public int user_id { get; set; }
-        [ForeignKey("user_id")]
+        public int userId { get; set; }
+        [ForeignKey("userId")]
         public virtual User user { get; set; }
-        public int property_id { get; set; }
-        [ForeignKey("property_id")]
+        public int propertyId { get; set; }
+        [ForeignKey("propertyId")]
         public virtual Property property { get; set; }
         public DateTime createdAt { get; set; } = DateTime.Now;
         [Required]

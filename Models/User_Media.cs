@@ -14,8 +14,8 @@ namespace TestWebAPI.Models
         [Required]
         public string link { get; set; }
         [Required]
-        public int user_id { get; set; }
-        [ForeignKey("user_id")]
+        public int userId { get; set; }
+        [ForeignKey("userId")]
         public virtual User user { get; set; }
         public DateTime createdAt { get; set; } = DateTime.Now;
         [Required]

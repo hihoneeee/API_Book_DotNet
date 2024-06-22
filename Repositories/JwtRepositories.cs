@@ -15,7 +15,7 @@ namespace TestWebAPI.Repositories
         }
         public async Task<JWT> GetJwtByUserId(int id)
         {
-            return await _context.JWTs.FirstOrDefaultAsync(j => j.user_id == id);
+            return await _context.JWTs.FirstOrDefaultAsync(j => j.userId == id);
         }
 
         public async Task<JWT> AddJwtAsync(JWT jwt)
@@ -27,7 +27,7 @@ namespace TestWebAPI.Repositories
 
         public async Task<bool> IsTokenExpiredAsync(JWT jwt)
         {
-            return jwt.issued_date >= jwt.expired_date;
+            return jwt.issuedDate >= jwt.expiredDate;
         }
 
         public async Task<JWT> UpdateJwtAsync(JWT jwt)

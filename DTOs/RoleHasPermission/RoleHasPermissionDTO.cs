@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using TestWebAPI.Models;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace TestWebAPI.DTOs.RoleHasPermission
 {

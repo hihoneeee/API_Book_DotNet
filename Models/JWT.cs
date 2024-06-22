@@ -8,10 +8,10 @@ namespace TestWebAPI.Models
         [Key]
         public int id { get; set; }
         public string value { get; set; }
-        public DateTime issued_date { get; set; }
-        public DateTime expired_date { get; set; }
-        public int user_id { get; set; }
-        [ForeignKey("user_id")]
+        public DateTime issuedDate { get; set; }
+        public DateTime expiredDate { get; set; }
+        public int userId { get; set; }
+        [ForeignKey("userId")]
         public virtual User user { get; set; }
     }
 }
