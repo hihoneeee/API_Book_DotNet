@@ -30,7 +30,7 @@ namespace TestWebAPI.Data
                 .HasForeignKey(rp => rp.codePermission)
                 .HasPrincipalKey(p => p.code);
 
-            //Wishlist
+            //PropertyHasDetail
             modelBuilder.Entity<PropertyHasDetail>()
                 .HasOne(p => p.seller)
                 .WithMany(u => u.PropertyHasDetails)

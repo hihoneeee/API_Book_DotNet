@@ -174,6 +174,8 @@ builder.Services.AddScoped<IPermisstionRepositories, PermisstionRepositories>();
 builder.Services.AddScoped<IRoleHasPermissionRepositories, RoleHasPermissionRepositories>();
 builder.Services.AddScoped<IUserRepositories, UserRepositories>();
 builder.Services.AddScoped<ICategoryRepositories, CategoryRepositories>();
+builder.Services.AddScoped<IPropertyRepositories, PropertyRepositories>();
+builder.Services.AddScoped<IPropertyHasDetailRepositories, PropertyHasDetailRepositories>();
 builder.Services.AddScoped<FakeDataRepositories>();
 
 // Add services to the container.
@@ -186,7 +188,7 @@ builder.Services.AddScoped<IRoleHasPermissionServices, RoleHasPermissionServices
 builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<ICategoryServices, CategoryServices>();
 builder.Services.AddScoped<ICloudinaryServices, CloudinaryServices>();
-
+builder.Services.AddScoped<IPropertyServices, PropertyServices>();
 // Register JWTHelper
 builder.Services.AddScoped<IJWTHelper, JWTHelper>();
 

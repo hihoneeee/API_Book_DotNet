@@ -55,7 +55,11 @@ namespace TestWebAPI.Helpers
                                  }).ToList()));
             CreateMap<Category, CategoryDTO>().ReverseMap();
             //property
+
             CreateMap<Property, GetPropertyDTO>().ReverseMap();
+            CreateMap<Property, PropertyDTO>().ReverseMap();
+            CreateMap<PropertyHasDetail, PropertyHasDetailDTO>().ReverseMap();
+
         }
     }
 }
