@@ -268,3 +268,5 @@ D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\Faker.NETCore.dll
 D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\de-DE\Faker.Net.6.0.resources.dll
 D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\de-DE\Faker.NETCore.resources.dll
 D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\Bogus.dll
+D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\Pipelines.Sockets.Unofficial.dll
+D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\StackExchange.Redis.dll

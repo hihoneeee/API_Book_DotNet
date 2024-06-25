@@ -9,41 +9,22 @@ namespace TestWebAPI.Response
         public T data { get; set; }
         public string accessToken { get; set; }
         public string refreshToken { get; set; }
-
         public EHttpType statusCode { get; set; }
         public bool success { get; set; }
+        public int total { get; set; }
+        public int limit { get; set; }
+        public int page { get; set; }
 
         public CommonResponseMsgDTO getMessage()
         {
             return new CommonResponseMsgDTO()
             {
                 success = success,
-                statusCode = (int)statusCode,
                 message = message
             };
         }
 
-        public CommonResponseDataDTO<T> getData()
-        {
-            return new CommonResponseDataDTO<T>()
-            {
-                statusCode = (int)statusCode,
-                success = success,
-                message = message,
-                data = data
-            };
-        }
 
-        public CommonResponseAccessTokenDTO getAccessToken()
-        {
-            return new CommonResponseAccessTokenDTO()
-            {
-                success = success,
-                message = message,
-                statusCode = (int)statusCode,
-                accessToken = accessToken
-            };
-        }
 
         bool IServiceResponse.Success
         {

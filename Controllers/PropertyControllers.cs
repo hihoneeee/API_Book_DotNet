@@ -3,6 +3,7 @@ using TestWebAPI.DTOs.Category;
 using TestWebAPI.DTOs.Property;
 using TestWebAPI.Services;
 using TestWebAPI.Services.Interfaces;
+using TestWebAPI.Settings;
 using static TestWebAPI.Response.HttpStatus;
 
 namespace TestWebAPI.Controllers
@@ -20,7 +21,7 @@ namespace TestWebAPI.Controllers
             _propertyServices = propertyServices;
         }
 
-        //[Authorize(Policy = "create-category")]
+        //[Authorize(Policy = "create-poperty")]
         [HttpPost]
         public async Task<IActionResult> CreateCategoryAsync([FromForm] PropertyDTO propertyDTO, [FromForm] PropertyHasDetailDTO propertyHasDetailDTO)
         {
@@ -36,6 +37,29 @@ namespace TestWebAPI.Controllers
             if (serviceResponse.statusCode == EHttpType.Success)
             {
                 return Ok(new { serviceResponse.success, serviceResponse.message });
+            }
+            else
+            {
+                return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPropertiesAsync([FromQuery] QueryParamsSetting queryParams)
+        {
+            var serviceResponse = await _propertyServices.GetPropertiesAsync(queryParams);
+            if (serviceResponse.statusCode == EHttpType.Success)
+            {
+                return Ok(new
+                {
+                    serviceResponse.success,
+                    serviceResponse.message,
+                    serviceResponse.total,
+                    serviceResponse.limit,
+                    serviceResponse.page,
+                    serviceResponse.data
+
+                });
             }
             else
             {

@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Configuration;
 using System.Text;
 using TestWebAPI.Configs;
 using TestWebAPI.Data;
@@ -194,6 +196,16 @@ builder.Services.AddScoped<IJWTHelper, JWTHelper>();
 
 //Htttp cookie
 builder.Services.AddHttpContextAccessor();
+
+// Register the RedisCacheService
+
+builder.Services.Configure<RedisCacheSetting>(builder.Configuration.GetSection("RedisCacheSetting"));
+
+builder.Services.AddSingleton<RedisCacheConfig>(provider =>
+{
+    var redisConfig = provider.GetRequiredService<IOptions<RedisCacheSetting>>().Value;
+    return new RedisCacheConfig(redisConfig.ConnectionString);
+});
 var app = builder.Build();
 
 app.UseExceptionHandler(errorApp =>

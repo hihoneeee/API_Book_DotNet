@@ -54,11 +54,25 @@ namespace TestWebAPI.Helpers
                                      sellerId = p.PropertyHasDetails.FirstOrDefault().sellerId,
                                  }).ToList()));
             CreateMap<Category, CategoryDTO>().ReverseMap();
-            //property
 
-            CreateMap<Property, GetPropertyDTO>().ReverseMap();
+            //property
+            //CreateMap<Property, GetPropertyDTO>().ForMember(dest => dest.propertyHasDetails, opt => opt.MapFrom(src => src.PropertyHasDetails.Select(phd => new GetPropertyHasDetailDTO
+            //{
+            //    province = phd.province,
+            //    city = phd.city,
+            //    images = phd.images,
+            //    address = phd.address,
+            //    bedroom = phd.bedroom,
+            //    yearBuild = phd.yearBuild,
+            //    size = phd.size,
+            //    sellerId = phd.sellerId,
+            //    propertyId = phd.propertyId,
+            //    type = phd.type
+            //}).ToList()));
             CreateMap<Property, PropertyDTO>().ReverseMap();
+            CreateMap<Property, GetPropertyDTO>().ReverseMap();
             CreateMap<PropertyHasDetail, PropertyHasDetailDTO>().ReverseMap();
+            CreateMap<PropertyHasDetail, GetPropertyHasDetailDTO>().ReverseMap();
 
         }
     }

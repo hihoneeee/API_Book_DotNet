@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using System.IO;
+using TestWebAPI.DTOs.Category;
 using TestWebAPI.DTOs.Property;
 using TestWebAPI.Helpers;
 using TestWebAPI.Models;
 using TestWebAPI.Repositories.Interfaces;
 using TestWebAPI.Response;
 using TestWebAPI.Services.Interfaces;
+using TestWebAPI.Settings;
 
 namespace TestWebAPI.Services
 {
@@ -55,11 +57,23 @@ namespace TestWebAPI.Services
             throw new NotImplementedException();
         }
 
-        public async Task<ServiceResponse<List<PropertyDTO>>> GetAllPropertyAsync()
+        public async Task<ServiceResponse<List<GetPropertyDTO>>> GetPropertiesAsync(QueryParamsSetting queryParams)
         {
-            throw new NotImplementedException();
+            var serviceResponse = new ServiceResponse<List<GetPropertyDTO>>();
+            try
+            {
+                var (properties, total) = await _propertyRepo.GetPropertiesAsync(queryParams);
+                serviceResponse.data = _mapper.Map<List<GetPropertyDTO>>(properties);
+                serviceResponse.limit = queryParams.limit ?? total;
+                serviceResponse.total = total;
+                serviceResponse.page = queryParams.page ?? 1;
+                serviceResponse.SetSuccess("Properties got successfully!");
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.SetError(ex.Message);
+            }
+            return serviceResponse;
         }
-
-
     }
 }
