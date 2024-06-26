@@ -36,6 +36,6 @@ namespace TestWebAPI.Models
         public virtual ICollection<Submission>? Submissions { get; set; }
         public virtual ICollection<Appointment>? Appointments { get; set; }
         public virtual ICollection<Wishlist>? Wishlists { get; set; }
-        public virtual ICollection<PropertyHasDetail>? PropertyHasDetails { get; set; }
+        public virtual PropertyHasDetail PropertyHasDetail { get; set; }
     }
 }

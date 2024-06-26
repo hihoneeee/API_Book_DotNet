@@ -21,7 +21,7 @@ namespace TestWebAPI.Helpers
                  {
                      code = rp.Permission.code,
                      value = rp.Permission.value
-                 }).ToList())); 
+                 }).ToList())).ReverseMap(); 
             CreateMap<Role, AddRoleDTO>().ReverseMap();
 
             //auth
@@ -44,31 +44,57 @@ namespace TestWebAPI.Helpers
 
             //category
             CreateMap<Category, GetCategoryDTO>()
-                                .ForMember(dest => dest.dataProperties, opt => opt.MapFrom(src => src.Properties.Select(p => new GetPropertyDTO
-                                 {
-                                     title = p.title,
-                                     description = p.description,
-                                     avatar = p.avatar,
-                                     price = p.price,
-                                     categoryId = p.categoryId,
-                                     sellerId = p.PropertyHasDetails.FirstOrDefault().sellerId,
-                                 }).ToList()));
+                .ForMember(dest => dest.dataProperties, opt => opt.MapFrom(src => src.Properties.Select(p => new GetPropertyDTO
+                {
+                    id = p.id,
+                    title = p.title,
+                    description = p.description,
+                    avatar = p.avatar,
+                    price = p.price,
+                    categoryId = p.categoryId,
+                    status = p.status,
+                    createdAt = p.createdAt,
+                    updatedAt = p.updatedAt,
+                    dataDetail = p.PropertyHasDetail != null ? new GetPropertyHasDetailDTO
+                    {
+                        id = p.PropertyHasDetail.id,
+                        sellerId = p.PropertyHasDetail.sellerId,
+                        propertyId = p.PropertyHasDetail.propertyId,
+                        province = p.PropertyHasDetail.province,
+                        city = p.PropertyHasDetail.city,
+                        images = p.PropertyHasDetail.images,
+                        address = p.PropertyHasDetail.address,
+                        bedroom = p.PropertyHasDetail.bedroom,
+                        bathroom = p.PropertyHasDetail.bathroom,
+                        yearBuild = p.PropertyHasDetail.yearBuild,
+                        size = p.PropertyHasDetail.size,
+                        type = p.PropertyHasDetail.type
+                    } : null
+                }).ToList()))
+                    .ReverseMap();
+
             CreateMap<Category, CategoryDTO>().ReverseMap();
 
             //property
-            //CreateMap<Property, GetPropertyDTO>().ForMember(dest => dest.propertyHasDetails, opt => opt.MapFrom(src => src.PropertyHasDetails.Select(phd => new GetPropertyHasDetailDTO
-            //{
-            //    province = phd.province,
-            //    city = phd.city,
-            //    images = phd.images,
-            //    address = phd.address,
-            //    bedroom = phd.bedroom,
-            //    yearBuild = phd.yearBuild,
-            //    size = phd.size,
-            //    sellerId = phd.sellerId,
-            //    propertyId = phd.propertyId,
-            //    type = phd.type
-            //}).ToList()));
+            CreateMap<Property, GetPropertyDTO>()
+                .ForMember(dest => dest.dataDetail, opt => opt.MapFrom(src => src.PropertyHasDetail != null ? new GetPropertyHasDetailDTO
+                {
+                    id = src.PropertyHasDetail.id,
+                    sellerId = src.PropertyHasDetail.sellerId,
+                    propertyId = src.PropertyHasDetail.propertyId,
+                    province = src.PropertyHasDetail.province,
+                    city = src.PropertyHasDetail.city,
+                    images = src.PropertyHasDetail.images,
+                    address = src.PropertyHasDetail.address,
+                    bedroom = src.PropertyHasDetail.bedroom,
+                    bathroom = src.PropertyHasDetail.bathroom,
+                    yearBuild = src.PropertyHasDetail.yearBuild,
+                    size = src.PropertyHasDetail.size,
+                    type = src.PropertyHasDetail.type
+                } : null))
+                .ReverseMap();
+
+
             CreateMap<Property, PropertyDTO>().ReverseMap();
             CreateMap<Property, GetPropertyDTO>().ReverseMap();
             CreateMap<PropertyHasDetail, PropertyHasDetailDTO>().ReverseMap();

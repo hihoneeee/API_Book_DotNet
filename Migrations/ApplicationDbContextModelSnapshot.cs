@@ -377,7 +377,8 @@ namespace TestWebAPI.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("propertyId");
+                    b.HasIndex("propertyId")
+                        .IsUnique();
 
                     b.HasIndex("sellerId");
 
@@ -706,8 +707,8 @@ namespace TestWebAPI.Migrations
             modelBuilder.Entity("TestWebAPI.Models.PropertyHasDetail", b =>
                 {
                     b.HasOne("TestWebAPI.Models.Property", "property")
-                        .WithMany("PropertyHasDetails")
-                        .HasForeignKey("propertyId")
+                        .WithOne("PropertyHasDetail")
+                        .HasForeignKey("TestWebAPI.Models.PropertyHasDetail", "propertyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -835,7 +836,8 @@ namespace TestWebAPI.Migrations
 
                     b.Navigation("Nofications");
 
-                    b.Navigation("PropertyHasDetails");
+                    b.Navigation("PropertyHasDetail")
+                        .IsRequired();
 
                     b.Navigation("Submissions");
 

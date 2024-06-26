@@ -65,13 +65,14 @@ namespace TestWebAPI.Repositories
 
         public async Task<(List<ExpandoObject>, int)> GetPropertiesAsync(QueryParamsSetting queryParams)
         {
-            var query = _context.Properties.AsQueryable();
-
-            //// Address filtering
-            //if (!string.IsNullOrEmpty(queryParams.address))
-            //{
-            //    query = query.Where(p => p.PropertyHasDetails.Any(phd => phd.address.ToLower().Contains(queryParams.address.ToLower())));
-            //}
+            var query = _context.Properties
+                                    .Include(p => p.PropertyHasDetail)
+                                    .AsQueryable();
+            // Address filtering
+            if (!string.IsNullOrEmpty(queryParams.address))
+            {
+                query = query.Where(p => p.PropertyHasDetail != null && p.PropertyHasDetail.address.ToLower().Contains(queryParams.address.ToLower()));
+            }
 
             // Title filtering
             if (!string.IsNullOrEmpty(queryParams.title))
@@ -96,8 +97,6 @@ namespace TestWebAPI.Repositories
                 }
             }
 
-            var total = await query.CountAsync();
-
             // Pagination
             if (queryParams.limit.HasValue)
             {
@@ -108,13 +107,14 @@ namespace TestWebAPI.Repositories
             }
 
             // Fetch data from the database
+            var total = await query.CountAsync();
             var properties = await query.ToListAsync();
 
             // Fields selection and projection
             List<ExpandoObject> result = new List<ExpandoObject>();
             if (!string.IsNullOrEmpty(queryParams.fields))
             {
-                var fields = queryParams.fields.Split(',').ToList();
+                var fields = queryParams.fields.Split(',').Select(f => f.Trim()).ToList();
                 bool isExclusion = fields.Any(f => f.StartsWith("-"));
                 var includeFields = isExclusion
                     ? typeof(Property).GetProperties().Select(p => p.Name).Except(fields.Select(f => f.TrimStart('-'))).ToList()
@@ -155,8 +155,6 @@ namespace TestWebAPI.Repositories
 
             return (result, total);
         }
-
-
 
         public async Task<Property> GetPropertyByIdAsync(int id)
         {

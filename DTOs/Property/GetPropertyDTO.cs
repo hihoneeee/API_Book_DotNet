@@ -24,7 +24,7 @@ namespace TestWebAPI.DTOs.Property
         public DateTime createdAt { get; set; } 
         [Required]
         public DateTime updatedAt { get; set; }
-        // public List<PropertyHasDetailDTO> propertyHasDetails { get; set; }
+        public GetPropertyHasDetailDTO dataDetail { get; set; }
 
     }
 }

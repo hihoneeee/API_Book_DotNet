@@ -20,7 +20,7 @@ namespace TestWebAPI.Controllers
             _categoryServices = categoryServices;
             _cloudinaryServices = cloudinaryServices;
         }
-        [Authorize(Policy = "get-category")]
+        // [Authorize(Policy = "get-category")]
         [HttpGet]
         public async Task<IActionResult> GetCategoriesAsync()
         {

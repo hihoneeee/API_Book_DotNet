@@ -45,9 +45,9 @@ namespace TestWebAPI.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<CategoryDTO>>> GetCategoriesAsync()
+        public async Task<ServiceResponse<List<GetCategoryDTO>>> GetCategoriesAsync()
         {
-            var serviceResponse = new ServiceResponse<List<CategoryDTO>>();
+            var serviceResponse = new ServiceResponse<List<GetCategoryDTO>>();
             try
             {
                 var categories = await _cateRepo.GetCategoryAllAsync();
@@ -56,7 +56,7 @@ namespace TestWebAPI.Services
                     serviceResponse.SetNotFound("List Categories");
                     return serviceResponse;
                 }
-                serviceResponse.data = _mapper.Map<List<CategoryDTO>>(categories);
+                serviceResponse.data = _mapper.Map<List<GetCategoryDTO>>(categories);
                 serviceResponse.SetSuccess("Get successfully!");
             }
             catch (Exception ex)

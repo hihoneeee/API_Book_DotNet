@@ -167,6 +167,14 @@ builder.Services.AddSingleton(provider => new MapperConfiguration(options =>
 //builder settings
 builder.Services.Configure<SendEmailSetting>(builder.Configuration.GetSection("SendEmailSetting"));
 builder.Services.Configure<CloudinarySetting>(builder.Configuration.GetSection("CloudinarySetting"));
+builder.Services.Configure<RedisCacheSetting>(builder.Configuration.GetSection("RedisCacheSetting"));
+
+// Register the RedisCacheService
+builder.Services.AddSingleton<RedisCacheConfig>(provider =>
+{
+    var redisConfig = provider.GetRequiredService<IOptions<RedisCacheSetting>>().Value;
+    return new RedisCacheConfig(redisConfig.ConnectionString);
+});
 
 // Add Repositories to the container.
 builder.Services.AddScoped<IRoleRepositories, RoleRepositories>();
@@ -197,15 +205,6 @@ builder.Services.AddScoped<IJWTHelper, JWTHelper>();
 //Htttp cookie
 builder.Services.AddHttpContextAccessor();
 
-// Register the RedisCacheService
-
-builder.Services.Configure<RedisCacheSetting>(builder.Configuration.GetSection("RedisCacheSetting"));
-
-builder.Services.AddSingleton<RedisCacheConfig>(provider =>
-{
-    var redisConfig = provider.GetRequiredService<IOptions<RedisCacheSetting>>().Value;
-    return new RedisCacheConfig(redisConfig.ConnectionString);
-});
 var app = builder.Build();
 
 app.UseExceptionHandler(errorApp =>

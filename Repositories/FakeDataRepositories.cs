@@ -76,7 +76,7 @@ namespace TestWebAPI.Repositories
 
             var userFaker = new Faker<User>()
                 .RuleFor(u => u.first_name, f => f.Person.FirstName)
-                .RuleFor(u => u.last_name, f => f.Person.LastName)
+                .RuleFor(u => u.last_name, f => f.Random.String2(1, 10)) // Giới hạn chiều dài tên
                 .RuleFor(u => u.phone, f => "0" + f.Random.Number(100000000, 999999999).ToString())
                 .RuleFor(u => u.email, f => f.Internet.Email())
                 .RuleFor(u => u.address, f => f.Address.FullAddress())
@@ -103,7 +103,7 @@ namespace TestWebAPI.Repositories
 
             var propertyFaker = new Faker<Property>()
                 .RuleFor(p => p.title, f => f.Commerce.ProductName())
-                .RuleFor(p => p.price, f => f.Random.Int(1000, 1000000)) // Ensure this is an int
+                .RuleFor(p => p.price, f => f.Random.Int(1000, 1000000))
                 .RuleFor(p => p.avatar, f => f.Image.LoremFlickrUrl(1000, 500, "realestate"))
                 .RuleFor(p => p.status, f => f.PickRandom<statusEnum>())
                 .RuleFor(p => p.description, f => f.Lorem.Paragraph())
@@ -129,7 +129,7 @@ namespace TestWebAPI.Repositories
                 .RuleFor(phd => phd.sellerId, f => f.PickRandom(users).id)
                 .RuleFor(phd => phd.seller, f => f.PickRandom(users))
                 .RuleFor(phd => phd.propertyId, f => f.PickRandom(properties).id)
-                .RuleFor(phd => phd.property, f => f.PickRandom(properties))
+                .RuleFor(phd => phd.property, (f, phd) => properties.First(p => p.id == phd.propertyId))
                 .RuleFor(phd => phd.type, f => f.PickRandom<typeEnum>());
 
             var propertyHasDetails = propertyHasDetailFaker.Generate(60);

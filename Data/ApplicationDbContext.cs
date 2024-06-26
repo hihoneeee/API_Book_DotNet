@@ -37,10 +37,10 @@ namespace TestWebAPI.Data
                 .HasForeignKey(p => p.sellerId)
                 .HasPrincipalKey(u => u.id);
             modelBuilder.Entity<PropertyHasDetail>()
-                .HasOne(p => p.property)
-                .WithMany(p => p.PropertyHasDetails)
-                .HasForeignKey(p => p.propertyId)
-                .HasPrincipalKey(p => p.id);
+                .HasOne(phd => phd.property)
+                .WithOne(p => p.PropertyHasDetail)
+                .HasForeignKey<PropertyHasDetail>(phd => phd.propertyId)
+                .HasPrincipalKey<Property>(p => p.id);
 
             //nofication
             modelBuilder.Entity<Nofication>()

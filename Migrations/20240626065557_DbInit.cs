@@ -493,7 +493,8 @@ namespace TestWebAPI.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_PropertyHasDetails_propertyId",
                 table: "PropertyHasDetails",
-                column: "propertyId");
+                column: "propertyId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_PropertyHasDetails_sellerId",

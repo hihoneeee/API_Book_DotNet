@@ -28,7 +28,10 @@ namespace TestWebAPI.Repositories
 
         public async Task<List<Category>> GetCategoryAllAsync()
         {
-            return await _context.Categories.ToListAsync();
+            return await _context.Categories
+                .Include(c => c.Properties)
+                .ThenInclude(p => p.PropertyHasDetail)
+                .ToListAsync();
         }
 
         public async Task<Category> GetCategoryByTitleAsync(string title)

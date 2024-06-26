@@ -31,7 +31,10 @@ namespace TestWebAPI.Repositories
 
         public async Task<List<Role>> GetAllRoles()
         {
-            return await _context.Roles.ToListAsync();
+            return await _context.Roles
+                .Include(r => r.Role_Permissions)
+                .ThenInclude(rp => rp.Permission)
+                .ToListAsync();
         }
 
         public async Task<Role> GetRolesById(int id)

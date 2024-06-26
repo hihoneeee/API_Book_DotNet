@@ -21,7 +21,7 @@ namespace TestWebAPI.Controllers
         }
 
         // GET: api/Roles
-        [Authorize(Policy = "get-role")]
+        // [Authorize(Policy = "get-role")]
         [HttpGet]
         public async Task<IActionResult> GetAllRoles()
         {
@@ -37,7 +37,7 @@ namespace TestWebAPI.Controllers
         }
 
         // GET: api/Roles/5
-        [Authorize(Policy = "get-only-role")]
+        // [Authorize(Policy = "get-only-role")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetRolesById(int id)
         {

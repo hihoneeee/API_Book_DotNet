@@ -12,8 +12,6 @@ namespace TestWebAPI.DTOs.Category
         public string description { get; set; }
         [Required]
         public string avatar { get; set; }
-        [JsonIgnore]
         public List<GetPropertyDTO> dataProperties { get; set; }
-
     }
 }
