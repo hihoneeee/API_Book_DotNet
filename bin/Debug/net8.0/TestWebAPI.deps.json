@@ -22,7 +22,8 @@
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "8.0.2",
           "NETCore.MailKit": "2.1.0",
           "StackExchange.Redis": "2.8.0",
-          "Swashbuckle.AspNetCore": "6.6.2"
+          "Swashbuckle.AspNetCore": "6.6.2",
+          "System.Linq.Dynamic.Core": "1.4.2"
         },
         "runtime": {
           "TestWebAPI.dll": {}
@@ -2114,6 +2115,14 @@
           "System.Runtime.Extensions": "4.3.0"
         }
       },
+      "System.Linq.Dynamic.Core/1.4.2": {
+        "runtime": {
+          "lib/net8.0/System.Linq.Dynamic.Core.dll": {
+            "assemblyVersion": "1.4.2.0",
+            "fileVersion": "1.4.2.0"
+          }
+        }
+      },
       "System.Memory/4.5.4": {},
       "System.Memory.Data/1.0.2": {
         "dependencies": {
@@ -3792,6 +3801,13 @@
       "sha512": "sha512-5DbqIUpsDp0dFftytzuMmc0oeMdQwjcP/EWxsksIz/w1TcFRkZ3yKKz0PqiYFMmEwPSWw+qNVqD7PJ889JzHbw==",
       "path": "system.linq/4.3.0",
       "hashPath": "system.linq.4.3.0.nupkg.sha512"
+    },
+    "System.Linq.Dynamic.Core/1.4.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-MUEv7XellrLTS5JSuM6cMMgcDk8ymehAli6VGI2oDjfgs4erYKfGnhG86SYZk802N5lhkaxcPzvLNCbPBj/Bnw==",
+      "path": "system.linq.dynamic.core/1.4.2",
+      "hashPath": "system.linq.dynamic.core.1.4.2.nupkg.sha512"
     },
     "System.Memory/4.5.4": {
       "type": "package",

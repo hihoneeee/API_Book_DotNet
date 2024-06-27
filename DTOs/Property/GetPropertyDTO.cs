@@ -1,30 +1,29 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace TestWebAPI.DTOs.Property
 {
     public class GetPropertyDTO
-    { 
-        [Required]
+    {
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int id { get; set; }
-        [Required]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public string title { get; set; }
-        [Required]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public string description { get; set; }
-        [Required]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int price { get; set; }
-        [Required]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public string avatar { get; set; }
-        [Required]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int categoryId { get; set; }
-        [Required]
-        public int sellerId { get; set; }
-        [Required]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public statusEnum status { get; set; }
-        [Required]
-        public DateTime createdAt { get; set; } 
-        [Required]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public DateTime createdAt { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public DateTime updatedAt { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public GetPropertyHasDetailDTO dataDetail { get; set; }
-
     }
 }

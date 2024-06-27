@@ -2,7 +2,7 @@
 {
     public class CachedPropertiesDTO
     {
-        public List<PropertyDTO> Properties { get; set; }
+        public List<GetPropertyDTO> Properties { get; set; }
         public int TotalCount { get; set; }
     }
 }

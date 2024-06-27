@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Mr6rVV/lZB1xZpW+u4uBr6GRRpo8YfFlSsjbE6Rib+jySlKv9pNfwSn42X2GBpuLGG3NvWGOTmrp29ia5H//3A==",
+  "dgSpecHash": "XGJgLDByTk8ebuWxoCi0+wYybUE8Q/WK/d+4YvClJyfyiuY0C/2iTC+Dnqp559Smj73GAeXYrOfXWdB1sUUHHA==",
   "success": true,
   "projectFilePath": "D:\\code\\.NET\\TestWebAPI\\TestWebAPI\\TestWebAPI.csproj",
   "expectedPackageFiles": [
@@ -191,6 +191,7 @@
     "C:\\Users\\Huy\\.nuget\\packages\\system.io.filesystem.primitives\\4.3.0\\system.io.filesystem.primitives.4.3.0.nupkg.sha512",
     "C:\\Users\\Huy\\.nuget\\packages\\system.io.pipelines\\7.0.0\\system.io.pipelines.7.0.0.nupkg.sha512",
     "C:\\Users\\Huy\\.nuget\\packages\\system.linq\\4.3.0\\system.linq.4.3.0.nupkg.sha512",
+    "C:\\Users\\Huy\\.nuget\\packages\\system.linq.dynamic.core\\1.4.2\\system.linq.dynamic.core.1.4.2.nupkg.sha512",
     "C:\\Users\\Huy\\.nuget\\packages\\system.memory\\4.5.4\\system.memory.4.5.4.nupkg.sha512",
     "C:\\Users\\Huy\\.nuget\\packages\\system.memory.data\\1.0.2\\system.memory.data.1.0.2.nupkg.sha512",
     "C:\\Users\\Huy\\.nuget\\packages\\system.net.http\\4.3.4\\system.net.http.4.3.4.nupkg.sha512",
