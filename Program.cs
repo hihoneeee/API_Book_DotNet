@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -21,6 +22,8 @@ using TestWebAPI.Settings;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
+
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -176,7 +179,7 @@ builder.Services.AddSingleton<RedisCacheConfig>(provider =>
     return new RedisCacheConfig(redisConfig.ConnectionString);
 });
 
-// Add Repositories to the container.
+// Add Repositories to the container
 builder.Services.AddScoped<IRoleRepositories, RoleRepositories>();
 builder.Services.AddScoped<IAuthRepositories, AuthRepositories>();
 builder.Services.AddScoped<IJwtRepositories, JwtRepositories>();
@@ -187,8 +190,9 @@ builder.Services.AddScoped<ICategoryRepositories, CategoryRepositories>();
 builder.Services.AddScoped<IPropertyRepositories, PropertyRepositories>();
 builder.Services.AddScoped<IPropertyHasDetailRepositories, PropertyHasDetailRepositories>();
 builder.Services.AddScoped<FakeDataRepositories>();
+builder.Services.AddScoped<IChatHubRepositories, ChatHubRepositories>();
 
-// Add services to the container.
+// Add services to the container
 builder.Services.AddScoped<IRoleService, RoleServices>();
 builder.Services.AddScoped<IAuthService, AuthServices>();
 builder.Services.AddScoped<IJwtServices, JwtServices>();
@@ -199,11 +203,14 @@ builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<ICategoryServices, CategoryServices>();
 builder.Services.AddScoped<ICloudinaryServices, CloudinaryServices>();
 builder.Services.AddScoped<IPropertyServices, PropertyServices>();
-// Register JWTHelper
+
+// Add middleware to the container
 builder.Services.AddScoped<IJWTHelper, JWTHelper>();
 
 //Htttp cookie
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddDirectoryBrowser();
 
 var app = builder.Build();
 
@@ -232,9 +239,24 @@ app.UseMiddleware<ErrorHandlingToken>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseRouting();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles")),
+    RequestPath = "/static"
+});
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<ChatHub>("/chathub");
+});
 
 app.UseMiddleware<ErrorHandlingToken>();
 

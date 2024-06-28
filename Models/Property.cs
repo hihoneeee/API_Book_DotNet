@@ -33,7 +33,6 @@ namespace TestWebAPI.Models
         public virtual ICollection<Nofication>? Nofications { get; set; }
         public virtual ICollection<Evaluate>? Evaluates { get; set; }
         public virtual ICollection<Contract>? Contracts { get; set; }
-        public virtual ICollection<Submission>? Submissions { get; set; }
         public virtual ICollection<Appointment>? Appointments { get; set; }
         public virtual ICollection<Wishlist>? Wishlists { get; set; }
         public virtual PropertyHasDetail PropertyHasDetail { get; set; }

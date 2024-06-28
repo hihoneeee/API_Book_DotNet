@@ -66,17 +66,20 @@ namespace TestWebAPI.Data
                 .HasForeignKey(e => e.propertyId)
                 .HasPrincipalKey(p => p.id);
 
-            //Submission
-            modelBuilder.Entity<Submission>()
-                .HasOne(s => s.buyer)
-                .WithMany(u => u.Submissions)
-                .HasForeignKey(s => s.buyerId)
+            //chat message
+            modelBuilder.Entity<ConversationUser>()
+            .HasKey(cu => new { cu.conversationId, cu.userId });
+
+            modelBuilder.Entity<ConversationUser>()
+                .HasOne(cu => cu.Conversation)
+                .WithMany(c => c.conversationUsers)
+                .HasForeignKey(cu => cu.conversationId)
+                .HasPrincipalKey(c => c.id);
+            modelBuilder.Entity<ConversationUser>()
+                .HasOne(cu => cu.User)
+                .WithMany(u => u.conversationUsers)
+                .HasForeignKey(cu => cu.userId)
                 .HasPrincipalKey(u => u.id);
-            modelBuilder.Entity<Submission>()
-                .HasOne(s => s.property)
-                .WithMany(p => p.Submissions)
-                .HasForeignKey(s => s.propertyId)
-                .HasPrincipalKey(p => p.id);
 
             //Wishlist
             modelBuilder.Entity<Wishlist>()
@@ -128,13 +131,15 @@ namespace TestWebAPI.Data
         public DbSet<Property> Properties { get; set; }
         public DbSet<Nofication> Nofications { get; set; }
         public DbSet<User_Media> User_Medias { get; set; }
-        public DbSet<Submission> Submissions { get; set; }
         public DbSet<Evaluate> Evaluates { get; set; }
         public DbSet<Contract> Contracts { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
         public DbSet<PropertyHasDetail> PropertyHasDetails { get; set; }
         public DbSet<Offer> Offers { get; set; }
+        public DbSet<Message> messages { get; set; }
+        public DbSet<Conversation> conversations { get; set; }
+        public DbSet<ConversationUser> ConversationUsers { get; set; }
 
     }
 }

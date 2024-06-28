@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignalR Chat</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.3/signalr.min.js"></script>
+</head>
+<body>
+    <h2>SignalR Chat</h2>
+    <div>
+        <input type="text" id="conversationName" placeholder="Conversation Name" />
+        <button onclick="createConversation()">Create Conversation</button>
+    </div>
+    <div>
+        <input type="text" id="userId" placeholder="User ID" />
+        <input type="text" id="conversationId" placeholder="Conversation ID" />
+        <input type="text" id="messageInput" placeholder="Message" />
+        <button onclick="sendMessage()">Send Message</button>
+    </div>
+    <div>
+        <button onclick="joinConversation()">Join Conversation</button>
+        <button onclick="leaveConversation()">Leave Conversation</button>
+    </div>
+    <div>
+        <input type="text" id="sendMessageAll" placeholder="sendMessageAll" />
+        <button onclick="sendMessageAll()">sendMessageAll</button>
+    </div>
+    <ul id="messagesList"></ul>
+
+    <script>
+        const connection = new signalR.HubConnectionBuilder().withUrl("/chathub").build();
+
+        connection.on("ReceiveMessage", function (userId, messageContent, timestamp) {
+            const li = document.createElement("li");
+            li.textContent = `User ${userId}: ${messageContent} [${timestamp}]`;
+            document.getElementById("messagesList").appendChild(li);
+        });
+
+        connection.start().then(function () {
+            console.log("SignalR connected");
+            connection.invoke("GetConnectionId").then(function (connectionId) {
+                console.log("ConnectionId:", connectionId);
+                window.connectionId = connectionId;
+            });
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        function createConversation() {
+            const conversationName = document.getElementById("conversationName").value;
+
+            fetch('/api/conversations/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: conversationName })
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to create conversation');
+                }
+                console.log('Conversation created:', conversationName);
+            }).catch(error => console.error('Error:', error));
+        }
+
+        function sendMessage() {
+            const userId = document.getElementById("userId").value;
+            const conversationId = document.getElementById("conversationId").value;
+            const messageContent = document.getElementById("messageInput").value;
+
+            fetch('/api/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userId: parseInt(userId),
+                    conversationId: parseInt(conversationId),
+                    content: messageContent
+                })
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to send message');
+                }
+                document.getElementById("messageInput").value = ''; // Clear the input after sending
+            }).catch(error => console.error('Error:', error));
+        }
+
+        function joinConversation() {
+            const conversationId = document.getElementById("conversationId").value;
+
+            fetch(`/api/conversations/join?conversationId=${conversationId}&connectionId=${window.connectionId}`, {
+                method: 'POST'
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to join conversation');
+                }
+                console.log('Joined conversation:', conversationId);
+
+                // Fetch previous messages
+                fetch(`/api/messages/${conversationId}`)
+                    .then(response => response.json())
+                    .then(messages => {
+                        document.getElementById("messagesList").innerHTML = ''; // Clear existing messages
+                        messages.forEach(message => {
+                            const li = document.createElement("li");
+                            li.textContent = `User ${message.userId}: ${message.content} [${message.createdAt}]`;
+                            document.getElementById("messagesList").appendChild(li);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching messages:', error));
+            }).catch(error => console.error('Error:', error));
+        }
+
+        function leaveConversation() {
+            const conversationId = document.getElementById("conversationId").value;
+
+            fetch(`/api/conversations/leave?conversationId=${conversationId}&connectionId=${window.connectionId}`, {
+                method: 'POST'
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to leave conversation');
+                }
+                console.log('Left conversation:', conversationId);
+            }).catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
+
+
+

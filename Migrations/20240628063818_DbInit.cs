@@ -29,6 +29,19 @@ namespace TestWebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "conversations",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_conversations", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Permissions",
                 columns: table => new
                 {
@@ -175,6 +188,30 @@ namespace TestWebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ConversationUsers",
+                columns: table => new
+                {
+                    conversationId = table.Column<int>(type: "int", nullable: false),
+                    userId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ConversationUsers", x => new { x.conversationId, x.userId });
+                    table.ForeignKey(
+                        name: "FK_ConversationUsers_Users_userId",
+                        column: x => x.userId,
+                        principalTable: "Users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ConversationUsers_conversations_conversationId",
+                        column: x => x.conversationId,
+                        principalTable: "conversations",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Evaluates",
                 columns: table => new
                 {
@@ -222,6 +259,34 @@ namespace TestWebAPI.Migrations
                         name: "FK_JWTs_Users_userId",
                         column: x => x.userId,
                         principalTable: "Users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "messages",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    userId = table.Column<int>(type: "int", nullable: false),
+                    conversationId = table.Column<int>(type: "int", nullable: false),
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_messages", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_messages_Users_userId",
+                        column: x => x.userId,
+                        principalTable: "Users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_messages_conversations_conversationId",
+                        column: x => x.conversationId,
+                        principalTable: "conversations",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -284,35 +349,6 @@ namespace TestWebAPI.Migrations
                     table.ForeignKey(
                         name: "FK_PropertyHasDetails_Users_sellerId",
                         column: x => x.sellerId,
-                        principalTable: "Users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Submissions",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    buyerId = table.Column<int>(type: "int", nullable: false),
-                    propertyId = table.Column<int>(type: "int", nullable: false),
-                    message = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Submissions", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Submissions_Properties_propertyId",
-                        column: x => x.propertyId,
-                        principalTable: "Properties",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Submissions_Users_buyerId",
-                        column: x => x.buyerId,
                         principalTable: "Users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -456,6 +492,11 @@ namespace TestWebAPI.Migrations
                 column: "Userid");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ConversationUsers_userId",
+                table: "ConversationUsers",
+                column: "userId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Evaluates_buyerId",
                 table: "Evaluates",
                 column: "buyerId");
@@ -468,6 +509,16 @@ namespace TestWebAPI.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_JWTs_userId",
                 table: "JWTs",
+                column: "userId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_messages_conversationId",
+                table: "messages",
+                column: "conversationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_messages_userId",
+                table: "messages",
                 column: "userId");
 
             migrationBuilder.CreateIndex(
@@ -512,16 +563,6 @@ namespace TestWebAPI.Migrations
                 column: "codeRole");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Submissions_buyerId",
-                table: "Submissions",
-                column: "buyerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Submissions_propertyId",
-                table: "Submissions",
-                column: "propertyId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_User_Medias_userId",
                 table: "User_Medias",
                 column: "userId");
@@ -549,10 +590,16 @@ namespace TestWebAPI.Migrations
                 name: "Contracts");
 
             migrationBuilder.DropTable(
+                name: "ConversationUsers");
+
+            migrationBuilder.DropTable(
                 name: "Evaluates");
 
             migrationBuilder.DropTable(
                 name: "JWTs");
+
+            migrationBuilder.DropTable(
+                name: "messages");
 
             migrationBuilder.DropTable(
                 name: "Nofications");
@@ -564,9 +611,6 @@ namespace TestWebAPI.Migrations
                 name: "RolePermissions");
 
             migrationBuilder.DropTable(
-                name: "Submissions");
-
-            migrationBuilder.DropTable(
                 name: "User_Medias");
 
             migrationBuilder.DropTable(
@@ -574,6 +618,9 @@ namespace TestWebAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "Offers");
+
+            migrationBuilder.DropTable(
+                name: "conversations");
 
             migrationBuilder.DropTable(
                 name: "Permissions");

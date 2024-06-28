@@ -138,6 +138,38 @@ namespace TestWebAPI.Migrations
                     b.ToTable("Contracts");
                 });
 
+            modelBuilder.Entity("TestWebAPI.Models.Conversation", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("conversations");
+                });
+
+            modelBuilder.Entity("TestWebAPI.Models.ConversationUser", b =>
+                {
+                    b.Property<int>("conversationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("userId")
+                        .HasColumnType("int");
+
+                    b.HasKey("conversationId", "userId");
+
+                    b.HasIndex("userId");
+
+                    b.ToTable("ConversationUsers");
+                });
+
             modelBuilder.Entity("TestWebAPI.Models.Evaluate", b =>
                 {
                     b.Property<int>("id")
@@ -200,6 +232,36 @@ namespace TestWebAPI.Migrations
                     b.HasIndex("userId");
 
                     b.ToTable("JWTs");
+                });
+
+            modelBuilder.Entity("TestWebAPI.Models.Message", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("conversationId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("createdAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("userId")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("conversationId");
+
+                    b.HasIndex("userId");
+
+                    b.ToTable("messages");
                 });
 
             modelBuilder.Entity("TestWebAPI.Models.Nofication", b =>
@@ -439,39 +501,6 @@ namespace TestWebAPI.Migrations
                     b.ToTable("RolePermissions");
                 });
 
-            modelBuilder.Entity("TestWebAPI.Models.Submission", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<int>("buyerId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("createdAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("message")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("propertyId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("updatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("buyerId");
-
-                    b.HasIndex("propertyId");
-
-                    b.ToTable("Submissions");
-                });
-
             modelBuilder.Entity("TestWebAPI.Models.User", b =>
                 {
                     b.Property<int>("id")
@@ -633,6 +662,25 @@ namespace TestWebAPI.Migrations
                     b.Navigation("offer");
                 });
 
+            modelBuilder.Entity("TestWebAPI.Models.ConversationUser", b =>
+                {
+                    b.HasOne("TestWebAPI.Models.Conversation", "Conversation")
+                        .WithMany("conversationUsers")
+                        .HasForeignKey("conversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TestWebAPI.Models.User", "User")
+                        .WithMany("conversationUsers")
+                        .HasForeignKey("userId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("TestWebAPI.Models.Evaluate", b =>
                 {
                     b.HasOne("TestWebAPI.Models.User", "buyer")
@@ -661,6 +709,25 @@ namespace TestWebAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("user");
+                });
+
+            modelBuilder.Entity("TestWebAPI.Models.Message", b =>
+                {
+                    b.HasOne("TestWebAPI.Models.Conversation", "Conversation")
+                        .WithMany("messages")
+                        .HasForeignKey("conversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TestWebAPI.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("userId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TestWebAPI.Models.Nofication", b =>
@@ -744,25 +811,6 @@ namespace TestWebAPI.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("TestWebAPI.Models.Submission", b =>
-                {
-                    b.HasOne("TestWebAPI.Models.User", "buyer")
-                        .WithMany("Submissions")
-                        .HasForeignKey("buyerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TestWebAPI.Models.Property", "property")
-                        .WithMany("Submissions")
-                        .HasForeignKey("propertyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("buyer");
-
-                    b.Navigation("property");
-                });
-
             modelBuilder.Entity("TestWebAPI.Models.User", b =>
                 {
                     b.HasOne("TestWebAPI.Models.Role", "Role")
@@ -815,6 +863,13 @@ namespace TestWebAPI.Migrations
                     b.Navigation("Properties");
                 });
 
+            modelBuilder.Entity("TestWebAPI.Models.Conversation", b =>
+                {
+                    b.Navigation("conversationUsers");
+
+                    b.Navigation("messages");
+                });
+
             modelBuilder.Entity("TestWebAPI.Models.Offer", b =>
                 {
                     b.Navigation("Contract")
@@ -838,8 +893,6 @@ namespace TestWebAPI.Migrations
 
                     b.Navigation("PropertyHasDetail")
                         .IsRequired();
-
-                    b.Navigation("Submissions");
 
                     b.Navigation("Wishlists");
                 });
@@ -865,11 +918,11 @@ namespace TestWebAPI.Migrations
 
                     b.Navigation("PropertyHasDetails");
 
-                    b.Navigation("Submissions");
-
                     b.Navigation("User_Medias");
 
                     b.Navigation("Wishlists");
+
+                    b.Navigation("conversationUsers");
                 });
 #pragma warning restore 612, 618
         }

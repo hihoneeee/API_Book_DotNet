@@ -6,11 +6,11 @@ namespace TestWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DataGeneratorController : ControllerBase
+    public class DataGeneratorControllers : ControllerBase
     {
         private readonly FakeDataRepositories _fakeDataRepo;
 
-        public DataGeneratorController(FakeDataRepositories fakeDataRepo) {
+        public DataGeneratorControllers(FakeDataRepositories fakeDataRepo) {
             _fakeDataRepo = fakeDataRepo;
         }
 

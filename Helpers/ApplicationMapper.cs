@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using TestWebAPI.DTOs.Auth;
 using TestWebAPI.DTOs.Category;
+using TestWebAPI.DTOs.Chat;
+using TestWebAPI.DTOs.ChatHub;
 using TestWebAPI.DTOs.JWT;
 using TestWebAPI.DTOs.Permisstion;
 using TestWebAPI.DTOs.Property;
@@ -94,11 +96,14 @@ namespace TestWebAPI.Helpers
                 } : null))
                 .ReverseMap();
 
-
             CreateMap<Property, PropertyDTO>().ReverseMap();
             CreateMap<Property, GetPropertyDTO>().ReverseMap();
             CreateMap<PropertyHasDetail, PropertyHasDetailDTO>().ReverseMap();
             CreateMap<PropertyHasDetail, GetPropertyHasDetailDTO>().ReverseMap();
+
+            // ChatHub
+            CreateMap<Conversation, CreateConversationDTO>().ReverseMap();
+            CreateMap<Message, MessageDTO>().ReverseMap();
 
         }
     }
