@@ -9,11 +9,13 @@
 <body>
     <h2>SignalR Chat</h2>
     <div>
-        <input type="text" id="conversationName" placeholder="Conversation Name" />
-        <button onclick="createConversation()">Create Conversation</button>
+        <input type="text" id="userId1" placeholder="User ID" />
+        <input type="text" id="userId2" placeholder="Recipient ID" />        
+        <button onclick="getOrCreateConversation()">Check Conversation</button>
     </div>
     <div>
         <input type="text" id="userId" placeholder="User ID" />
+        <input type="text" id="recipientId" placeholder="Recipient ID" />
         <input type="text" id="conversationId" placeholder="Conversation ID" />
         <input type="text" id="messageInput" placeholder="Message" />
         <button onclick="sendMessage()">Send Message</button>
@@ -21,10 +23,6 @@
     <div>
         <button onclick="joinConversation()">Join Conversation</button>
         <button onclick="leaveConversation()">Leave Conversation</button>
-    </div>
-    <div>
-        <input type="text" id="sendMessageAll" placeholder="sendMessageAll" />
-        <button onclick="sendMessageAll()">sendMessageAll</button>
     </div>
     <ul id="messagesList"></ul>
 
@@ -47,25 +45,26 @@
             return console.error(err.toString());
         });
 
-        function createConversation() {
-            const conversationName = document.getElementById("conversationName").value;
+        function getOrCreateConversation() {
+            const conversationSender = document.getElementById("userId1").value;
+            const conversationRecipient = document.getElementById("userId2").value;
 
-            fetch('/api/conversations/create', {
+            fetch('/api/conversations/GetOrCreate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ name: conversationName })
+                body: JSON.stringify({ userId1: conversationSender, userId2: conversationRecipient })
             }).then(response => {
                 if (!response.ok) {
                     throw new Error('Failed to create conversation');
                 }
-                console.log('Conversation created:', conversationName);
             }).catch(error => console.error('Error:', error));
         }
 
         function sendMessage() {
             const userId = document.getElementById("userId").value;
+            const recipientId = document.getElementById("recipientId").value;
             const conversationId = document.getElementById("conversationId").value;
             const messageContent = document.getElementById("messageInput").value;
 
@@ -98,12 +97,11 @@
                 }
                 console.log('Joined conversation:', conversationId);
 
-                // Fetch previous messages
                 fetch(`/api/messages/${conversationId}`)
                     .then(response => response.json())
-                    .then(messages => {
-                        document.getElementById("messagesList").innerHTML = ''; // Clear existing messages
-                        messages.forEach(message => {
+                    .then(result => {
+                        document.getElementById("messagesList").innerHTML = '';
+                        result.data.forEach(message => {
                             const li = document.createElement("li");
                             li.textContent = `User ${message.userId}: ${message.content} [${message.createdAt}]`;
                             document.getElementById("messagesList").appendChild(li);

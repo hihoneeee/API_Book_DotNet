@@ -4,10 +4,9 @@ namespace TestWebAPI.Repositories.Interfaces
 {
     public interface IChatHubRepositories
     {
-        Task CreateConversation(string conversationName);
-        Task SendMessage(int conversationId, int userId, string messageContent);
+        Task<Conversation> CheckkConversation(int userId1, int userId2);
+        Task<Conversation> CreateConversation(Conversation conversation);
+        Task<Message> SendMessage(Message message);
         Task<List<Message>> GetMessagesForConversation(int conversationId);
-        Task JoinConversation(int conversationId, string connectionId);
-        Task LeaveConversation(int conversationId, string connectionId);
     }
 }

@@ -7,8 +7,10 @@ namespace TestWebAPI.Models
         [Key]
         public int id { get; set; }
         [Required]
-        public string name { get; set; }
-        public virtual ICollection<Message> messages { get; set; }
-        public virtual ICollection<ConversationUser> conversationUsers { get; set; }
+        public int userId1 { get; set; }
+        [Required]
+        public int userId2 { get; set; }
+        public DateTime createdAt { get; set; } = DateTime.Now;
+        public virtual ICollection<Message>? Messages { get; set; }
     }
 }

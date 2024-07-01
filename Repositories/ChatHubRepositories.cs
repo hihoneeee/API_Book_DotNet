@@ -9,60 +9,38 @@ namespace TestWebAPI.Repositories
     public class ChatHubRepositories : IChatHubRepositories
     {
         private readonly ApplicationDbContext _context;
-        private readonly IHubContext<ChatHub> _hubContext;
 
         public ChatHubRepositories(ApplicationDbContext context, IHubContext<ChatHub> hubContext)
         {
             _context = context;
-            _hubContext = hubContext;
         }
 
-
-        public async Task CreateConversation(string conversationName)
+        public async Task<Conversation> CheckkConversation(int userId1, int userId2)
         {
-            var conversation = new Conversation
-            {
-                name = conversationName            
-            };
-
-            _context.conversations.Add(conversation);
+            return await _context.Conversations.FirstOrDefaultAsync(c =>
+                (c.userId1 == userId1 && c.userId2 == userId2) ||
+                (c.userId1 == userId2 && c.userId2 == userId1));
+        }
+        public async Task<Conversation> CreateConversation(Conversation conversation)
+        {
+            _context.Conversations.Add(conversation);
             await _context.SaveChangesAsync();
+            return conversation;
         }
 
-        public async Task SendMessage(int conversationId, int userId, string messageContent)
+        public async Task<Message> SendMessage(Message message)
         {
-            // Tạo mới một message
-            var message = new Message
-            {
-                conversationId = conversationId,
-                userId = userId,
-                content = messageContent,
-                createdAt = DateTime.UtcNow
-            };
-
-            _context.messages.Add(message);
+            _context.Messages.Add(message);
             await _context.SaveChangesAsync();
-
-            // tạo sự kiện realtime
-            await _hubContext.Clients.Group(conversationId.ToString()).SendAsync("ReceiveMessage", userId, messageContent, message.createdAt);
+            return message;
         }
 
         public async Task<List<Message>> GetMessagesForConversation(int conversationId)
         {
-            return await _context.messages
+            return await _context.Messages
                                  .Where(m => m.conversationId == conversationId)
                                  .OrderBy(m => m.createdAt)
                                  .ToListAsync();
-        }
-
-        public async Task JoinConversation(int conversationId, string connectionId)
-        {
-            await _hubContext.Groups.AddToGroupAsync(connectionId, conversationId.ToString());
-        }
-
-        public async Task LeaveConversation(int conversationId, string connectionId)
-        {
-            await _hubContext.Groups.RemoveFromGroupAsync(connectionId, conversationId.ToString());
         }
     }
 }

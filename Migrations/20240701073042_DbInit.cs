@@ -29,16 +29,18 @@ namespace TestWebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "conversations",
+                name: "Conversations",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    userId1 = table.Column<int>(type: "int", nullable: false),
+                    userId2 = table.Column<int>(type: "int", nullable: false),
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_conversations", x => x.id);
+                    table.PrimaryKey("PK_Conversations", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -188,30 +190,6 @@ namespace TestWebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ConversationUsers",
-                columns: table => new
-                {
-                    conversationId = table.Column<int>(type: "int", nullable: false),
-                    userId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ConversationUsers", x => new { x.conversationId, x.userId });
-                    table.ForeignKey(
-                        name: "FK_ConversationUsers_Users_userId",
-                        column: x => x.userId,
-                        principalTable: "Users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ConversationUsers_conversations_conversationId",
-                        column: x => x.conversationId,
-                        principalTable: "conversations",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Evaluates",
                 columns: table => new
                 {
@@ -264,7 +242,7 @@ namespace TestWebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "messages",
+                name: "Messages",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
@@ -276,17 +254,17 @@ namespace TestWebAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_messages", x => x.id);
+                    table.PrimaryKey("PK_Messages", x => x.id);
                     table.ForeignKey(
-                        name: "FK_messages_Users_userId",
-                        column: x => x.userId,
-                        principalTable: "Users",
+                        name: "FK_Messages_Conversations_conversationId",
+                        column: x => x.conversationId,
+                        principalTable: "Conversations",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_messages_conversations_conversationId",
-                        column: x => x.conversationId,
-                        principalTable: "conversations",
+                        name: "FK_Messages_Users_userId",
+                        column: x => x.userId,
+                        principalTable: "Users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -492,11 +470,6 @@ namespace TestWebAPI.Migrations
                 column: "Userid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ConversationUsers_userId",
-                table: "ConversationUsers",
-                column: "userId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Evaluates_buyerId",
                 table: "Evaluates",
                 column: "buyerId");
@@ -512,13 +485,13 @@ namespace TestWebAPI.Migrations
                 column: "userId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_messages_conversationId",
-                table: "messages",
+                name: "IX_Messages_conversationId",
+                table: "Messages",
                 column: "conversationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_messages_userId",
-                table: "messages",
+                name: "IX_Messages_userId",
+                table: "Messages",
                 column: "userId");
 
             migrationBuilder.CreateIndex(
@@ -590,16 +563,13 @@ namespace TestWebAPI.Migrations
                 name: "Contracts");
 
             migrationBuilder.DropTable(
-                name: "ConversationUsers");
-
-            migrationBuilder.DropTable(
                 name: "Evaluates");
 
             migrationBuilder.DropTable(
                 name: "JWTs");
 
             migrationBuilder.DropTable(
-                name: "messages");
+                name: "Messages");
 
             migrationBuilder.DropTable(
                 name: "Nofications");
@@ -620,7 +590,7 @@ namespace TestWebAPI.Migrations
                 name: "Offers");
 
             migrationBuilder.DropTable(
-                name: "conversations");
+                name: "Conversations");
 
             migrationBuilder.DropTable(
                 name: "Permissions");

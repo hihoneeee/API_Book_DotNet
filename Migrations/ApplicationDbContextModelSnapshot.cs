@@ -146,28 +146,18 @@ namespace TestWebAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<string>("name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("createdAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("userId1")
+                        .HasColumnType("int");
+
+                    b.Property<int>("userId2")
+                        .HasColumnType("int");
 
                     b.HasKey("id");
 
-                    b.ToTable("conversations");
-                });
-
-            modelBuilder.Entity("TestWebAPI.Models.ConversationUser", b =>
-                {
-                    b.Property<int>("conversationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("userId")
-                        .HasColumnType("int");
-
-                    b.HasKey("conversationId", "userId");
-
-                    b.HasIndex("userId");
-
-                    b.ToTable("ConversationUsers");
+                    b.ToTable("Conversations");
                 });
 
             modelBuilder.Entity("TestWebAPI.Models.Evaluate", b =>
@@ -261,7 +251,7 @@ namespace TestWebAPI.Migrations
 
                     b.HasIndex("userId");
 
-                    b.ToTable("messages");
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("TestWebAPI.Models.Nofication", b =>
@@ -662,25 +652,6 @@ namespace TestWebAPI.Migrations
                     b.Navigation("offer");
                 });
 
-            modelBuilder.Entity("TestWebAPI.Models.ConversationUser", b =>
-                {
-                    b.HasOne("TestWebAPI.Models.Conversation", "Conversation")
-                        .WithMany("conversationUsers")
-                        .HasForeignKey("conversationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TestWebAPI.Models.User", "User")
-                        .WithMany("conversationUsers")
-                        .HasForeignKey("userId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Conversation");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("TestWebAPI.Models.Evaluate", b =>
                 {
                     b.HasOne("TestWebAPI.Models.User", "buyer")
@@ -714,13 +685,13 @@ namespace TestWebAPI.Migrations
             modelBuilder.Entity("TestWebAPI.Models.Message", b =>
                 {
                     b.HasOne("TestWebAPI.Models.Conversation", "Conversation")
-                        .WithMany("messages")
+                        .WithMany("Messages")
                         .HasForeignKey("conversationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TestWebAPI.Models.User", "User")
-                        .WithMany()
+                        .WithMany("Messages")
                         .HasForeignKey("userId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -865,9 +836,7 @@ namespace TestWebAPI.Migrations
 
             modelBuilder.Entity("TestWebAPI.Models.Conversation", b =>
                 {
-                    b.Navigation("conversationUsers");
-
-                    b.Navigation("messages");
+                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("TestWebAPI.Models.Offer", b =>
@@ -914,6 +883,8 @@ namespace TestWebAPI.Migrations
 
                     b.Navigation("JWTs");
 
+                    b.Navigation("Messages");
+
                     b.Navigation("Nofications");
 
                     b.Navigation("PropertyHasDetails");
@@ -921,8 +892,6 @@ namespace TestWebAPI.Migrations
                     b.Navigation("User_Medias");
 
                     b.Navigation("Wishlists");
-
-                    b.Navigation("conversationUsers");
                 });
 #pragma warning restore 612, 618
         }

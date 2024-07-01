@@ -203,6 +203,7 @@ builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<ICategoryServices, CategoryServices>();
 builder.Services.AddScoped<ICloudinaryServices, CloudinaryServices>();
 builder.Services.AddScoped<IPropertyServices, PropertyServices>();
+builder.Services.AddScoped<IChatHubServices, ChatHubServices>();
 
 // Add middleware to the container
 builder.Services.AddScoped<IJWTHelper, JWTHelper>();

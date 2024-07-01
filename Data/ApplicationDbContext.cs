@@ -67,17 +67,14 @@ namespace TestWebAPI.Data
                 .HasPrincipalKey(p => p.id);
 
             //chat message
-            modelBuilder.Entity<ConversationUser>()
-            .HasKey(cu => new { cu.conversationId, cu.userId });
-
-            modelBuilder.Entity<ConversationUser>()
+            modelBuilder.Entity<Message>()
                 .HasOne(cu => cu.Conversation)
-                .WithMany(c => c.conversationUsers)
+                .WithMany(c => c.Messages)
                 .HasForeignKey(cu => cu.conversationId)
                 .HasPrincipalKey(c => c.id);
-            modelBuilder.Entity<ConversationUser>()
+            modelBuilder.Entity<Message>()
                 .HasOne(cu => cu.User)
-                .WithMany(u => u.conversationUsers)
+                .WithMany(u => u.Messages)
                 .HasForeignKey(cu => cu.userId)
                 .HasPrincipalKey(u => u.id);
 
@@ -137,9 +134,7 @@ namespace TestWebAPI.Data
         public DbSet<Wishlist> Wishlists { get; set; }
         public DbSet<PropertyHasDetail> PropertyHasDetails { get; set; }
         public DbSet<Offer> Offers { get; set; }
-        public DbSet<Message> messages { get; set; }
-        public DbSet<Conversation> conversations { get; set; }
-        public DbSet<ConversationUser> ConversationUsers { get; set; }
-
+        public DbSet<Message> Messages { get; set; }
+        public DbSet<Conversation> Conversations { get; set; }
     }
 }

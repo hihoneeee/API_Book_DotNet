@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TestWebAPI.DTOs.ChatHub;
-using TestWebAPI.Models;
-using TestWebAPI.Repositories.Interfaces;
+using TestWebAPI.Services.Interfaces;
+using static TestWebAPI.Response.HttpStatus;
 
 namespace TestWebAPI.Controllers
 {
@@ -10,25 +9,40 @@ namespace TestWebAPI.Controllers
     [ApiController]
     public class messagesController : ControllerBase
     {
-        private readonly IChatHubRepositories _chatHubRepo;
+        private readonly IChatHubServices _chatHubServices;
 
-        public messagesController(IChatHubRepositories chatHubRepo)
+        public messagesController(IChatHubServices chatHubServices)
         {
-            _chatHubRepo = chatHubRepo;
+            _chatHubServices = chatHubServices;
         }
 
         [HttpPost]
         public async Task<IActionResult> SendMessage([FromBody] MessageDTO messageDTO)
         {
-            await _chatHubRepo.SendMessage(messageDTO.conversationId, messageDTO.userId, messageDTO.content);
-            return Ok(messageDTO);
+
+            var serviceResponse = await _chatHubServices.SendMessage(messageDTO);
+            if (serviceResponse.statusCode == EHttpType.Success)
+            {
+                return Ok(new { serviceResponse.success, serviceResponse.message, serviceResponse.data });
+            }
+            else
+            {
+                return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
+            }
         }
 
         [HttpGet("{conversationId}")]
         public async Task<IActionResult> GetMessagesForConversation(int conversationId)
         {
-            var messages = await _chatHubRepo.GetMessagesForConversation(conversationId);
-            return Ok(messages);
+            var serviceResponse = await _chatHubServices.GetMessagesForConversation(conversationId);
+            if (serviceResponse.statusCode == EHttpType.Success)
+            {
+                return Ok(new { serviceResponse.success, serviceResponse.message, serviceResponse.data });
+            }
+            else
+            {
+                return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
+            }
         }
     }
 }
