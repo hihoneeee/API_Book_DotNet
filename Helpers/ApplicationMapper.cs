@@ -3,6 +3,7 @@ using TestWebAPI.DTOs.Auth;
 using TestWebAPI.DTOs.Category;
 using TestWebAPI.DTOs.ChatHub;
 using TestWebAPI.DTOs.JWT;
+using TestWebAPI.DTOs.Notification;
 using TestWebAPI.DTOs.Permisstion;
 using TestWebAPI.DTOs.Property;
 using TestWebAPI.DTOs.Role;
@@ -100,11 +101,25 @@ namespace TestWebAPI.Helpers
             CreateMap<PropertyHasDetail, PropertyHasDetailDTO>().ReverseMap();
             CreateMap<PropertyHasDetail, GetPropertyHasDetailDTO>().ReverseMap();
 
-            // ChatHub
+            // Realtime
+            CreateMap<Conversation, GetConversationDTO>()
+                .ForMember(dest => dest.dataMessages, opt => opt.MapFrom(src => src.Messages.Select(m => new GetMessageDTO
+                {
+                    conversationId = m.conversationId,
+                    userId = m.userId,
+                    content = m.content,
+                    createdAt = m.createdAt,
+                }).ToList()))
+                .ReverseMap()
+                .ForMember(dest => dest.Messages, opt => opt.Ignore());
+
             CreateMap<Conversation, ConversationDTO>().ReverseMap();
+
             CreateMap<Message, MessageDTO>().ReverseMap();
             CreateMap<Message, GetMessageDTO>();
 
+            CreateMap<Notification, NotificationDTO>();
+            CreateMap<Notification, GetNotificationDTO>();
         }
     }
 }

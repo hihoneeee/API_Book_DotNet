@@ -94,7 +94,7 @@ namespace TestWebAPI.Services
                 var cookieOptions = new CookieOptions
                 {
                     HttpOnly = true,
-                    MaxAge = TimeSpan.FromDays(30) // Thời gian sống của cookie là 7 ngày
+                    MaxAge = TimeSpan.FromDays(30)
                 };
                 _httpContextAccessor.HttpContext.Response.Cookies.Append(cookieName, refresh_token, cookieOptions);
                 serviceResponse.accessToken = token;
@@ -150,8 +150,6 @@ namespace TestWebAPI.Services
                 }
 
                 var authChangePassword = await _authRepo.InsertChangePasswordAsyn(existsEmail);
-
-                // Here we add the token to the service response
                 serviceResponse.data = _mapper.Map<AuthForgotPasswordDTO>(authChangePassword);
                 serviceResponse.SetSuccess("Password reset token generated!");
             }

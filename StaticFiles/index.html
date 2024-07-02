@@ -5,26 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SignalR Chat</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.3/signalr.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
 </head>
 <body>
     <h2>SignalR Chat</h2>
     <div>
         <input type="text" id="userId1" placeholder="User ID" />
-        <input type="text" id="userId2" placeholder="Recipient ID" />        
+        <input type="text" id="userId2" placeholder="Recipient ID" />
         <button onclick="getOrCreateConversation()">Check Conversation</button>
     </div>
     <div>
         <input type="text" id="userId" placeholder="User ID" />
-        <input type="text" id="recipientId" placeholder="Recipient ID" />
         <input type="text" id="conversationId" placeholder="Conversation ID" />
         <input type="text" id="messageInput" placeholder="Message" />
         <button onclick="sendMessage()">Send Message</button>
     </div>
     <div>
-        <button onclick="joinConversation()">Join Conversation</button>
+        <input type="text" id="userIdInput" placeholder="Enter your User ID" />
+        <button onclick="setUserId()">Set User ID</button>
+    </div>
+    <i id="notificationIcon" class="ri-message-3-line" style="display: none;">
+        <span id="notificationCount" style="display: none;">0</span>
+    </i>
+    <div>
         <button onclick="leaveConversation()">Leave Conversation</button>
     </div>
+
     <ul id="messagesList"></ul>
+    <ul id="notificationList"></ul>
 
     <script>
         const connection = new signalR.HubConnectionBuilder().withUrl("/chathub").build();
@@ -34,6 +42,33 @@
             li.textContent = `User ${userId}: ${messageContent} [${timestamp}]`;
             document.getElementById("messagesList").appendChild(li);
         });
+
+        let currentUserId = null;
+
+        connection.on("ReceiveNotification", function (userId, notificationContent) {
+            if (currentUserId === userId) {
+                const notificationCountElem = document.getElementById("notificationCount");
+                let count = parseInt(notificationCountElem.textContent) || 0;
+                count++;
+                console.log(`ReceiveNotification called for userId: ${userId}`);
+                console.log("New count:", count);
+                notificationCountElem.textContent = count;
+                notificationCountElem.style.display = 'inline';
+
+                const notificationList = document.getElementById("notificationList");
+                const li = document.createElement("li");
+                li.textContent = notificationContent;
+                notificationList.appendChild(li);
+            }
+        });
+
+        function setUserId() {
+            currentUserId = parseInt(document.getElementById("userIdInput").value);
+            console.log("User ID set to:", currentUserId);
+
+            const notificationIcon = document.getElementById("notificationIcon");
+            notificationIcon.style.display = 'inline';
+        }
 
         connection.start().then(function () {
             console.log("SignalR connected");
@@ -55,16 +90,42 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ userId1: conversationSender, userId2: conversationRecipient })
-            }).then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to create conversation');
-                }
-            }).catch(error => console.error('Error:', error));
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to create conversation');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const conversationId = data.data.id;
+
+                    return fetch(`/api/conversations/join?conversationId=${conversationId}&connectionId=${window.connectionId}`, {
+                        method: 'POST'
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Failed to join conversation');
+                            }
+                            console.log('Joined conversation:', conversationId);
+
+                            return fetch(`/api/messages/${conversationId}`)
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            document.getElementById("messagesList").innerHTML = '';
+                            result.data.forEach(message => {
+                                const li = document.createElement("li");
+                                li.textContent = `User ${message.userId}: ${message.content} [${message.createdAt}]`;
+                                document.getElementById("messagesList").appendChild(li);
+                            });
+                        });
+                })
+                .catch(error => console.error('Error:', error));
         }
 
         function sendMessage() {
             const userId = document.getElementById("userId").value;
-            const recipientId = document.getElementById("recipientId").value;
             const conversationId = document.getElementById("conversationId").value;
             const messageContent = document.getElementById("messageInput").value;
 
@@ -82,32 +143,7 @@
                 if (!response.ok) {
                     throw new Error('Failed to send message');
                 }
-                document.getElementById("messageInput").value = ''; // Clear the input after sending
-            }).catch(error => console.error('Error:', error));
-        }
-
-        function joinConversation() {
-            const conversationId = document.getElementById("conversationId").value;
-
-            fetch(`/api/conversations/join?conversationId=${conversationId}&connectionId=${window.connectionId}`, {
-                method: 'POST'
-            }).then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to join conversation');
-                }
-                console.log('Joined conversation:', conversationId);
-
-                fetch(`/api/messages/${conversationId}`)
-                    .then(response => response.json())
-                    .then(result => {
-                        document.getElementById("messagesList").innerHTML = '';
-                        result.data.forEach(message => {
-                            const li = document.createElement("li");
-                            li.textContent = `User ${message.userId}: ${message.content} [${message.createdAt}]`;
-                            document.getElementById("messagesList").appendChild(li);
-                        });
-                    })
-                    .catch(error => console.error('Error fetching messages:', error));
+                document.getElementById("messageInput").value = '';
             }).catch(error => console.error('Error:', error));
         }
 
@@ -123,6 +159,8 @@
                 console.log('Left conversation:', conversationId);
             }).catch(error => console.error('Error:', error));
         }
+
+
     </script>
 </body>
 </html>

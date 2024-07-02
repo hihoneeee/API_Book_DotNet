@@ -254,13 +254,23 @@ namespace TestWebAPI.Migrations
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("TestWebAPI.Models.Nofication", b =>
+            modelBuilder.Entity("TestWebAPI.Models.Notification", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("conversationId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime2");
@@ -276,11 +286,13 @@ namespace TestWebAPI.Migrations
 
                     b.HasKey("id");
 
+                    b.HasIndex("conversationId");
+
                     b.HasIndex("propertyId");
 
                     b.HasIndex("userId");
 
-                    b.ToTable("Nofications");
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("TestWebAPI.Models.Offer", b =>
@@ -701,19 +713,27 @@ namespace TestWebAPI.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("TestWebAPI.Models.Nofication", b =>
+            modelBuilder.Entity("TestWebAPI.Models.Notification", b =>
                 {
+                    b.HasOne("TestWebAPI.Models.Conversation", "conversation")
+                        .WithMany("Notifications")
+                        .HasForeignKey("conversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("TestWebAPI.Models.Property", "property")
-                        .WithMany("Nofications")
+                        .WithMany("Notifications")
                         .HasForeignKey("propertyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TestWebAPI.Models.User", "user")
-                        .WithMany("Nofications")
+                        .WithMany("Notifications")
                         .HasForeignKey("userId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("conversation");
 
                     b.Navigation("property");
 
@@ -837,6 +857,8 @@ namespace TestWebAPI.Migrations
             modelBuilder.Entity("TestWebAPI.Models.Conversation", b =>
                 {
                     b.Navigation("Messages");
+
+                    b.Navigation("Notifications");
                 });
 
             modelBuilder.Entity("TestWebAPI.Models.Offer", b =>
@@ -858,7 +880,7 @@ namespace TestWebAPI.Migrations
 
                     b.Navigation("Evaluates");
 
-                    b.Navigation("Nofications");
+                    b.Navigation("Notifications");
 
                     b.Navigation("PropertyHasDetail")
                         .IsRequired();
@@ -885,7 +907,7 @@ namespace TestWebAPI.Migrations
 
                     b.Navigation("Messages");
 
-                    b.Navigation("Nofications");
+                    b.Navigation("Notifications");
 
                     b.Navigation("PropertyHasDetails");
 

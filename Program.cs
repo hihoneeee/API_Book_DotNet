@@ -7,7 +7,6 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Configuration;
 using System.Text;
 using TestWebAPI.Configs;
 using TestWebAPI.Data;
@@ -191,6 +190,7 @@ builder.Services.AddScoped<IPropertyRepositories, PropertyRepositories>();
 builder.Services.AddScoped<IPropertyHasDetailRepositories, PropertyHasDetailRepositories>();
 builder.Services.AddScoped<FakeDataRepositories>();
 builder.Services.AddScoped<IChatHubRepositories, ChatHubRepositories>();
+builder.Services.AddScoped<INotificationRepositories, NotificationRepositories>();
 
 // Add services to the container
 builder.Services.AddScoped<IRoleService, RoleServices>();
@@ -203,7 +203,7 @@ builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<ICategoryServices, CategoryServices>();
 builder.Services.AddScoped<ICloudinaryServices, CloudinaryServices>();
 builder.Services.AddScoped<IPropertyServices, PropertyServices>();
-builder.Services.AddScoped<IChatHubServices, ChatHubServices>();
+builder.Services.AddScoped<IRealTimeServices, RealTimeServices>();
 
 // Add middleware to the container
 builder.Services.AddScoped<IJWTHelper, JWTHelper>();

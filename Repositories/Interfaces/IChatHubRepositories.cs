@@ -6,6 +6,7 @@ namespace TestWebAPI.Repositories.Interfaces
     {
         Task<Conversation> CheckkConversation(int userId1, int userId2);
         Task<Conversation> CreateConversation(Conversation conversation);
+        Task<Conversation> GetConversationById(int id);   
         Task<Message> SendMessage(Message message);
         Task<List<Message>> GetMessagesForConversation(int conversationId);
     }

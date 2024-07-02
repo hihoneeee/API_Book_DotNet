@@ -17,7 +17,8 @@ namespace TestWebAPI.Repositories
 
         public async Task<Conversation> CheckkConversation(int userId1, int userId2)
         {
-            return await _context.Conversations.FirstOrDefaultAsync(c =>
+            return await _context.Conversations.Include(c => c.Messages)
+                .FirstOrDefaultAsync(c =>
                 (c.userId1 == userId1 && c.userId2 == userId2) ||
                 (c.userId1 == userId2 && c.userId2 == userId1));
         }
@@ -26,6 +27,11 @@ namespace TestWebAPI.Repositories
             _context.Conversations.Add(conversation);
             await _context.SaveChangesAsync();
             return conversation;
+        }
+
+        public async Task<Conversation> GetConversationById(int id)
+        {
+            return await _context.Conversations.FirstOrDefaultAsync(c => c.id == id);
         }
 
         public async Task<Message> SendMessage(Message message)

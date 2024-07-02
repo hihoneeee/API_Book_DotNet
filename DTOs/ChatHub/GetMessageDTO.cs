@@ -5,12 +5,12 @@ namespace TestWebAPI.DTOs.ChatHub
     public class GetMessageDTO
     {
         [Required]
-        public string Content { get; set; }
+        public string content { get; set; }
         [Required]
-        public int UserId { get; set; }
+        public int userId { get; set; }
         [Required]
-        public int ConversationId { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public int conversationId { get; set; }
+        public DateTime createdAt { get; set; }
     }
 
 }

@@ -10,17 +10,17 @@ namespace TestWebAPI.Controllers
     [ApiController]
     public class conversationsController : ControllerBase
     {
-        private readonly IChatHubServices _chatHubServices;
+        private readonly IRealTimeServices _realTimeServices;
 
-        public conversationsController(IChatHubServices chatHubServices)
+        public conversationsController(IRealTimeServices realTimeServices)
         {
-            _chatHubServices = chatHubServices;
+            _realTimeServices = realTimeServices;
         }
 
         [HttpPost("GetOrCreate")]
         public async Task<IActionResult> GetOrCreateConversation([FromBody] ConversationDTO conversationDTO)
         {
-            var serviceResponse = await _chatHubServices.GetOrCreateConversation(conversationDTO);
+            var serviceResponse = await _realTimeServices.GetOrCreateConversation(conversationDTO);
             if (serviceResponse.statusCode == EHttpType.Success)
             {
                 return Ok(new { serviceResponse.success, serviceResponse.message, serviceResponse.data });
@@ -34,14 +34,14 @@ namespace TestWebAPI.Controllers
         [HttpPost("join")]
         public async Task<IActionResult> JoinConversation(int conversationId, string connectionId)
         {
-            await _chatHubServices.JoinConversation(conversationId, connectionId);
+            await _realTimeServices.JoinConversation(conversationId, connectionId);
             return Ok();
         }
 
         [HttpPost("leave")]
         public async Task<IActionResult> LeaveConversation(int conversationId, string connectionId)
         {
-            await _chatHubServices.LeaveConversation(conversationId, connectionId);
+            await _realTimeServices.LeaveConversation(conversationId, connectionId);
             return Ok();
         }
     }

@@ -43,16 +43,21 @@ namespace TestWebAPI.Data
                 .HasPrincipalKey<Property>(p => p.id);
 
             //nofication
-            modelBuilder.Entity<Nofication>()
+            modelBuilder.Entity<Notification>()
                 .HasOne(n => n.property)
-                .WithMany(p => p.Nofications)
+                .WithMany(p => p.Notifications)
                 .HasForeignKey(n => n.propertyId)
                 .HasPrincipalKey(p => p.id);
-            modelBuilder.Entity<Nofication>()
+            modelBuilder.Entity<Notification>()
                 .HasOne(n => n.user)
-                .WithMany(u => u.Nofications)
+                .WithMany(u => u.Notifications)
                 .HasForeignKey(n => n.userId)
                 .HasPrincipalKey(u => u.id);
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.conversation)
+                .WithMany(c => c.Notifications)
+                .HasForeignKey(n => n.conversationId)
+                .HasPrincipalKey(c => c.id);
 
             //Evaluate
             modelBuilder.Entity<Evaluate>()
@@ -126,7 +131,7 @@ namespace TestWebAPI.Data
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<Role_Permission> RolePermissions { get; set; }
         public DbSet<Property> Properties { get; set; }
-        public DbSet<Nofication> Nofications { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
         public DbSet<User_Media> User_Medias { get; set; }
         public DbSet<Evaluate> Evaluates { get; set; }
         public DbSet<Contract> Contracts { get; set; }

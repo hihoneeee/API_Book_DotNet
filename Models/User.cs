@@ -35,7 +35,7 @@ namespace TestWebAPI.Models
         public DateTime? passwordResetExpires { get; set; }
         public virtual ICollection<JWT>? JWTs { get; set; }
         public virtual ICollection<User_Media>? User_Medias { get; set; }
-        public virtual ICollection<Nofication>? Nofications { get; set; }
+        public virtual ICollection<Notification>? Notifications { get; set; }
         public virtual ICollection<Evaluate>? Evaluates { get; set; }
         public virtual ICollection<Contract>? Contracts { get; set; }
         public virtual ICollection<Message>? Messages { get; set; }
