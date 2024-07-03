@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TestWebAPI.DTOs.ChatHub;
-using TestWebAPI.Repositories.Interfaces;
 using TestWebAPI.Services.Interfaces;
 using static TestWebAPI.Response.HttpStatus;
 

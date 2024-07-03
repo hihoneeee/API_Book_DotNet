@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.SignalR;
+using System.Text.RegularExpressions;
 using TestWebAPI.DTOs.ChatHub;
 using TestWebAPI.DTOs.Notification;
 using TestWebAPI.Helpers;
@@ -113,6 +114,16 @@ namespace TestWebAPI.Services
             await _hubContext.Groups.RemoveFromGroupAsync(connectionId, conversationId.ToString());
         }
 
+        public async Task OnConnectedAsync(int userId, string connectionId)
+        {
+            await _hubContext.Groups.AddToGroupAsync(connectionId, userId.ToString());
+        }
+
+        public async Task OnDisconnectedAsync(int userId, string connectionId)
+        {
+            await _hubContext.Groups.RemoveFromGroupAsync(connectionId, userId.ToString());
+        }
+
         public async Task<ServiceResponse<List<GetMessageDTO>>> GetMessagesForConversation(int conversationId)
         {
             var serviceResponse = new ServiceResponse<List<GetMessageDTO>>();
@@ -154,7 +165,9 @@ namespace TestWebAPI.Services
                             serviceResponse.data = _mapper.Map<NotificationDTO>(createdNotification);
                             serviceResponse.SetSuccess("Appointment notification created successfully!");
 
-                            await _hubContext.Clients.User(checkUser.id.ToString()).SendAsync("ReceiveNotification", notification.content);
+                            await _hubContext.Clients.User(checkUser.id.ToString()).SendAsync("ReceiveNotification", notification.userId, notification.content);
+
+                            Console.WriteLine($"Notification sent to user ID {checkUser.id} with content: {notification.content}");
                         }
                         else
                         {

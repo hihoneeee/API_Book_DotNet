@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TestWebAPI.Services;
 using TestWebAPI.Services.Interfaces;
 using static TestWebAPI.Response.HttpStatus;
 
@@ -9,10 +10,13 @@ namespace TestWebAPI.Controllers
     public class userController : ControllerBase
     {
         private readonly IUserServices _userServices;
+        private readonly IRealTimeServices _realTimeServices;
 
-        public userController(IUserServices userServices)
+        public userController(IUserServices userServices, IRealTimeServices realTimeServices)
         {
             _userServices = userServices;
+            _realTimeServices = realTimeServices;
+
         }
 
         [HttpGet]
@@ -39,5 +43,20 @@ namespace TestWebAPI.Controllers
                  return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
             }
         }
+
+        [HttpPost("connected")]
+        public async Task<IActionResult> OnConnectedAsync(int userId, string connectionId)
+        {
+            await _realTimeServices.OnConnectedAsync(userId, connectionId);
+            return Ok();
+        }
+
+        [HttpPost("disconnected")]
+        public async Task<IActionResult> OnDisconnectedAsync(int userId, string connectionId)
+        {
+            await _realTimeServices.OnDisconnectedAsync(userId, connectionId);
+            return Ok();
+        }
+
     }
 }

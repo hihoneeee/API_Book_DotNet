@@ -34,8 +34,6 @@ namespace TestWebAPI.Services
                 {
                     serviceResponse.SetError(notificationResponse.message);
                 }
-
-                serviceResponse.data = _mapper.Map<AppointmentDTO>(createdAppointment);
             }
             catch (Exception ex)
             {

@@ -5,4 +5,8 @@ public class ChatHub : Hub
     {
         return Context.ConnectionId;
     }
+    public async Task SendNotification(int userId, string content)
+    {
+        await Clients.User(userId.ToString()).SendAsync("ReceiveNotification", userId, content);
+    }
 }

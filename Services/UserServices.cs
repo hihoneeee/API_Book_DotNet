@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using TestWebAPI.DTOs.User;
+using TestWebAPI.Helpers;
 using TestWebAPI.Repositories.Interfaces;
 using TestWebAPI.Response;
 using TestWebAPI.Services.Interfaces;
@@ -26,15 +27,11 @@ namespace TestWebAPI.Services
                 var existingUser = await _userRepo.GetCurrentAsync(id);
                 if (existingUser == null)
                 {
-                    serviceResponse.statusCode = EHttpType.NotFound;
-                    serviceResponse.success = false;
-                    serviceResponse.message = "User not existing.";
+                    serviceResponse.SetNotFound("User");
                     return serviceResponse;
                 }
                 serviceResponse.data = _mapper.Map<UserDTO>(existingUser);
-                serviceResponse.statusCode = EHttpType.Success;
-                serviceResponse.message = "Get current user successfully.";
-                serviceResponse.success = true;
+                serviceResponse.SetSuccess("Get current user successfully!");
             }
             catch (Exception ex)
             {
