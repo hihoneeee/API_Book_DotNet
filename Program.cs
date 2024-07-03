@@ -191,6 +191,7 @@ builder.Services.AddScoped<IPropertyHasDetailRepositories, PropertyHasDetailRepo
 builder.Services.AddScoped<FakeDataRepositories>();
 builder.Services.AddScoped<IChatHubRepositories, ChatHubRepositories>();
 builder.Services.AddScoped<INotificationRepositories, NotificationRepositories>();
+builder.Services.AddScoped<IAppointmentRepositories, AppointmentRepositories>();
 
 // Add services to the container
 builder.Services.AddScoped<IRoleService, RoleServices>();
@@ -204,6 +205,7 @@ builder.Services.AddScoped<ICategoryServices, CategoryServices>();
 builder.Services.AddScoped<ICloudinaryServices, CloudinaryServices>();
 builder.Services.AddScoped<IPropertyServices, PropertyServices>();
 builder.Services.AddScoped<IRealTimeServices, RealTimeServices>();
+builder.Services.AddScoped<IAppointmentServices, AppointmentServices>();
 
 // Add middleware to the container
 builder.Services.AddScoped<IJWTHelper, JWTHelper>();

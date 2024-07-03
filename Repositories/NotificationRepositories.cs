@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using TestWebAPI.Data;
 using TestWebAPI.Models;
 using TestWebAPI.Repositories.Interfaces;
@@ -18,6 +19,12 @@ namespace TestWebAPI.Repositories
             _context.Notifications.Add(notification);
             await _context.SaveChangesAsync();
             return notification;
+        }
+        public async Task<User> FindUserByPropertyIdAsync(int propertyId)
+        {
+            return await _context.Users
+                                 .Where(u => u.PropertyHasDetails.Any(p => p.propertyId == propertyId))
+                                 .FirstOrDefaultAsync();
         }
 
         public async Task<List<Notification>> GetNotificationsForUser(int userId)

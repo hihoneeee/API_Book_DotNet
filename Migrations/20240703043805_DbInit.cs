@@ -276,28 +276,26 @@ namespace TestWebAPI.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     userId = table.Column<int>(type: "int", nullable: false),
-                    propertyId = table.Column<int>(type: "int", nullable: false),
-                    conversationId = table.Column<int>(type: "int", nullable: false),
                     content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsRead = table.Column<bool>(type: "bit", nullable: false),
                     createdAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Conversationid = table.Column<int>(type: "int", nullable: true),
+                    Propertyid = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Notifications", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Notifications_Conversations_conversationId",
-                        column: x => x.conversationId,
+                        name: "FK_Notifications_Conversations_Conversationid",
+                        column: x => x.Conversationid,
                         principalTable: "Conversations",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_Notifications_Properties_propertyId",
-                        column: x => x.propertyId,
+                        name: "FK_Notifications_Properties_Propertyid",
+                        column: x => x.Propertyid,
                         principalTable: "Properties",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_Notifications_Users_userId",
                         column: x => x.userId,
@@ -504,14 +502,14 @@ namespace TestWebAPI.Migrations
                 column: "userId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notifications_conversationId",
+                name: "IX_Notifications_Conversationid",
                 table: "Notifications",
-                column: "conversationId");
+                column: "Conversationid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notifications_propertyId",
+                name: "IX_Notifications_Propertyid",
                 table: "Notifications",
-                column: "propertyId");
+                column: "Propertyid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notifications_userId",

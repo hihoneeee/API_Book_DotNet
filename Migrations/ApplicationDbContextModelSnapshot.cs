@@ -262,21 +262,21 @@ namespace TestWebAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
+                    b.Property<int?>("Conversationid")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
+
+                    b.Property<int?>("Propertyid")
+                        .HasColumnType("int");
 
                     b.Property<string>("content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("conversationId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("propertyId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("updatedAt")
                         .HasColumnType("datetime2");
@@ -286,9 +286,9 @@ namespace TestWebAPI.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("conversationId");
+                    b.HasIndex("Conversationid");
 
-                    b.HasIndex("propertyId");
+                    b.HasIndex("Propertyid");
 
                     b.HasIndex("userId");
 
@@ -715,27 +715,19 @@ namespace TestWebAPI.Migrations
 
             modelBuilder.Entity("TestWebAPI.Models.Notification", b =>
                 {
-                    b.HasOne("TestWebAPI.Models.Conversation", "conversation")
+                    b.HasOne("TestWebAPI.Models.Conversation", null)
                         .WithMany("Notifications")
-                        .HasForeignKey("conversationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Conversationid");
 
-                    b.HasOne("TestWebAPI.Models.Property", "property")
+                    b.HasOne("TestWebAPI.Models.Property", null)
                         .WithMany("Notifications")
-                        .HasForeignKey("propertyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Propertyid");
 
                     b.HasOne("TestWebAPI.Models.User", "user")
                         .WithMany("Notifications")
                         .HasForeignKey("userId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("conversation");
-
-                    b.Navigation("property");
 
                     b.Navigation("user");
                 });

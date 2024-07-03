@@ -7,6 +7,6 @@ namespace TestWebAPI.Repositories.Interfaces
         Task<List<Notification>> GetNotificationsForUser(int userId);
         Task MarkNotificationsAsRead(int userId);
         Task<Notification> CreateNoficationsAsync(Notification notification);
-
+        Task<User> FindUserByPropertyIdAsync(int propertyId);    
     }
 }

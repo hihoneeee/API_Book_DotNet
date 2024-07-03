@@ -33,8 +33,6 @@ namespace TestWebAPI.Models
         public DateTime createdAt { get; set;} = DateTime.Now;
         [Required]
         public DateTime updatedAt { get; set; }
-
         public virtual ICollection<Offer>? Offers { get; set; }
-
     }
 }

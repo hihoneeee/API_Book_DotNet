@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.SignalR;
-using TestWebAPI.DTOs.Category;
 using TestWebAPI.DTOs.ChatHub;
 using TestWebAPI.DTOs.Notification;
 using TestWebAPI.Helpers;
@@ -16,13 +15,19 @@ namespace TestWebAPI.Services
         private readonly IChatHubRepositories _chatHubRepo;
         private readonly IHubContext<ChatHub> _hubContext;
         private readonly INotificationRepositories _notificationRepo;
+        private readonly IPropertyRepositories _propertyRepo;
+        private readonly IPropertyHasDetailRepositories _propertyHasDetailRepo;
+        private readonly IUserRepositories _userRepo;
         private readonly IMapper _mapper;
 
-        public RealTimeServices(IChatHubRepositories chatHubRepo, IMapper mapper, IHubContext<ChatHub> hubContext, INotificationRepositories notificationRepo) {
+        public RealTimeServices(IChatHubRepositories chatHubRepo, IMapper mapper, IHubContext<ChatHub> hubContext, INotificationRepositories notificationRepo, IPropertyRepositories propertyRepo, IPropertyHasDetailRepositories propertyHasDetailRepo, IUserRepositories userRepo) {
             _chatHubRepo = chatHubRepo;
             _mapper = mapper;
             _hubContext = hubContext;
             _notificationRepo = notificationRepo;
+            _propertyRepo = propertyRepo;
+            _propertyHasDetailRepo = propertyHasDetailRepo;
+            _userRepo = userRepo;
         }
 
         public async Task<ServiceResponse<GetConversationDTO>> GetOrCreateConversation(ConversationDTO conversationDTO)
@@ -124,16 +129,47 @@ namespace TestWebAPI.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<NotificationDTO>> CreateNotification(NotificationDTO notificationDTO)
+        public async Task<ServiceResponse<NotificationDTO>> CreateAppointmentNotificationAsync(int propertyId)
         {
             var serviceResponse = new ServiceResponse<NotificationDTO>();
             try
             {
-                var notification = _mapper.Map<Notification>(notificationDTO);
-                notification.content = $"New message from user {notification.userId}";
-                var createdNotification = await _notificationRepo.CreateNoficationsAsync(notification);
-                serviceResponse.SetSuccess("Notification created successfully!");
-                await _hubContext.Clients.Group(notificationDTO.conversationId.ToString()).SendAsync("ReceiveNotification", notificationDTO.userId, notificationDTO.content, notificationDTO.createdAt);
+                var checkProperty = await _propertyRepo.GetPropertyByIdAsync(propertyId);
+                if (checkProperty != null)
+                {
+                    var checkPropertyHasDetail = await _propertyHasDetailRepo.GetPropertyHasDetailByPropertyIdAsync(propertyId);
+                    if (checkPropertyHasDetail != null)
+                    {
+                        var checkUser = await _userRepo.GetCurrentAsync(checkPropertyHasDetail.sellerId);
+                        if (checkUser != null)
+                        {
+                            var notification = new Notification
+                            {
+                                userId = checkUser.id,
+                                content = $"Có một cuộc hẹn mới được đặt cho bất động sản: {checkProperty.title}",
+                                createdAt = DateTime.Now,
+                                IsRead = false
+                            };
+                            var createdNotification = await _notificationRepo.CreateNoficationsAsync(notification);
+                            serviceResponse.data = _mapper.Map<NotificationDTO>(createdNotification);
+                            serviceResponse.SetSuccess("Appointment notification created successfully!");
+
+                            await _hubContext.Clients.User(checkUser.id.ToString()).SendAsync("ReceiveNotification", notification.content);
+                        }
+                        else
+                        {
+                            serviceResponse.SetError("User not found.");
+                        }
+                    }
+                    else
+                    {
+                        serviceResponse.SetError("Property detail not found.");
+                    }
+                }
+                else
+                {
+                    serviceResponse.SetError("Property not found.");
+                }
             }
             catch (Exception ex)
             {
@@ -141,6 +177,7 @@ namespace TestWebAPI.Services
             }
             return serviceResponse;
         }
+
 
         public async Task<ServiceResponse<List<GetNotificationDTO>>> GetNotificationsForUser(int userId)
         {

@@ -12,15 +12,8 @@ namespace TestWebAPI.Models
         [ForeignKey("userId")]
         public virtual User user { get; set; }
         [Required]
-        public int propertyId { get; set; }
-        [ForeignKey("propertyId")]
-        public virtual Property property { get; set; }
-        [Required]
-        public int conversationId { get; set; }
-        [ForeignKey("conversationId")]
-        public virtual Conversation conversation { get; set; }
-        [Required]
         public string content { get; set; }
+        [Required]
         public bool IsRead { get; set; } = false;
         public DateTime createdAt { get; set; } = DateTime.Now;
         [Required]

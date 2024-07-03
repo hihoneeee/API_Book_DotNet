@@ -19,5 +19,10 @@ namespace TestWebAPI.Repositories
             await _context.SaveChangesAsync();
             return propertyHasDetail;
         }
+
+        public async Task<PropertyHasDetail> GetPropertyHasDetailByPropertyIdAsync(int id)
+        {
+            return _context.PropertyHasDetails.FirstOrDefault(phd=>phd.propertyId == id);
+        }
     }
 }

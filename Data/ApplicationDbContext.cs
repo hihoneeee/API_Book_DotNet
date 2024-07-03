@@ -44,20 +44,10 @@ namespace TestWebAPI.Data
 
             //nofication
             modelBuilder.Entity<Notification>()
-                .HasOne(n => n.property)
-                .WithMany(p => p.Notifications)
-                .HasForeignKey(n => n.propertyId)
-                .HasPrincipalKey(p => p.id);
-            modelBuilder.Entity<Notification>()
                 .HasOne(n => n.user)
                 .WithMany(u => u.Notifications)
                 .HasForeignKey(n => n.userId)
                 .HasPrincipalKey(u => u.id);
-            modelBuilder.Entity<Notification>()
-                .HasOne(n => n.conversation)
-                .WithMany(c => c.Notifications)
-                .HasForeignKey(n => n.conversationId)
-                .HasPrincipalKey(c => c.id);
 
             //Evaluate
             modelBuilder.Entity<Evaluate>()

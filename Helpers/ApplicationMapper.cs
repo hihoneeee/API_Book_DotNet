@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using TestWebAPI.DTOs.Appointment;
 using TestWebAPI.DTOs.Auth;
 using TestWebAPI.DTOs.Category;
 using TestWebAPI.DTOs.ChatHub;
@@ -116,10 +117,14 @@ namespace TestWebAPI.Helpers
             CreateMap<Conversation, ConversationDTO>().ReverseMap();
 
             CreateMap<Message, MessageDTO>().ReverseMap();
-            CreateMap<Message, GetMessageDTO>();
+            CreateMap<Message, GetMessageDTO>().ReverseMap();
 
-            CreateMap<Notification, NotificationDTO>();
-            CreateMap<Notification, GetNotificationDTO>();
+            CreateMap<Notification, NotificationDTO>().ReverseMap();
+            CreateMap<Notification, GetNotificationDTO>().ReverseMap();
+
+            //Appointment
+            CreateMap<Appointment, AppointmentDTO>().ReverseMap();
+            CreateMap<Appointment, GetAppointmentDTO>().ReverseMap();
         }
     }
 }
