@@ -15,6 +15,8 @@ namespace TestWebAPI.Models
         public string content { get; set; }
         [Required]
         public bool IsRead { get; set; } = false;
+        [Required]
+        public int buyerId { get; set; }
         public DateTime createdAt { get; set; } = DateTime.Now;
         [Required]
         public DateTime updatedAt { get; set; }

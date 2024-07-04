@@ -12,13 +12,11 @@ namespace TestWebAPI.Services.Interfaces
         Task<ServiceResponse<List<GetMessageDTO>>> GetMessagesForConversation(int conversationId);
         Task<ServiceResponse<List<GetNotificationDTO>>> GetNotificationsForUser(int userId);
         Task<ServiceResponse<bool>> MarkNotificationsAsRead(int userId);
-        Task<ServiceResponse<NotificationDTO>> CreateAppointmentNotificationAsync(int propertyId);
+        Task<ServiceResponse<NotificationDTO>> CreateAppointmentNotificationAsync(int propertyId, int buyerId);
 
         // Join and Connect
-        Task OnDisconnectedAsync(int userId, string connectionId);
-        Task OnConnectedAsync(int userId, string connectionId);
-        Task JoinConversation(int conversationId, string connectionId);
-        Task LeaveConversation(int conversationId, string connectionId);
+        Task OnDisconnectedAsync(int id, string connectionId);
+        Task OnConnectedAsync(int id, string connectionId);
 
     }
 }

@@ -29,19 +29,5 @@ namespace TestWebAPI.Controllers
                 return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
             }
         }
-
-        [HttpPost("join")]
-        public async Task<IActionResult> JoinConversation(int conversationId, string connectionId)
-        {
-            await _realTimeServices.JoinConversation(conversationId, connectionId);
-            return Ok();
-        }
-
-        [HttpPost("leave")]
-        public async Task<IActionResult> LeaveConversation(int conversationId, string connectionId)
-        {
-            await _realTimeServices.LeaveConversation(conversationId, connectionId);
-            return Ok();
-        }
     }
 }

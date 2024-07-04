@@ -82,17 +82,18 @@ namespace TestWebAPI.Services
                 serviceResponse.SetSuccess("Message sent successfully!");
 
                 var conversation = await _chatHubRepo.GetConversationById(messageDTO.conversationId);
-
+                var user1 = await _userRepo.GetCurrentAsync(conversation.userId1);
+                var user2 = await _userRepo.GetCurrentAsync(conversation.userId2);
                 if (conversation.userId1 != messageDTO.userId)
                 {
-                    Console.WriteLine("Sending notification to user: " + conversation.userId1);
-                    await _hubContext.Clients.User(conversation.userId1.ToString()).SendAsync("ReceiveNotification", conversation.userId1, "New message in conversation " + messageDTO.conversationId);
+                    var content = $"{user2.first_name}{user2.last_name} has sent you a new message!";
+                    await _hubContext.Clients.Group(conversation.userId1.ToString()).SendAsync("ReceiveNotification", content);
                 }
 
                 if (conversation.userId2 != messageDTO.userId)
                 {
-                    Console.WriteLine("Sending notification to user: " + conversation.userId2);
-                    await _hubContext.Clients.User(conversation.userId2.ToString()).SendAsync("ReceiveNotification", conversation.userId2, "New message in conversation " + messageDTO.conversationId);
+                    var content = $"{user1.first_name}{user1.last_name} has sent you a new message!";
+                    await _hubContext.Clients.Group(conversation.userId2.ToString()).SendAsync("ReceiveNotification", content);
                 }
 
                 await _hubContext.Clients.Group(messageDTO.conversationId.ToString()).SendAsync("ReceiveMessage", messageDTO.userId, messageDTO.content, messageDTO.createdAt);
@@ -104,24 +105,14 @@ namespace TestWebAPI.Services
             return serviceResponse;
         }
 
-        public async Task JoinConversation(int conversationId, string connectionId)
+        public async Task OnConnectedAsync(int id, string connectionId)
         {
-            await _hubContext.Groups.AddToGroupAsync(connectionId, conversationId.ToString());
+            await _hubContext.Groups.AddToGroupAsync(connectionId, id.ToString());
         }
 
-        public async Task LeaveConversation(int conversationId, string connectionId)
+        public async Task OnDisconnectedAsync(int id, string connectionId)
         {
-            await _hubContext.Groups.RemoveFromGroupAsync(connectionId, conversationId.ToString());
-        }
-
-        public async Task OnConnectedAsync(int userId, string connectionId)
-        {
-            await _hubContext.Groups.AddToGroupAsync(connectionId, userId.ToString());
-        }
-
-        public async Task OnDisconnectedAsync(int userId, string connectionId)
-        {
-            await _hubContext.Groups.RemoveFromGroupAsync(connectionId, userId.ToString());
+            await _hubContext.Groups.RemoveFromGroupAsync(connectionId, id.ToString());
         }
 
         public async Task<ServiceResponse<List<GetMessageDTO>>> GetMessagesForConversation(int conversationId)
@@ -140,7 +131,7 @@ namespace TestWebAPI.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<NotificationDTO>> CreateAppointmentNotificationAsync(int propertyId)
+        public async Task<ServiceResponse<NotificationDTO>> CreateAppointmentNotificationAsync(int propertyId, int buyerId)
         {
             var serviceResponse = new ServiceResponse<NotificationDTO>();
             try
@@ -159,15 +150,14 @@ namespace TestWebAPI.Services
                                 userId = checkUser.id,
                                 content = $"Có một cuộc hẹn mới được đặt cho bất động sản: {checkProperty.title}",
                                 createdAt = DateTime.Now,
+                                buyerId = buyerId,
                                 IsRead = false
                             };
                             var createdNotification = await _notificationRepo.CreateNoficationsAsync(notification);
                             serviceResponse.data = _mapper.Map<NotificationDTO>(createdNotification);
                             serviceResponse.SetSuccess("Appointment notification created successfully!");
 
-                            await _hubContext.Clients.User(checkUser.id.ToString()).SendAsync("ReceiveNotification", notification.userId, notification.content);
-
-                            Console.WriteLine($"Notification sent to user ID {checkUser.id} with content: {notification.content}");
+                            await _hubContext.Clients.Group(checkUser.id.ToString()).SendAsync("ReceiveNotification", notification.content);
                         }
                         else
                         {
@@ -190,7 +180,6 @@ namespace TestWebAPI.Services
             }
             return serviceResponse;
         }
-
 
         public async Task<ServiceResponse<List<GetNotificationDTO>>> GetNotificationsForUser(int userId)
         {

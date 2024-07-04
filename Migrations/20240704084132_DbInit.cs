@@ -278,6 +278,7 @@ namespace TestWebAPI.Migrations
                     userId = table.Column<int>(type: "int", nullable: false),
                     content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsRead = table.Column<bool>(type: "bit", nullable: false),
+                    buyerId = table.Column<int>(type: "int", nullable: false),
                     createdAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Conversationid = table.Column<int>(type: "int", nullable: true),
@@ -392,29 +393,6 @@ namespace TestWebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Offers",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    appointmentId = table.Column<int>(type: "int", nullable: false),
-                    status = table.Column<int>(type: "int", nullable: false),
-                    price = table.Column<int>(type: "int", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Offers", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Offers_Appointments_appointmentId",
-                        column: x => x.appointmentId,
-                        principalTable: "Appointments",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Contracts",
                 columns: table => new
                 {
@@ -423,7 +401,8 @@ namespace TestWebAPI.Migrations
                     signatureBuyer = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     signatureSeller = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    offerId = table.Column<int>(type: "int", nullable: false),
+                    appointmentId = table.Column<int>(type: "int", nullable: false),
+                    EarnestMoney = table.Column<int>(type: "int", nullable: false),
                     createdAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Propertyid = table.Column<int>(type: "int", nullable: true),
@@ -433,9 +412,9 @@ namespace TestWebAPI.Migrations
                 {
                     table.PrimaryKey("PK_Contracts", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Contracts_Offers_offerId",
-                        column: x => x.offerId,
-                        principalTable: "Offers",
+                        name: "FK_Contracts_Appointments_appointmentId",
+                        column: x => x.appointmentId,
+                        principalTable: "Appointments",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -461,9 +440,9 @@ namespace TestWebAPI.Migrations
                 column: "propertyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Contracts_offerId",
+                name: "IX_Contracts_appointmentId",
                 table: "Contracts",
-                column: "offerId",
+                column: "appointmentId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -515,11 +494,6 @@ namespace TestWebAPI.Migrations
                 name: "IX_Notifications_userId",
                 table: "Notifications",
                 column: "userId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Offers_appointmentId",
-                table: "Offers",
-                column: "appointmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Properties_categoryId",
@@ -599,16 +573,13 @@ namespace TestWebAPI.Migrations
                 name: "Wishlists");
 
             migrationBuilder.DropTable(
-                name: "Offers");
+                name: "Appointments");
 
             migrationBuilder.DropTable(
                 name: "Conversations");
 
             migrationBuilder.DropTable(
                 name: "Permissions");
-
-            migrationBuilder.DropTable(
-                name: "Appointments");
 
             migrationBuilder.DropTable(
                 name: "Properties");

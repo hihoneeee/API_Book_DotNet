@@ -94,15 +94,13 @@
             const notificationIcon = document.getElementById("notificationIcon");
             notificationIcon.style.display = 'inline';
 
-            fetch(`/api/user/connected?userId=${currentUserId}&connectionId=${connectionId}`, {
+            fetch(`/api/user/connected?id=${currentUserId}&connectionId=${connectionId}`, {
                 method: 'POST'
             })
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Failed to join notification group');
+                        throw new Error('Failed to connected');
                     }
-                    console.log('Joined notification group for user:', currentUserId);
-
                     return fetch(`/api/notification/${currentUserId}`);
                 })
                 .then(response => response.json())
@@ -143,15 +141,13 @@
                 .then(data => {
                     const conversationId = data.data.id;
 
-                    return fetch(`/api/conversations/join?conversationId=${conversationId}&connectionId=${window.connectionId}`, {
+                    return fetch(`/api/user/connected?id=${conversationId}&connectionId=${window.connectionId}`, {
                         method: 'POST'
                     })
                         .then(response => {
                             if (!response.ok) {
-                                throw new Error('Failed to join conversation');
+                                throw new Error('Failed to connected');
                             }
-                            console.log('Joined conversation:', conversationId);
-
                             return fetch(`/api/messages/${conversationId}`)
                         })
                         .then(response => response.json())
@@ -203,7 +199,6 @@
             }).catch(error => console.error('Error:', error));
         }
 
-        // New Function to Schedule Appointment
         function scheduleAppointment() {
             const appointmentUserId = document.getElementById("appointmentUserId").value;
             const propertyId = document.getElementById("propertyId").value;
@@ -221,19 +216,32 @@
                     appointmentDate: new Date(appointmentDate).toISOString(),
                     backupDay: new Date(backupDay).toISOString()
                 })
-            }).then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to schedule appointment');
-                }
-                document.getElementById("backupDay").value = '';
-                document.getElementById("appointmentDate").value = '';
-                document.getElementById("propertyId").value = '';
-                document.getElementById("appointmentUserId").value = '';
-            }).then(data => {
-                console.log('Appointment scheduled successfully', data);
-            }).catch(error => console.error('Error:', error));
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to schedule appointment');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const property = data.data.propertyId;
+                    console.log(property);
+                    return fetch(`/api/notification/appointment-notification?propertyId=${property}`, {
+                        method: 'POST',
+                    });
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to create appointment notification');
+                    }
+                    document.getElementById("appointmentUserId").value = '';
+                    document.getElementById("propertyId").value = '';
+                    document.getElementById("appointmentDate").value = '';
+                    document.getElementById("backupDay").value = '';
+                    document.getElementById("messageInput").value = '';
+                })
+                .catch(error => console.error('Error:', error));
         }
-
     </script>
 </body>
 </html>

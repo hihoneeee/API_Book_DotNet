@@ -18,5 +18,10 @@ namespace TestWebAPI.Repositories
             await _context.SaveChangesAsync();
             return appointment;
         }
+
+        public async Task<Appointment> GetAppointmentByIdAsync(int id)
+        {
+            return await _context.Appointments.FirstOrDefaultAsync(a => a.id == id);
+        }
     }
 }

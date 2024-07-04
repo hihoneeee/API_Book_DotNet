@@ -3,6 +3,7 @@ using TestWebAPI.DTOs.Appointment;
 using TestWebAPI.DTOs.Auth;
 using TestWebAPI.DTOs.Category;
 using TestWebAPI.DTOs.ChatHub;
+using TestWebAPI.DTOs.Contract;
 using TestWebAPI.DTOs.JWT;
 using TestWebAPI.DTOs.Notification;
 using TestWebAPI.DTOs.Permisstion;
@@ -125,6 +126,10 @@ namespace TestWebAPI.Helpers
             //Appointment
             CreateMap<Appointment, AppointmentDTO>().ReverseMap();
             CreateMap<Appointment, GetAppointmentDTO>().ReverseMap();
+
+            //Contract
+            CreateMap<Contract, ContractDTO>().ReverseMap();
+            CreateMap<Contract, GetContractDTO>().ReverseMap();
         }
     }
 }

@@ -20,16 +20,17 @@ namespace TestWebAPI.Services
             _appointmentRepo = appointmentRepo;
             _realTimeServices = realTimeServices;
         }
-        public async Task<ServiceResponse<AppointmentDTO>> CreateAppointmentAsync(AppointmentDTO appointmentDTO)
+        public async Task<ServiceResponse<GetAppointmentDTO>> CreateAppointmentAsync(AppointmentDTO appointmentDTO)
         {
-            var serviceResponse = new ServiceResponse<AppointmentDTO>();
+            var serviceResponse = new ServiceResponse<GetAppointmentDTO>();
             try
             {
                 var appointment = _mapper.Map<Appointment>(appointmentDTO);
                 var createdAppointment = await _appointmentRepo.CreateAppointmentAsync(appointment);
+                serviceResponse.data = _mapper.Map<GetAppointmentDTO>(createdAppointment);
                 serviceResponse.SetSuccess("Appointment created successfully!");
 
-                var notificationResponse = await _realTimeServices.CreateAppointmentNotificationAsync(createdAppointment.propertyId);
+                var notificationResponse = await _realTimeServices.CreateAppointmentNotificationAsync(createdAppointment.propertyId, createdAppointment.buyerId);
                 if (!notificationResponse.success)
                 {
                     serviceResponse.SetError(notificationResponse.message);

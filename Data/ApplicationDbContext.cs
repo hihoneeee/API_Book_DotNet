@@ -97,21 +97,13 @@ namespace TestWebAPI.Data
                 .HasForeignKey(a => a.propertyId)
                 .HasPrincipalKey(p => p.id);
 
-            //offer
-            modelBuilder.Entity<Offer>()
-                .HasOne(o => o.appointment)
-                .WithMany(a => a.Offers)
-                .HasForeignKey(o => o.appointmentId)
-                .HasPrincipalKey(a => a.id);
-
             //Contract
             modelBuilder.Entity<Contract>()
-                .HasOne(c => c.offer)
-                .WithOne(o => o.Contract)
-                .HasForeignKey<Contract>(c => c.offerId)
-                .HasPrincipalKey<Offer>(o => o.id);
-
-            base.OnModelCreating(modelBuilder);
+                .HasOne(c => c.appointment)
+                .WithOne(a => a.contract)
+                .HasForeignKey<Contract>(c => c.appointmentId)
+                .HasPrincipalKey<Appointment>(a => a.id);
+                base.OnModelCreating(modelBuilder);
         }
 
         public DbSet<Category> Categories { get; set; }
@@ -128,7 +120,6 @@ namespace TestWebAPI.Data
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
         public DbSet<PropertyHasDetail> PropertyHasDetails { get; set; }
-        public DbSet<Offer> Offers { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<Conversation> Conversations { get; set; }
     }
