@@ -17,6 +17,7 @@ using TestWebAPI.Repositories.Interfaces;
 using TestWebAPI.Services;
 using TestWebAPI.Services.Interfaces;
 using TestWebAPI.Settings;
+using static TestWebAPI.Configs.PaypalConfig;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -192,6 +193,8 @@ builder.Services.AddScoped<FakeDataRepositories>();
 builder.Services.AddScoped<IChatHubRepositories, ChatHubRepositories>();
 builder.Services.AddScoped<INotificationRepositories, NotificationRepositories>();
 builder.Services.AddScoped<IAppointmentRepositories, AppointmentRepositories>();
+builder.Services.AddScoped<IContractRepositories, ContractRepositories>();
+builder.Services.AddScoped<IPaymentRepositories, PaymentRepositories>();
 
 // Add services to the container
 builder.Services.AddScoped<IRoleService, RoleServices>();
@@ -206,6 +209,8 @@ builder.Services.AddScoped<ICloudinaryServices, CloudinaryServices>();
 builder.Services.AddScoped<IPropertyServices, PropertyServices>();
 builder.Services.AddScoped<IRealTimeServices, RealTimeServices>();
 builder.Services.AddScoped<IAppointmentServices, AppointmentServices>();
+builder.Services.AddScoped<IContractServices, ContractServices>();
+builder.Services.AddScoped<IPaymentServices, PaymentServices>();
 
 // Add middleware to the container
 builder.Services.AddScoped<IJWTHelper, JWTHelper>();
@@ -213,7 +218,18 @@ builder.Services.AddScoped<IJWTHelper, JWTHelper>();
 //Htttp cookie
 builder.Services.AddHttpContextAccessor();
 
+// client
 builder.Services.AddDirectoryBrowser();
+
+//payment
+builder.Services.AddSingleton(x =>
+    new PaypalConfig(
+        builder.Configuration["PaypalSetting:AppId"],
+        builder.Configuration["PaypalSetting:AppSecret"],
+        builder.Configuration["PaypalSetting:Mode"]
+    )
+);
+
 
 var app = builder.Build();
 
@@ -236,7 +252,6 @@ app.UseExceptionHandler(errorApp =>
     });
 });
 
-
 app.UseMiddleware<ErrorHandlingToken>();
 
 // Configure the HTTP request pipeline.
@@ -256,15 +271,16 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/static"
 });
 
+app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();  
+
 app.UseEndpoints(endpoints =>
 {
+    endpoints.MapControllers();
     endpoints.MapHub<ChatHub>("/chathub");
 });
 
-app.UseMiddleware<ErrorHandlingToken>();
-
-app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
 app.Run();
+

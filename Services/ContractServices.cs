@@ -33,15 +33,9 @@ namespace TestWebAPI.Services
                     serviceResponse.SetError("Appointment not found.");
                     return serviceResponse;
                 }
-                var checkProperty = await _propertyRepo.GetPropertyByIdAsync(checkAppointment.propertyId);
-                if(checkProperty == null)
-                {
-                    serviceResponse.SetError("property not found.");
-                    return serviceResponse;
-                }
                 var contract = _mapper.Map<Contract>(contractDTO);
-                contract.EarnestMoney = (checkProperty.price * 10)/100;
                 var createContract = await _contractRepo.CreateContractAsync(contract);
+                serviceResponse.data = _mapper.Map<GetContractDTO>(createContract);
                 serviceResponse.SetSuccess("contract created successfully!");
             }
             catch (Exception ex)

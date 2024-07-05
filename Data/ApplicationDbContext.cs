@@ -104,6 +104,14 @@ namespace TestWebAPI.Data
                 .HasForeignKey<Contract>(c => c.appointmentId)
                 .HasPrincipalKey<Appointment>(a => a.id);
                 base.OnModelCreating(modelBuilder);
+
+            //Payment
+            modelBuilder.Entity<Payment>()
+                .HasOne(p => p.contract)
+                .WithOne(c => c.payment)
+                .HasForeignKey<Payment>(p => p.contractId)
+                .HasPrincipalKey<Contract>(c => c.id);
+            base.OnModelCreating(modelBuilder);
         }
 
         public DbSet<Category> Categories { get; set; }
@@ -122,5 +130,6 @@ namespace TestWebAPI.Data
         public DbSet<PropertyHasDetail> PropertyHasDetails { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<Conversation> Conversations { get; set; }
+        public DbSet<Payment> Payments { get; set; }
     }
 }
