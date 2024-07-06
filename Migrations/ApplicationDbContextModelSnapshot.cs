@@ -301,6 +301,36 @@ namespace TestWebAPI.Migrations
                     b.ToTable("Notifications");
                 });
 
+            modelBuilder.Entity("TestWebAPI.Models.Payment", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<int>("contractId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("createdAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("paypalId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("contractId")
+                        .IsUnique();
+
+                    b.ToTable("Payments");
+                });
+
             modelBuilder.Entity("TestWebAPI.Models.Permission", b =>
                 {
                     b.Property<int>("id")
@@ -708,6 +738,17 @@ namespace TestWebAPI.Migrations
                     b.Navigation("user");
                 });
 
+            modelBuilder.Entity("TestWebAPI.Models.Payment", b =>
+                {
+                    b.HasOne("TestWebAPI.Models.Contract", "contract")
+                        .WithOne("payment")
+                        .HasForeignKey("TestWebAPI.Models.Payment", "contractId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("contract");
+                });
+
             modelBuilder.Entity("TestWebAPI.Models.Property", b =>
                 {
                     b.HasOne("TestWebAPI.Models.Category", "category")
@@ -810,6 +851,12 @@ namespace TestWebAPI.Migrations
             modelBuilder.Entity("TestWebAPI.Models.Category", b =>
                 {
                     b.Navigation("Properties");
+                });
+
+            modelBuilder.Entity("TestWebAPI.Models.Contract", b =>
+                {
+                    b.Navigation("payment")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("TestWebAPI.Models.Conversation", b =>

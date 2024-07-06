@@ -171,12 +171,19 @@ builder.Services.AddSingleton(provider => new MapperConfiguration(options =>
 builder.Services.Configure<SendEmailSetting>(builder.Configuration.GetSection("SendEmailSetting"));
 builder.Services.Configure<CloudinarySetting>(builder.Configuration.GetSection("CloudinarySetting"));
 builder.Services.Configure<RedisCacheSetting>(builder.Configuration.GetSection("RedisCacheSetting"));
+builder.Services.Configure<PaypalSetiing>(builder.Configuration.GetSection("PaypalSetting"));
 
-// Register the RedisCacheService
+// Register the setting
 builder.Services.AddSingleton<RedisCacheConfig>(provider =>
 {
     var redisConfig = provider.GetRequiredService<IOptions<RedisCacheSetting>>().Value;
     return new RedisCacheConfig(redisConfig.ConnectionString);
+});
+
+builder.Services.AddSingleton<PaypalConfig>(serviceProvider =>
+{
+    var paypalSettings = serviceProvider.GetRequiredService<IOptions<PaypalSetiing>>().Value;
+    return new PaypalConfig(paypalSettings.appId, paypalSettings.appSecret, paypalSettings.mode);
 });
 
 // Add Repositories to the container
@@ -222,13 +229,13 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddDirectoryBrowser();
 
 //payment
-builder.Services.AddSingleton(x =>
-    new PaypalConfig(
-        builder.Configuration["PaypalSetting:AppId"],
-        builder.Configuration["PaypalSetting:AppSecret"],
-        builder.Configuration["PaypalSetting:Mode"]
-    )
-);
+//builder.Services.AddSingleton(x =>
+//    new PaypalConfig(
+//        builder.Configuration["PaypalSetting:AppId"],
+//        builder.Configuration["PaypalSetting:AppSecret"],
+//        builder.Configuration["PaypalSetting:Mode"]
+//    )
+//);
 
 
 var app = builder.Build();

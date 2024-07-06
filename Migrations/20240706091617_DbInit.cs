@@ -429,6 +429,28 @@ namespace TestWebAPI.Migrations
                         principalColumn: "id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Payments",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    contractId = table.Column<int>(type: "int", nullable: false),
+                    paypalId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Payments", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Payments_Contracts_contractId",
+                        column: x => x.contractId,
+                        principalTable: "Contracts",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Appointments_buyerId",
                 table: "Appointments",
@@ -496,6 +518,12 @@ namespace TestWebAPI.Migrations
                 column: "userId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Payments_contractId",
+                table: "Payments",
+                column: "contractId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Properties_categoryId",
                 table: "Properties",
                 column: "categoryId");
@@ -546,9 +574,6 @@ namespace TestWebAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Contracts");
-
-            migrationBuilder.DropTable(
                 name: "Evaluates");
 
             migrationBuilder.DropTable(
@@ -559,6 +584,9 @@ namespace TestWebAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "Notifications");
+
+            migrationBuilder.DropTable(
+                name: "Payments");
 
             migrationBuilder.DropTable(
                 name: "PropertyHasDetails");
@@ -573,13 +601,16 @@ namespace TestWebAPI.Migrations
                 name: "Wishlists");
 
             migrationBuilder.DropTable(
-                name: "Appointments");
-
-            migrationBuilder.DropTable(
                 name: "Conversations");
 
             migrationBuilder.DropTable(
+                name: "Contracts");
+
+            migrationBuilder.DropTable(
                 name: "Permissions");
+
+            migrationBuilder.DropTable(
+                name: "Appointments");
 
             migrationBuilder.DropTable(
                 name: "Properties");

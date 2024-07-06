@@ -75,7 +75,7 @@
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwicm9sZUNvZGUiOiJEMjJNRDIiLCJpYXQiOjE3MjAxNzQyODIsInBlcm1pc3Npb24iOlsiYWRkLXJvbGUiLCJnZXQtcm9sZSIsInVwZGF0ZS1yb2xlIiwiZGVsZXRlLXJvbGUiLCJhc3NpZ24tcGVybWlzc2lvbiIsImFkZC1wZXJtaXNzaW9uIiwiZ2V0LXBlcm1pc3Npb24iLCJ1cGRhdGUtcGVybWlzc2lvbiIsImRlbGV0ZS1wZXJtaXNzaW9uIiwiYWRkLWNhdGVnb3J5IiwiZ2V0LWNhdGVnb3J5IiwidXBkYXRlLWNhdGVnb3J5IiwiZGVsZXRlLWNhdGVnb3J5Il0sIm5iZiI6MTcyMDE3NDI4MiwiZXhwIjoxNzIwMTc0NTgyfQ.VStWFU0S8jQiBMKMlz8Y-5LmEdCO90g9NAkY4gUQyAk`,
+                        "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwicm9sZUNvZGUiOiJEMjJNRDIiLCJpYXQiOjE3MjAyNTU4MzIsInBlcm1pc3Npb24iOlsiYWRkLXJvbGUiLCJnZXQtcm9sZSIsInVwZGF0ZS1yb2xlIiwiZGVsZXRlLXJvbGUiLCJhc3NpZ24tcGVybWlzc2lvbiIsImFkZC1wZXJtaXNzaW9uIiwiZ2V0LXBlcm1pc3Npb24iLCJ1cGRhdGUtcGVybWlzc2lvbiIsImRlbGV0ZS1wZXJtaXNzaW9uIiwiYWRkLWNhdGVnb3J5IiwiZ2V0LWNhdGVnb3J5IiwidXBkYXRlLWNhdGVnb3J5IiwiZGVsZXRlLWNhdGVnb3J5Il0sIm5iZiI6MTcyMDI1NTgzMiwiZXhwIjoxNzIwMjU2MTMyfQ.moS33R4gIR_S33dlIYK25LGybl29EN0i4wyT6yhtkUs`,
                     },
                 }).then((response) => {
                     if (!response.ok) {
@@ -90,16 +90,23 @@
                 });
             },
             async onApprove(data) {
-                const response = await fetch("/my-server/capture-paypal-order", {
+                const response = await fetch(`/api/payment/capture-paypal-order?id=${data}`, {
                     method: "POST",
-                    body: JSON.stringify({
-                        orderID: data.orderID
-                    })
-                })
-
-                const details = await response.json();
-
-                alert(`Transaction completed by ${details.payer.name.given_name}`);
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwicm9sZUNvZGUiOiJEMjJNRDIiLCJpYXQiOjE3MjAyNTU4MzIsInBlcm1pc3Npb24iOlsiYWRkLXJvbGUiLCJnZXQtcm9sZSIsInVwZGF0ZS1yb2xlIiwiZGVsZXRlLXJvbGUiLCJhc3NpZ24tcGVybWlzc2lvbiIsImFkZC1wZXJtaXNzaW9uIiwiZ2V0LXBlcm1pc3Npb24iLCJ1cGRhdGUtcGVybWlzc2lvbiIsImRlbGV0ZS1wZXJtaXNzaW9uIiwiYWRkLWNhdGVnb3J5IiwiZ2V0LWNhdGVnb3J5IiwidXBkYXRlLWNhdGVnb3J5IiwiZGVsZXRlLWNhdGVnb3J5Il0sIm5iZiI6MTcyMDI1NTgzMiwiZXhwIjoxNzIwMjU2MTMyfQ.moS33R4gIR_S33dlIYK25LGybl29EN0i4wyT6yhtkUs`,
+                    },
+                }).then((response) => {
+                    if (!response.ok) {
+                        return response.json().then((err) => {
+                            throw err;
+                        });
+                    }
+                    return response.json();
+                }).catch((err) => {
+                    console.error("Error in fetch response:", err);
+                    alert(err.message);
+                });
             }
         }).render('#paypal-button-container');
 
