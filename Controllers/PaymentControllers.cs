@@ -10,11 +10,12 @@ namespace TestWebAPI.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class paymentController : ControllerBase
+    public class PaymentController : ControllerBase
     {
         private readonly IPaymentServices _paymentServices;
         private readonly PaypalConfig _paypalConfig;
-        public paymentController(IPaymentServices paymentServices, PaypalConfig paypalConfig)
+
+        public PaymentController(IPaymentServices paymentServices, PaypalConfig paypalConfig)
         {
             _paypalConfig = paypalConfig;
             _paymentServices = paymentServices;
