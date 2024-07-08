@@ -120,8 +120,15 @@ namespace TestWebAPI.Repositories
             var propertyHasDetailFaker = new Faker<PropertyHasDetail>()
                 .RuleFor(phd => phd.province, f => f.Address.State())
                 .RuleFor(phd => phd.city, f => f.Address.City())
-                .RuleFor(phd => phd.images, f => f.Image.LoremFlickrUrl(1000, 500, "realestate"))
-                .RuleFor(phd => phd.address, f => f.Address.FullAddress())
+                .RuleFor(phd => phd.images, f =>
+                {
+                    var imageUrls = new List<string>();
+                    for (int i = 0; i < 5; i++)
+                    {
+                        imageUrls.Add(f.Image.LoremFlickrUrl(1000, 500, "realestate"));
+                    }
+                    return imageUrls;
+                }).RuleFor(phd => phd.address, f => f.Address.FullAddress())
                 .RuleFor(phd => phd.bedroom, f => f.Random.Int(1, 10))
                 .RuleFor(phd => phd.bathroom, f => f.Random.Int(1, 5))
                 .RuleFor(phd => phd.yearBuild, f => f.Date.Past(50).Year)

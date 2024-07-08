@@ -11,7 +11,7 @@ namespace TestWebAPI.DTOs.Property
         [Required]
         public string address { get; set; }
         [Required]
-        public string images { get; set; }
+        public List<IFormFile> images { get; set; }
         [Required]
         public int bedroom { get; set; }
         [Required]
@@ -22,7 +22,5 @@ namespace TestWebAPI.DTOs.Property
         public int size { get; set; }
         [Required]
         public int sellerId { get; set; }
-        [Required]
-        public typeEnum Type { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using TestWebAPI.Data;
 using TestWebAPI.Models;
 using TestWebAPI.Repositories.Interfaces;
@@ -45,7 +46,6 @@ namespace TestWebAPI.Repositories
         public async Task<Category> GetFindAvatarAsync(string avatar)
         {
             return await _context.Categories.FirstOrDefaultAsync(c => c.avatar == avatar);
-
         }
 
         public async Task<Category> UpdateCategoryAsync(Category oldCate, Category newCate)

@@ -68,8 +68,9 @@ namespace TestWebAPI.Repositories
 
         public async Task<Property> GetPropertyByIdAsync(int id)
         {
-            return _context.Properties.FirstOrDefault(p=>p.id == id);
-
+            return await _context.Properties
+                     .Include(p => p.PropertyHasDetail)
+                     .FirstOrDefaultAsync(p => p.id == id);
         }
         public async Task<Property> CreatePropertyAsync(Property property)
         {

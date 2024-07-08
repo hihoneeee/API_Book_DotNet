@@ -7,7 +7,7 @@ namespace TestWebAPI.DTOs.Property
         public int id { get; set; }
         public string province { get; set; }
         public string city { get; set; }
-        public string images { get; set; }
+        public List<string> images { get; set; }
         public string address { get; set; }
         public int bedroom { get; set; }
         public int bathroom { get; set; }

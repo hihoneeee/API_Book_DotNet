@@ -4,7 +4,10 @@ namespace TestWebAPI.Repositories.Interfaces
 {
     public interface IPropertyHasDetailRepositories
     {
-        Task<PropertyHasDetail> CreatePropertyAsync(PropertyHasDetail propertyHasDetail);
-        Task<PropertyHasDetail> GetPropertyHasDetailByPropertyIdAsync(int id);
+        Task<PropertyHasDetail> CreateDetailyAsync(PropertyHasDetail propertyHasDetail);
+        Task<PropertyHasDetail> GetDetailByIdAsync(int id);
+        Task<PropertyHasDetail> UpdateDetailyAsync(PropertyHasDetail oldPropertyHasDetail, PropertyHasDetail newPropertyHasDetail);
+        Task<object> DeleteDetailAsync(PropertyHasDetail propertyHasDetail);
+
     }
 }

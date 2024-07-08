@@ -12,7 +12,7 @@ using TestWebAPI.Data;
 namespace TestWebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240706091617_DbInit")]
+    [Migration("20240708021534_DbInit")]
     partial class DbInit
     {
         /// <inheritdoc />

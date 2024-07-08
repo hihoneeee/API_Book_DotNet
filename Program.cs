@@ -17,14 +17,11 @@ using TestWebAPI.Repositories.Interfaces;
 using TestWebAPI.Services;
 using TestWebAPI.Services.Interfaces;
 using TestWebAPI.Settings;
-using static TestWebAPI.Configs.PaypalConfig;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
-
-
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
@@ -82,6 +79,43 @@ builder.Services.Configure<TokenSetting>(jwtSection);
 
 var jwtSettings = jwtSection.Get<TokenSetting>();
 
+//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//    .AddJwtBearer(options =>
+//    {
+//        options.RequireHttpsMetadata = false;
+//        options.SaveToken = false;
+//        options.TokenValidationParameters = new TokenValidationParameters
+//        {
+//            ValidateIssuer = false,
+//            ValidateAudience = false,
+//            ValidateLifetime = true,
+//            ClockSkew = TimeSpan.Zero,
+//            ValidateIssuerSigningKey = true,
+//            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
+//            RoleClaimType = "roleCode"
+//        };
+//        options.Events = new JwtBearerEvents
+//        {
+//            OnMessageReceived = context =>
+//            {
+//                return Task.CompletedTask;
+//            },
+//            OnChallenge = context =>
+//            {
+//                // Override the response status code and message
+//                context.HandleResponse();
+//                context.Response.StatusCode = 401;
+//                context.Response.ContentType = "application/json";
+//                var result = Newtonsoft.Json.JsonConvert.SerializeObject(new
+//                {
+//                    Success = "false",
+//                    message = "Token Invalid"
+//                });
+//                return context.Response.WriteAsync(result);
+//            }
+//        };
+//    });
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -101,11 +135,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             OnMessageReceived = context =>
             {
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/chathub"))
+                {
+                    context.Token = accessToken;
+                }
                 return Task.CompletedTask;
             },
             OnChallenge = context =>
             {
-                // Override the response status code and message
                 context.HandleResponse();
                 context.Response.StatusCode = 401;
                 context.Response.ContentType = "application/json";
@@ -117,8 +157,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 return context.Response.WriteAsync(result);
             }
         };
-
     });
+
 
 //config permission 
 builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
@@ -214,6 +254,7 @@ builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<ICategoryServices, CategoryServices>();
 builder.Services.AddScoped<ICloudinaryServices, CloudinaryServices>();
 builder.Services.AddScoped<IPropertyServices, PropertyServices>();
+builder.Services.AddScoped<IPropertyHasDetailServices, PropertyHasDetailServices>();
 builder.Services.AddScoped<IRealTimeServices, RealTimeServices>();
 builder.Services.AddScoped<IAppointmentServices, AppointmentServices>();
 builder.Services.AddScoped<IContractServices, ContractServices>();
@@ -227,16 +268,6 @@ builder.Services.AddHttpContextAccessor();
 
 // client
 builder.Services.AddDirectoryBrowser();
-
-//payment
-//builder.Services.AddSingleton(x =>
-//    new PaypalConfig(
-//        builder.Configuration["PaypalSetting:AppId"],
-//        builder.Configuration["PaypalSetting:AppSecret"],
-//        builder.Configuration["PaypalSetting:Mode"]
-//    )
-//);
-
 
 var app = builder.Build();
 

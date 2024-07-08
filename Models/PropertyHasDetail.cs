@@ -19,7 +19,7 @@ namespace TestWebAPI.Models
         [Required]
         public string city { get; set; }
         [Required]
-        public string images { get; set; }
+        public List<string> images { get; set; }
         [Required]
         public string address { get; set; }
         [Required]
@@ -39,6 +39,6 @@ namespace TestWebAPI.Models
         [ForeignKey("propertyId")]
         public virtual Property property { get; set; }
         [Required]
-        public typeEnum type { get; set; }
+        public typeEnum type { get; set; } = typeEnum.pending;
     }
 }
