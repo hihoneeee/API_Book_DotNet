@@ -274,3 +274,4 @@ D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\Microsoft.AspNetCore.Connect
 D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\Microsoft.AspNetCore.SignalR.Common.dll
 D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\Microsoft.Extensions.Features.dll
 D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
+D:\code\.NET\TestWebAPI\TestWebAPI\bin\Debug\net8.0\appsettings.Development.json

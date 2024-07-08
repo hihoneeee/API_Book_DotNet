@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using TestWebAPI.Models;
 
 namespace TestWebAPI.Data
@@ -36,11 +37,18 @@ namespace TestWebAPI.Data
                 .WithMany(u => u.PropertyHasDetails)
                 .HasForeignKey(p => p.sellerId)
                 .HasPrincipalKey(u => u.id);
+
             modelBuilder.Entity<PropertyHasDetail>()
                 .HasOne(phd => phd.property)
                 .WithOne(p => p.PropertyHasDetail)
                 .HasForeignKey<PropertyHasDetail>(phd => phd.propertyId)
                 .HasPrincipalKey<Property>(p => p.id);
+
+            modelBuilder.Entity<PropertyHasDetail>()
+                .Property(p => p.images)
+                .HasConversion(
+                    v => JsonConvert.SerializeObject(v),
+                    v => JsonConvert.DeserializeObject<List<string>>(v));
 
             //nofication
             modelBuilder.Entity<Notification>()

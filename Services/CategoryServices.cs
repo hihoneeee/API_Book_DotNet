@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using TestWebAPI.DTOs.Category;
+using TestWebAPI.DTOs.Property;
 using TestWebAPI.Helpers;
 using TestWebAPI.Models;
 using TestWebAPI.Repositories.Interfaces;
@@ -19,32 +20,43 @@ namespace TestWebAPI.Services
             _cateRepo = cateRepo;
             _cloudinaryServices = cloudinaryServices;
         }
-        public async Task<ServiceResponse<CategoryDTO>> CreateCategoryAsync(CategoryDTO categoryDTO, string path, string publicId)
+        public async Task<ServiceResponse<CategoryDTO>> CreateCategoryAsync(CategoryDTO categoryDTO)
         {
             var serviceResponse = new ServiceResponse<CategoryDTO>();
+            string publicId = null;
+
             try
             {
                 var existingCate = await _cateRepo.GetCategoryByTitleAsync(categoryDTO.title);
                 if (existingCate != null)
                 {
                     serviceResponse.SetExisting("Category");
-                    await _cloudinaryServices.DeleteImage(publicId);
-
                     return serviceResponse;
                 }
+
                 var category = _mapper.Map<Category>(categoryDTO);
-                category.avatar = path;
+
+                var avatarUploadResult = await _cloudinaryServices.UploadImage(categoryDTO.avatar);
+                if (avatarUploadResult == null || string.IsNullOrEmpty(avatarUploadResult.Url.ToString()))
+                {
+                    serviceResponse.SetError("Avatar upload failed");
+                    return serviceResponse;
+                }
+
+                category.avatar = avatarUploadResult.Url.ToString();
+                publicId = avatarUploadResult.PublicId;
+
                 var addCategory = await _cateRepo.CreateCategoryAsync(category);
                 serviceResponse.SetSuccess("Category created successfully!");
             }
             catch (Exception ex)
             {
-                serviceResponse.SetError(ex.Message);
+                serviceResponse.SetError($"An unexpected error occurred: {ex.Message}");                
                 await _cloudinaryServices.DeleteImage(publicId);
             }
+
             return serviceResponse;
         }
-
         public async Task<ServiceResponse<List<GetCategoryDTO>>> GetCategoriesAsync()
         {
             var serviceResponse = new ServiceResponse<List<GetCategoryDTO>>();
@@ -66,35 +78,42 @@ namespace TestWebAPI.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<CategoryDTO>> UpdateCategoryAsync(int id, CategoryDTO categoryDTO, string path, string publicId)
+        public async Task<ServiceResponse<CategoryDTO>> UpdateCategoryAsync(int id, CategoryDTO categoryDTO)
         {
             var serviceResponse = new ServiceResponse<CategoryDTO>();
+            string publicId = null;
             try
             {
                 var checkExist = await _cateRepo.GetCategoryByIdAsync(id);
                 if (checkExist == null)
                 {
                     serviceResponse.SetNotFound("Category");
-                    await _cloudinaryServices.DeleteImage(publicId);
                     return serviceResponse;
                 }
                 var CheckValue = await _cateRepo.GetCategoryByTitleAsync(categoryDTO.title);
                 if (CheckValue != null)
                 {
                     serviceResponse.SetExisting("Category");
-                    await _cloudinaryServices.DeleteImage(publicId);
                     return serviceResponse;
                 }
                 var oldImagePublicId = _cloudinaryServices.ExtractPublicIdFromUrl(checkExist.avatar);
                 await _cloudinaryServices.DeleteImage(oldImagePublicId);
                 var category = _mapper.Map<Category>(categoryDTO);
-                category.avatar = path;
-                var updatedRole = await _cateRepo.UpdateCategoryAsync(checkExist, category);
+                var avatarUploadResult = await _cloudinaryServices.UploadImage(categoryDTO.avatar);
+                if (avatarUploadResult == null || string.IsNullOrEmpty(avatarUploadResult.Url.ToString()))
+                {
+                    serviceResponse.SetError("Avatar upload failed");
+                    return serviceResponse;
+                }
+                category.avatar = avatarUploadResult.Url.ToString();
+                publicId = avatarUploadResult.PublicId;
+                var updatedCategory = await _cateRepo.UpdateCategoryAsync(checkExist, category);
                 serviceResponse.SetSuccess("Category updated successfully!");
             }
             catch (Exception ex)
             {
                 serviceResponse.SetError(ex.Message);
+                await _cloudinaryServices.DeleteImage(publicId);
             }
             return serviceResponse;
         }
@@ -110,6 +129,8 @@ namespace TestWebAPI.Services
                     serviceResponse.SetNotFound("Category");
                     return serviceResponse;
                 }
+                var publicId = _cloudinaryServices.ExtractPublicIdFromUrl(checkExist.avatar);
+                await _cloudinaryServices.DeleteImage(publicId);
                 await _cateRepo.DeleteCategoryAsync(checkExist);
                 serviceResponse.SetSuccess("Category deleted successfully!");
             }

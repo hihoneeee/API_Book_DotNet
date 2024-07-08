@@ -13,12 +13,10 @@ namespace TestWebAPI.Controllers
     public class categoryController : ControllerBase
     {
         private readonly ICategoryServices _categoryServices;
-        private readonly ICloudinaryServices _cloudinaryServices;
 
-        public categoryController(ICategoryServices categoryServices, ICloudinaryServices cloudinaryServices)
+        public categoryController(ICategoryServices categoryServices)
         {
             _categoryServices = categoryServices;
-            _cloudinaryServices = cloudinaryServices;
         }
         // [Authorize(Policy = "get-category")]
         [HttpGet]
@@ -38,16 +36,7 @@ namespace TestWebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCategoryAsync([FromForm] CategoryDTO categoryDTO)
         {
-            var uploadResult = await _cloudinaryServices.UploadImage(categoryDTO.avatar);
-            if (uploadResult == null || string.IsNullOrEmpty(uploadResult.Url.ToString()))
-            {
-                return StatusCode(500, "Image upload failed");
-            }
-
-            var path = uploadResult.Url.ToString();
-            var publicId = uploadResult.PublicId;
-
-            var serviceResponse = await _categoryServices.CreateCategoryAsync(categoryDTO, path, publicId);
+            var serviceResponse = await _categoryServices.CreateCategoryAsync(categoryDTO);
             if (serviceResponse.statusCode == EHttpType.Success)
             {
                 return Ok(new { serviceResponse.success, serviceResponse.message });
@@ -62,16 +51,7 @@ namespace TestWebAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCategoryAsync(int id, [FromForm] CategoryDTO categoryDTO)
         {
-            var uploadResult = await _cloudinaryServices.UploadImage(categoryDTO.avatar);
-            if (uploadResult == null || string.IsNullOrEmpty(uploadResult.Url.ToString()))
-            {
-                return StatusCode(500, "Image upload failed");
-            }
-
-            var path = uploadResult.Url.ToString();
-            var publicId = uploadResult.PublicId;
-
-            var serviceResponse = await _categoryServices.UpdateCategoryAsync(id, categoryDTO, path, publicId);
+            var serviceResponse = await _categoryServices.UpdateCategoryAsync(id, categoryDTO);
             if (serviceResponse.statusCode == EHttpType.Success)
             {
                 return Ok(new { serviceResponse.success, serviceResponse.message });

@@ -139,7 +139,7 @@ namespace TestWebAPI.Services
                 var checkProperty = await _propertyRepo.GetPropertyByIdAsync(propertyId);
                 if (checkProperty != null)
                 {
-                    var checkPropertyHasDetail = await _propertyHasDetailRepo.GetPropertyHasDetailByPropertyIdAsync(propertyId);
+                    var checkPropertyHasDetail = await _propertyHasDetailRepo.GetDetailByIdAsync(propertyId);
                     if (checkPropertyHasDetail != null)
                     {
                         var checkUser = await _userRepo.GetCurrentAsync(checkPropertyHasDetail.sellerId);

@@ -10,6 +10,8 @@ using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
 using TestWebAPI.Configs;
 using Newtonsoft.Json;
+using CloudinaryDotNet.Actions;
+using TestWebAPI.DTOs.Category;
 
 namespace TestWebAPI.Services
 {
@@ -18,48 +20,124 @@ namespace TestWebAPI.Services
         private readonly IMapper _mapper;
         private readonly IPropertyRepositories _propertyRepo;
         private readonly ICloudinaryServices _cloudinaryServices;
-        private readonly IPropertyHasDetailRepositories _propertyHasDetailRepo;
+        private readonly IPropertyHasDetailServices _propertyHasDetailServices;
         private readonly RedisCacheConfig _redisCacheConfig;
 
-        public PropertyServices(IMapper mapper, IPropertyRepositories propertyRepo, ICloudinaryServices cloudinaryServices, IPropertyHasDetailRepositories propertyHasDetailRepo, RedisCacheConfig redisCacheConfig)
+        public PropertyServices(IMapper mapper, IPropertyRepositories propertyRepo, ICloudinaryServices cloudinaryServices, IPropertyHasDetailServices propertyHasDetailServices, RedisCacheConfig redisCacheConfig)
         {
             _mapper = mapper;
             _propertyRepo = propertyRepo;
             _cloudinaryServices = cloudinaryServices;
-            _propertyHasDetailRepo = propertyHasDetailRepo;
+            _propertyHasDetailServices = propertyHasDetailServices;
             _redisCacheConfig = redisCacheConfig;
         }
 
-        public async Task<ServiceResponse<PropertyDTO>> CreatePropertyAsync(PropertyDTO propertyDTO, PropertyHasDetailDTO propertyHasDetailDTO, string path, string publicId)
+        public async Task<ServiceResponse<PropertyDTO>> CreatePropertyAsync(PropertyDTO propertyDTO, PropertyHasDetailDTO propertyHasDetailDTO)
         {
             var serviceResponse = new ServiceResponse<PropertyDTO>();
+            var imagePublicIds = new List<string>();
+
             try
             {
                 var property = _mapper.Map<Property>(propertyDTO);
-                property.avatar = path;
-                var createdProperty = await _propertyRepo.CreatePropertyAsync(property);
-                var propertyHasDetail = _mapper.Map<PropertyHasDetail>(propertyHasDetailDTO);
-                propertyHasDetail.propertyId = createdProperty.id;
-                var createdPropertyHasDetail = await _propertyHasDetailRepo.CreatePropertyAsync(propertyHasDetail);
 
+                // Upload avatar to cloudinary
+                var avatarUploadResult = await _cloudinaryServices.UploadImage(propertyDTO.avatar);
+                if (avatarUploadResult == null || string.IsNullOrEmpty(avatarUploadResult.Url.ToString()))
+                {
+                  serviceResponse.SetError("Avatar upload failed");
+                }
+                property.avatar = avatarUploadResult.Url.ToString();
+                imagePublicIds.Add(avatarUploadResult.PublicId);
+
+                // Create property
+                var createdProperty = await _propertyRepo.CreatePropertyAsync(property);
+                await _propertyHasDetailServices.CreateDetailAsync(createdProperty.id, propertyHasDetailDTO);
                 serviceResponse.SetSuccess("Property created successfully!");
             }
             catch (Exception ex)
             {
                 serviceResponse.SetError(ex.Message);
-                await _cloudinaryServices.DeleteImage(publicId);
+                foreach (var publicId in imagePublicIds)
+                {
+                    await _cloudinaryServices.DeleteImage(publicId);
+                }
             }
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<PropertyDTO>> UpdatePropertyAsync(int id, PropertyDTO propertyDTO)
+        public async Task<ServiceResponse<PropertyDTO>> UpdatePropertyAsync(int id, PropertyDTO propertyDTO, PropertyHasDetailDTO propertyHasDetailDTO)
         {
-            throw new NotImplementedException();
+            var serviceResponse = new ServiceResponse<PropertyDTO>();
+            var imagePublicIds = new List<string>();
+            try
+            {
+                // check id property
+                var checkExist = await _propertyRepo.GetPropertyByIdAsync(id);
+                if (checkExist == null)
+                {
+                    serviceResponse.SetNotFound("property");
+                    return serviceResponse;
+                }
+
+                // find url avatar and extract url to publicID
+                var oldImagePublicId = _cloudinaryServices.ExtractPublicIdFromUrl(checkExist.avatar);
+
+                // delete publicID
+                await _cloudinaryServices.DeleteImage(oldImagePublicId);
+
+                // Upload avatar to cloudinary
+                var property = _mapper.Map<Property>(propertyDTO);
+
+                var avatarUploadResult = await _cloudinaryServices.UploadImage(propertyDTO.avatar);
+                if (avatarUploadResult == null || string.IsNullOrEmpty(avatarUploadResult.Url.ToString()))
+                {
+                    serviceResponse.SetError("Avatar upload failed");
+                }
+                property.avatar = avatarUploadResult.Url.ToString();
+                imagePublicIds.Add(avatarUploadResult.PublicId);
+
+                // Update property
+                var updatePorperty = await _propertyRepo.UpdatePropertyAsync(checkExist, property);
+                await _propertyHasDetailServices.UpdateDetailAsync(checkExist.PropertyHasDetail.id, propertyHasDetailDTO);
+                serviceResponse.SetSuccess("Property updated successfully!");
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.SetError(ex.Message);
+                foreach (var publicId in imagePublicIds)
+                {
+                    await _cloudinaryServices.DeleteImage(publicId);
+                }
+            }
+            return serviceResponse;
         }
 
         public async Task<ServiceResponse<PropertyDTO>> DeletePropertyAsync(int id)
         {
-            throw new NotImplementedException();
+            var serviceResponse = new ServiceResponse<PropertyDTO>();
+            try
+            {
+                var checkExist = await _propertyRepo.GetPropertyByIdAsync(id);
+                if (checkExist == null)
+                {
+                    serviceResponse.SetNotFound("Property");
+                    return serviceResponse;
+                }
+                var publicId = _cloudinaryServices.ExtractPublicIdFromUrl(checkExist.avatar);
+                await _cloudinaryServices.DeleteImage(publicId);
+                if (checkExist.PropertyHasDetail != null)
+                {
+                    await _propertyHasDetailServices.DeletePropertyAsync(checkExist.PropertyHasDetail.id);
+                }
+                await _propertyRepo.DeletePropertyAsync(checkExist);
+                serviceResponse.SetSuccess("Property deleted successfully!");
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.SetError(ex.Message);
+            }
+            return serviceResponse;
         }
 
         public async Task<ServiceResponse<List<GetPropertyDTO>>> GetPropertiesAsync(QueryParamsSetting queryParams)

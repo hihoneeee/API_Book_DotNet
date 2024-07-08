@@ -273,30 +273,17 @@
                     backupDay: new Date(backupDay).toISOString()
                 })
             })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to schedule appointment');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const property = data.data.propertyId;
-                    console.log(property);
-                    return fetch(`/api/notification/appointment-notification?propertyId=${property}`, {
-                        method: 'POST',
-                    });
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to create appointment notification');
-                    }
-                    document.getElementById("appointmentUserId").value = '';
-                    document.getElementById("propertyId").value = '';
-                    document.getElementById("appointmentDate").value = '';
-                    document.getElementById("backupDay").value = '';
-                    document.getElementById("messageInput").value = '';
-                })
-                .catch(error => console.error('Error:', error));
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to schedule appointment');
+                }
+                document.getElementById("appointmentUserId").value = '';
+                document.getElementById("propertyId").value = '';
+                document.getElementById("appointmentDate").value = '';
+                document.getElementById("backupDay").value = '';
+                return response.json();
+            })
+            .catch(error => console.error('Error:', error));
         }
     </script>
 </body>

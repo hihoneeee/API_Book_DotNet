@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TestWebAPI.DTOs.Category;
 using TestWebAPI.DTOs.Property;
-using TestWebAPI.Services;
 using TestWebAPI.Services.Interfaces;
 using TestWebAPI.Settings;
 using static TestWebAPI.Response.HttpStatus;
@@ -25,15 +23,7 @@ namespace TestWebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCategoryAsync([FromForm] PropertyDTO propertyDTO, [FromForm] PropertyHasDetailDTO propertyHasDetailDTO)
         {
-            var uploadResult = await _cloudinaryServices.UploadImage(propertyDTO.avatar);
-            if (uploadResult == null || string.IsNullOrEmpty(uploadResult.Url.ToString()))
-            {
-                return StatusCode(500, "Image upload failed");
-            }
-            var path = uploadResult.Url.ToString();
-            var publicId = uploadResult.PublicId;
-
-            var serviceResponse = await _propertyServices.CreatePropertyAsync(propertyDTO, propertyHasDetailDTO, path, publicId);
+            var serviceResponse = await _propertyServices.CreatePropertyAsync(propertyDTO, propertyHasDetailDTO);
             if (serviceResponse.statusCode == EHttpType.Success)
             {
                 return Ok(new { serviceResponse.success, serviceResponse.message });
@@ -64,6 +54,36 @@ namespace TestWebAPI.Controllers
             else
             {
                 return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdatePropertyAysnc(int id, [FromForm] PropertyDTO propertyDTO, [FromForm] PropertyHasDetailDTO propertyHasDetailDTO)
+        {
+            var serviceResponse = await _propertyServices.UpdatePropertyAsync(id, propertyDTO, propertyHasDetailDTO);
+            if (serviceResponse.statusCode == EHttpType.Success)
+            {
+                return Ok(new { serviceResponse.success, serviceResponse.message });
+            }
+            else
+            {
+                return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
+
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeletePropertyAsync(int id)
+        {
+            var serviceResponse = await _propertyServices.DeletePropertyAsync(id);
+            if (serviceResponse.statusCode == EHttpType.Success)
+            {
+                return Ok(new { serviceResponse.success, serviceResponse.message });
+            }
+            else
+            {
+                return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
+
             }
         }
     }

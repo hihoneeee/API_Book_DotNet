@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using TestWebAPI.DTOs.Appointment;
-using TestWebAPI.DTOs.Notification;
 using TestWebAPI.Helpers;
 using TestWebAPI.Models;
 using TestWebAPI.Repositories.Interfaces;
