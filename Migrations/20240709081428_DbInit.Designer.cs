@@ -12,7 +12,7 @@ using TestWebAPI.Data;
 namespace TestWebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240708021534_DbInit")]
+    [Migration("20240709081428_DbInit")]
     partial class DbInit
     {
         /// <inheritdoc />
@@ -177,11 +177,11 @@ namespace TestWebAPI.Migrations
                     b.Property<int>("buyerId")
                         .HasColumnType("int");
 
+                    b.Property<int>("contractId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("propertyId")
-                        .HasColumnType("int");
 
                     b.Property<string>("review")
                         .IsRequired()
@@ -195,9 +195,8 @@ namespace TestWebAPI.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("buyerId");
-
-                    b.HasIndex("propertyId");
+                    b.HasIndex("contractId")
+                        .IsUnique();
 
                     b.ToTable("Evaluates");
                 });
@@ -675,21 +674,13 @@ namespace TestWebAPI.Migrations
 
             modelBuilder.Entity("TestWebAPI.Models.Evaluate", b =>
                 {
-                    b.HasOne("TestWebAPI.Models.User", "buyer")
-                        .WithMany("Evaluates")
-                        .HasForeignKey("buyerId")
+                    b.HasOne("TestWebAPI.Models.Contract", "contract")
+                        .WithOne("evaluate")
+                        .HasForeignKey("TestWebAPI.Models.Evaluate", "contractId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TestWebAPI.Models.Property", "property")
-                        .WithMany("Evaluates")
-                        .HasForeignKey("propertyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("buyer");
-
-                    b.Navigation("property");
+                    b.Navigation("contract");
                 });
 
             modelBuilder.Entity("TestWebAPI.Models.JWT", b =>
@@ -858,6 +849,9 @@ namespace TestWebAPI.Migrations
 
             modelBuilder.Entity("TestWebAPI.Models.Contract", b =>
                 {
+                    b.Navigation("evaluate")
+                        .IsRequired();
+
                     b.Navigation("payment")
                         .IsRequired();
                 });
@@ -880,8 +874,6 @@ namespace TestWebAPI.Migrations
 
                     b.Navigation("Contracts");
 
-                    b.Navigation("Evaluates");
-
                     b.Navigation("Notifications");
 
                     b.Navigation("PropertyHasDetail")
@@ -902,8 +894,6 @@ namespace TestWebAPI.Migrations
                     b.Navigation("Appointments");
 
                     b.Navigation("Contracts");
-
-                    b.Navigation("Evaluates");
 
                     b.Navigation("JWTs");
 

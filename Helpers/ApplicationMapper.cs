@@ -4,6 +4,7 @@ using TestWebAPI.DTOs.Auth;
 using TestWebAPI.DTOs.Category;
 using TestWebAPI.DTOs.ChatHub;
 using TestWebAPI.DTOs.Contract;
+using TestWebAPI.DTOs.Evaluate;
 using TestWebAPI.DTOs.JWT;
 using TestWebAPI.DTOs.Notification;
 using TestWebAPI.DTOs.Payment;
@@ -135,6 +136,10 @@ namespace TestWebAPI.Helpers
             //Payment
             CreateMap<Payment, PaymentDTO>().ReverseMap();
             CreateMap<Payment, GetPaymentDTO>().ReverseMap();
+
+            //Payment
+            CreateMap<Evaluate, EvaluateDTO>().ReverseMap();
+            CreateMap<Evaluate, GetEvaluateDTO>().ReverseMap();
         }
     }
 }

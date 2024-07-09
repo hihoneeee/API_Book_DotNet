@@ -59,15 +59,10 @@ namespace TestWebAPI.Data
 
             //Evaluate
             modelBuilder.Entity<Evaluate>()
-                .HasOne(e => e.buyer)
-                .WithMany(u => u.Evaluates)
-                .HasForeignKey(e => e.buyerId)
-                .HasPrincipalKey(u => u.id);
-            modelBuilder.Entity<Evaluate>()
-                .HasOne(e => e.property)
-                .WithMany(p => p.Evaluates)
-                .HasForeignKey(e => e.propertyId)
-                .HasPrincipalKey(p => p.id);
+                .HasOne(e => e.contract)
+                .WithOne(c => c.evaluate)
+                .HasForeignKey<Evaluate>(e => e.contractId)
+                .HasPrincipalKey<Contract>(c => c.id);
 
             //chat message
             modelBuilder.Entity<Message>()

@@ -28,7 +28,7 @@ namespace TestWebAPI.Models
         [Required]
         public DateTime backupDay { get; set; }
         [Required]
-        public EnumStatus status { get; set; }
+        public EnumStatus status { get; set; } = EnumStatus.pending;
         [Required]
         public DateTime createdAt { get; set;} = DateTime.Now;
         [Required]

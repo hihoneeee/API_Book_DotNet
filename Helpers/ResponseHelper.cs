@@ -8,7 +8,7 @@ namespace TestWebAPI.Helpers
         public static void SetNotFound(this IServiceResponse response, string message)
         {
             response.Success = false;
-            response.Message = $"{message} does not found!";
+            response.Message = $"{message} not found!";
             response.StatusCode = EHttpType.NotFound;
         }
 

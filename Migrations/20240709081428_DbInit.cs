@@ -190,36 +190,6 @@ namespace TestWebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Evaluates",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    buyerId = table.Column<int>(type: "int", nullable: false),
-                    propertyId = table.Column<int>(type: "int", nullable: false),
-                    star = table.Column<int>(type: "int", nullable: false),
-                    review = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Evaluates", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Evaluates_Properties_propertyId",
-                        column: x => x.propertyId,
-                        principalTable: "Properties",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Evaluates_Users_buyerId",
-                        column: x => x.buyerId,
-                        principalTable: "Users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "JWTs",
                 columns: table => new
                 {
@@ -430,6 +400,30 @@ namespace TestWebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Evaluates",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    buyerId = table.Column<int>(type: "int", nullable: false),
+                    contractId = table.Column<int>(type: "int", nullable: false),
+                    star = table.Column<int>(type: "int", nullable: false),
+                    review = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Evaluates", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Evaluates_Contracts_contractId",
+                        column: x => x.contractId,
+                        principalTable: "Contracts",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Payments",
                 columns: table => new
                 {
@@ -478,14 +472,10 @@ namespace TestWebAPI.Migrations
                 column: "Userid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Evaluates_buyerId",
+                name: "IX_Evaluates_contractId",
                 table: "Evaluates",
-                column: "buyerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Evaluates_propertyId",
-                table: "Evaluates",
-                column: "propertyId");
+                column: "contractId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_JWTs_userId",
