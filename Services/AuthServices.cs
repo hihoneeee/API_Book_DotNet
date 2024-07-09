@@ -2,6 +2,7 @@
 using TestWebAPI.DTOs.Auth;
 using TestWebAPI.DTOs.JWT;
 using TestWebAPI.Helpers;
+using TestWebAPI.Helpers.IHelpers;
 using TestWebAPI.Middlewares;
 using TestWebAPI.Models;
 using TestWebAPI.Repositories.Interfaces;
@@ -19,8 +20,9 @@ namespace TestWebAPI.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUserRepositories _userRepo;
         private readonly IRoleRepositories _roleRepo;
+        private readonly IHashPasswordHelper _hashPasswordHelper;
 
-        public AuthServices(IMapper mapper, IAuthRepositories authRepo, IJWTHelper jWTHelper, IJwtServices jwtService, IHttpContextAccessor httpContextAccessor, IUserRepositories userRepo, IRoleRepositories roleRepo)
+        public AuthServices(IMapper mapper, IAuthRepositories authRepo, IJWTHelper jWTHelper, IJwtServices jwtService, IHttpContextAccessor httpContextAccessor, IUserRepositories userRepo, IRoleRepositories roleRepo, IHashPasswordHelper hashPasswordHelper)
         {
             _mapper = mapper;
             _jwtService = jwtService;
@@ -29,6 +31,7 @@ namespace TestWebAPI.Services
             _httpContextAccessor = httpContextAccessor;
             _userRepo = userRepo;
             _roleRepo = roleRepo;
+            _hashPasswordHelper = hashPasswordHelper;
         }
             
         public async Task<ServiceResponse<AuthRegisterDTO>> Register(AuthRegisterDTO authRegisterDTO)
@@ -39,7 +42,7 @@ namespace TestWebAPI.Services
                 var existingEmail = await _authRepo.getByEmail(authRegisterDTO.email);
                 if (existingEmail != null)
                 {
-                    serviceResponse.SetExisting("Email already exists!");
+                    serviceResponse.SetExisting("Email");
                     return serviceResponse;
                 }
                 var checkRole = await _roleRepo.GetRoleByCodeAsyn(authRegisterDTO.roleCode);
@@ -49,9 +52,9 @@ namespace TestWebAPI.Services
                     return serviceResponse;
                 }
                 var newUser = _mapper.Map<User>(authRegisterDTO);
-                newUser.password = HashPasswordHelper.HashPassword(authRegisterDTO.password);
+                newUser.password = _hashPasswordHelper.HashPassword(authRegisterDTO.password);
                 var Response = await _authRepo.Register(newUser);
-                serviceResponse.SetSuccess("Register successfully");
+                serviceResponse.SetSuccess("Register successfully!");
             }
             catch (Exception ex)
             {
@@ -71,7 +74,7 @@ namespace TestWebAPI.Services
                     serviceResponse.SetNotFound("Email");
                     return serviceResponse;
                 }
-                if (!HashPasswordHelper.VerifyPassword(authLoginDTO.password, existingUser.password))
+                if (!_hashPasswordHelper.VerifyPassword(authLoginDTO.password, existingUser.password))
                 {
                     serviceResponse.SetUnauthorized("Password is wrong!");
                     return serviceResponse;
@@ -98,8 +101,7 @@ namespace TestWebAPI.Services
                 };
                 _httpContextAccessor.HttpContext.Response.Cookies.Append(cookieName, refresh_token, cookieOptions);
                 serviceResponse.accessToken = token;
-                serviceResponse.SetSuccess("Login successfully");
-               
+                serviceResponse.SetSuccess("Login successfully!");
             }
             catch (Exception ex)
             {
@@ -166,7 +168,7 @@ namespace TestWebAPI.Services
             var serviceResponse = new ServiceResponse<AuthResetPasswordDTO>();
             try
             {
-                var newPassword = HashPasswordHelper.HashPassword(password);
+                var newPassword = _hashPasswordHelper.HashPassword(password);
                 var findPasswordToken = await _authRepo.FindPasswordResetTokenAsyn(token);
                 if (findPasswordToken == null)
                 {
@@ -195,7 +197,7 @@ namespace TestWebAPI.Services
                     serviceResponse.SetNotFound("User");
                     return serviceResponse;
                 }
-                if (!HashPasswordHelper.VerifyPassword(authChangePasswordDTO.oldPassword, checkUSer.password))
+                if (!_hashPasswordHelper.VerifyPassword(authChangePasswordDTO.oldPassword, checkUSer.password))
                 {
                     serviceResponse.SetUnauthorized("Password is wrong!");
                     return serviceResponse;
@@ -205,7 +207,7 @@ namespace TestWebAPI.Services
                     serviceResponse.SetBadRequest("New password and confirmation password do not match!");
                     return serviceResponse;
                 }
-                var HashPassword = HashPasswordHelper.HashPassword(authChangePasswordDTO.newPassword);
+                var HashPassword = _hashPasswordHelper.HashPassword(authChangePasswordDTO.newPassword);
                 var changePassword = await _authRepo.ChangePasswordAsync(HashPassword, checkUSer);
                 serviceResponse.SetSuccess("Password change succssefully!");
             }

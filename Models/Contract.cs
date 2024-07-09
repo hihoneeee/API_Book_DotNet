@@ -24,5 +24,6 @@ namespace TestWebAPI.Models
         public DateTime createdAt { get; set; } = DateTime.Now;
         [Required]
         public DateTime updatedAt { get; set; }
+        public virtual Evaluate evaluate { get; set; }
     }
 }

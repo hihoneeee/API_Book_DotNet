@@ -9,11 +9,9 @@ namespace TestWebAPI.Models
         public int id { get; set; }
         [Required]
         public int buyerId { get; set; }
-        [ForeignKey("buyerId")]
-        public virtual User buyer { get; set; }
-        public int propertyId { get; set; }
-        [ForeignKey("propertyId")]
-        public virtual Property property { get; set; }
+        public int contractId { get; set; }
+        [ForeignKey("contractId")]
+        public virtual Contract contract { get; set; }
         [Required]
         public int star { get; set; }
         [Required]

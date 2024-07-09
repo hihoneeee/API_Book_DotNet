@@ -11,6 +11,7 @@ using System.Text;
 using TestWebAPI.Configs;
 using TestWebAPI.Data;
 using TestWebAPI.Helpers;
+using TestWebAPI.Helpers.IHelpers;
 using TestWebAPI.Middlewares;
 using TestWebAPI.Repositories;
 using TestWebAPI.Repositories.Interfaces;
@@ -260,8 +261,9 @@ builder.Services.AddScoped<IAppointmentServices, AppointmentServices>();
 builder.Services.AddScoped<IContractServices, ContractServices>();
 builder.Services.AddScoped<IPaymentServices, PaymentServices>();
 
-// Add middleware to the container
+// Add middleware and Helper to the container
 builder.Services.AddScoped<IJWTHelper, JWTHelper>();
+builder.Services.AddScoped<IHashPasswordHelper, HashPasswordHelper>();
 
 //Htttp cookie
 builder.Services.AddHttpContextAccessor();

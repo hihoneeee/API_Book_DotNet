@@ -13,9 +13,5 @@ namespace TestWebAPI.DTOs.Appointment
         public DateTime appointmentDate { get; set; }
         [Required]
         public DateTime backupDay { get; set; }
-        [JsonIgnore]
-        public EnumStatus status { get; set; } = EnumStatus.pending;
-        [JsonIgnore]
-        public DateTime createdAt { get; set; } = DateTime.Now;
     }
 }

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 public enum typeEnum
 {
     pending,
-    cancel,
+    complete,
     available
 }
 
@@ -39,6 +39,6 @@ namespace TestWebAPI.Models
         [ForeignKey("propertyId")]
         public virtual Property property { get; set; }
         [Required]
-        public typeEnum type { get; set; } = typeEnum.pending;
+        public typeEnum type { get; set; } = typeEnum.available;
     }
 }

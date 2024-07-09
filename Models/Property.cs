@@ -31,7 +31,6 @@ namespace TestWebAPI.Models
         [Required]
         public DateTime updatedAt { get; set; }
         public virtual ICollection<Notification>? Notifications { get; set; }
-        public virtual ICollection<Evaluate>? Evaluates { get; set; }
         public virtual ICollection<Contract>? Contracts { get; set; }
         public virtual ICollection<Appointment>? Appointments { get; set; }
         public virtual ICollection<Wishlist>? Wishlists { get; set; }
