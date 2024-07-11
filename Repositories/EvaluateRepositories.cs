@@ -21,6 +21,11 @@ namespace TestWebAPI.Repositories
             return evaluate;
         }
 
+        public async Task<Evaluate> GetEvaluateByIdAsync(int id)
+        {
+            return await _context.Evaluates.FirstOrDefaultAsync(e=>e.id == id);
+        }
+
         public async Task<Evaluate> UpdateEvaluateAsync(Evaluate oldEva, Evaluate newEva)
         {
             oldEva.review = newEva.review;
