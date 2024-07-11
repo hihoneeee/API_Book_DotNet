@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using System.ComponentModel.DataAnnotations;
-using System.Data;
 using TestWebAPI.DTOs.Role;
 using TestWebAPI.Helpers;
 using TestWebAPI.Models;

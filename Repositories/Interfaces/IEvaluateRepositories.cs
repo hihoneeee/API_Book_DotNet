@@ -6,6 +6,7 @@ namespace TestWebAPI.Repositories.Interfaces
     {
         Task<Evaluate> CreateEvaluateAsync(Evaluate evaluate);
         Task<Evaluate> UpdateEvaluateAsync(Evaluate oldEva, Evaluate newEva);
+        Task<Evaluate> GetEvaluateByIdAsync(int id);
 
     }
 }
