@@ -39,10 +39,10 @@ namespace TestWebAPI.Services
             var serviceResponse = new ServiceResponse<AuthRegisterDTO>();
             try
             {
-                var existingEmail = await _authRepo.getByEmail(authRegisterDTO.email);
-                if (existingEmail != null)
+                var existingPhone = await _authRepo.getByPhoneAsync(authRegisterDTO.phone);
+                if (existingPhone != null)
                 {
-                    serviceResponse.SetExisting("Email");
+                    serviceResponse.SetExisting("Phone");
                     return serviceResponse;
                 }
                 var checkRole = await _roleRepo.GetRoleByCodeAsyn(authRegisterDTO.roleCode);
@@ -68,10 +68,10 @@ namespace TestWebAPI.Services
             var serviceResponse = new ServiceResponse<AuthLoginDTO>();
             try
             {
-                var existingUser = await _authRepo.getByEmail(authLoginDTO.email);
+                var existingUser = await _authRepo.getByPhoneAsync(authLoginDTO.phone);
                 if (existingUser == null)
                 {
-                    serviceResponse.SetNotFound("Email");
+                    serviceResponse.SetNotFound("phone");
                     return serviceResponse;
                 }
                 if (!_hashPasswordHelper.VerifyPassword(authLoginDTO.password, existingUser.password))
@@ -79,11 +79,11 @@ namespace TestWebAPI.Services
                     serviceResponse.SetUnauthorized("Password is wrong!");
                     return serviceResponse;
                 }
-                // Tạo JWT token và refresh token
-                string token = await _jWTHelper.GenerateJWTToken(existingUser.id, existingUser.roleCode, DateTime.UtcNow.AddMinutes(5));
+                // Generate JWT token and refresh token
+                string token = await _jWTHelper.GenerateJWTToken(existingUser.id, existingUser.roleCode, DateTime.UtcNow.AddMinutes(30));
                 string refresh_token = await _jWTHelper.GenerateJWTRefreshToken(existingUser.id, existingUser.roleCode, DateTime.UtcNow.AddMonths(30));
 
-                // Thêm refresh token vào trong bảng JWT
+                // Insert refresh token into JWT table
                 await _jwtService.InsertJWTToken(new jwtDTO()
                 {
                     userId = existingUser.id,
@@ -92,15 +92,17 @@ namespace TestWebAPI.Services
                     issuedDate = DateTime.UtcNow
                 });
 
-                // Lưu refresh token vào cookie
-                string cookieName = "refresh_token";
-                var cookieOptions = new CookieOptions
-                {
-                    HttpOnly = true,
-                    MaxAge = TimeSpan.FromDays(30)
-                };
-                _httpContextAccessor.HttpContext.Response.Cookies.Append(cookieName, refresh_token, cookieOptions);
+                // Save refresh token in cookie
+                //string cookieName = "refresh_token";
+                //var cookieOptions = new CookieOptions
+                //{
+                //    HttpOnly = true,
+                //    MaxAge = TimeSpan.FromDays(30)
+                //};
+                //_httpContextAccessor.HttpContext.Response.Cookies.Append(cookieName, refresh_token, cookieOptions);
                 serviceResponse.accessToken = token;
+                serviceResponse.refreshToken = refresh_token;
+
                 serviceResponse.SetSuccess("Login successfully!");
             }
             catch (Exception ex)

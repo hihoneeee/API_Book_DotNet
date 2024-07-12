@@ -65,7 +65,9 @@ builder.Services.AddSwaggerGen(c =>
 
 // Set Cors
 builder.Services.AddCors(opt => opt.AddDefaultPolicy(policy =>
-    policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+    policy.WithOrigins(builder.Configuration["App:ClientRootAddress"])
+          .AllowAnyHeader()
+          .AllowAnyMethod()));
 
 // Connect DB
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -80,42 +82,6 @@ builder.Services.Configure<TokenSetting>(jwtSection);
 
 var jwtSettings = jwtSection.Get<TokenSetting>();
 
-//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//    .AddJwtBearer(options =>
-//    {
-//        options.RequireHttpsMetadata = false;
-//        options.SaveToken = false;
-//        options.TokenValidationParameters = new TokenValidationParameters
-//        {
-//            ValidateIssuer = false,
-//            ValidateAudience = false,
-//            ValidateLifetime = true,
-//            ClockSkew = TimeSpan.Zero,
-//            ValidateIssuerSigningKey = true,
-//            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
-//            RoleClaimType = "roleCode"
-//        };
-//        options.Events = new JwtBearerEvents
-//        {
-//            OnMessageReceived = context =>
-//            {
-//                return Task.CompletedTask;
-//            },
-//            OnChallenge = context =>
-//            {
-//                // Override the response status code and message
-//                context.HandleResponse();
-//                context.Response.StatusCode = 401;
-//                context.Response.ContentType = "application/json";
-//                var result = Newtonsoft.Json.JsonConvert.SerializeObject(new
-//                {
-//                    Success = "false",
-//                    message = "Token Invalid"
-//                });
-//                return context.Response.WriteAsync(result);
-//            }
-//        };
-//    });
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -312,7 +278,7 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseHttpsRedirection();
-
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();  
 

@@ -80,7 +80,7 @@ namespace TestWebAPI.Repositories
                 .RuleFor(u => u.phone, f => "0" + f.Random.Number(100000000, 999999999).ToString())
                 .RuleFor(u => u.email, f => f.Internet.Email())
                 .RuleFor(u => u.address, f => f.Address.FullAddress())
-                .RuleFor(u => u.password, f => BCrypt.Net.BCrypt.HashPassword("123456"))
+                .RuleFor(u => u.password, f => BCrypt.Net.BCrypt.HashPassword("12345678"))
                 .RuleFor(u => u.avatar, f => f.Internet.Avatar())
                 .RuleFor(u => u.roleCode, "D22MD2");
 

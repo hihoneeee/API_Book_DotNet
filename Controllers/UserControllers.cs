@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 using TestWebAPI.Services;
 using TestWebAPI.Services.Interfaces;
 using static TestWebAPI.Response.HttpStatus;
@@ -22,7 +23,7 @@ namespace TestWebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCurrentAsync(int id)
         {
-            var userIdClaim = HttpContext.User.FindFirst("id")?.Value;
+            var userIdClaim = HttpContext.User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
             if (userIdClaim == null)
             {
                 return Unauthorized(new { success = false, message = "Invalid token!" });

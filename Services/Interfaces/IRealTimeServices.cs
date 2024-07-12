@@ -8,7 +8,6 @@ namespace TestWebAPI.Services.Interfaces
     public interface IRealTimeServices
     {
         Task<ServiceResponse<GetConversationDTO>> GetOrCreateConversation(ConversationDTO conversationDTO);
-        Task<ServiceResponse<MessageDTO>> SendMessage(MessageDTO messageDTO);        
         Task<ServiceResponse<List<GetMessageDTO>>> GetMessagesForConversation(int conversationId);
         Task<ServiceResponse<List<GetNotificationDTO>>> GetNotificationsForUser(int userId);
         Task<ServiceResponse<bool>> MarkNotificationsAsRead(int userId);
