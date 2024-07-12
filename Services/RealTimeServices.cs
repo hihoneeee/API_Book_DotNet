@@ -72,39 +72,6 @@ namespace TestWebAPI.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<MessageDTO>> SendMessage(MessageDTO messageDTO)
-        {
-            var serviceResponse = new ServiceResponse<MessageDTO>();
-            try
-            {
-                var message = _mapper.Map<Message>(messageDTO);
-                var sendMessage = await _chatHubRepo.SendMessage(message);
-                serviceResponse.SetSuccess("Message sent successfully!");
-
-                var conversation = await _chatHubRepo.GetConversationById(messageDTO.conversationId);
-                var user1 = await _userRepo.GetCurrentAsync(conversation.userId1);
-                var user2 = await _userRepo.GetCurrentAsync(conversation.userId2);
-                if (conversation.userId1 != messageDTO.userId)
-                {
-                    var content = $"{user2.first_name}{user2.last_name} has sent you a new message!";
-                    await _hubContext.Clients.Group(conversation.userId1.ToString()).SendAsync("ReceiveNotification", content);
-                }
-
-                if (conversation.userId2 != messageDTO.userId)
-                {
-                    var content = $"{user1.first_name}{user1.last_name} has sent you a new message!";
-                    await _hubContext.Clients.Group(conversation.userId2.ToString()).SendAsync("ReceiveNotification", content);
-                }
-
-                await _hubContext.Clients.Group(messageDTO.conversationId.ToString()).SendAsync("ReceiveMessage", messageDTO.userId, messageDTO.content, messageDTO.createdAt);
-            }
-            catch (Exception ex)
-            {
-                serviceResponse.SetError(ex.Message);
-            }
-            return serviceResponse;
-        }
-
         public async Task OnConnectedAsync(int id, string connectionId)
         {
             await _hubContext.Groups.AddToGroupAsync(connectionId, id.ToString());

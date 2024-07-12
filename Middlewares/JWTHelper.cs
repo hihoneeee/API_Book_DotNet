@@ -5,6 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using TestWebAPI.Data;
+using TestWebAPI.Models;
 using TestWebAPI.Repositories.Interfaces;
 using TestWebAPI.Settings;
 
@@ -31,7 +32,7 @@ namespace TestWebAPI.Middlewares
             // Initialize claims as a List<Claim> to allow dynamic additions
             var claims = new List<Claim>
             {
-                new Claim("id", id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub, id.ToString()),
                 new Claim("roleCode", roleCode),
                 new Claim("iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
             };

@@ -66,14 +66,14 @@ namespace TestWebAPI.Data
 
             //chat message
             modelBuilder.Entity<Message>()
-                .HasOne(cu => cu.Conversation)
+                .HasOne(m => m.Conversation)
                 .WithMany(c => c.Messages)
-                .HasForeignKey(cu => cu.conversationId)
+                .HasForeignKey(m=> m.conversationId)
                 .HasPrincipalKey(c => c.id);
             modelBuilder.Entity<Message>()
-                .HasOne(cu => cu.User)
+                .HasOne(m => m.User)
                 .WithMany(u => u.Messages)
-                .HasForeignKey(cu => cu.userId)
+                .HasForeignKey(m => m.userId)
                 .HasPrincipalKey(u => u.id);
 
             //Wishlist

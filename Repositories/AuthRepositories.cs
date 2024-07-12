@@ -18,6 +18,11 @@ namespace TestWebAPI.Repositories
             return await _context.Users.FirstOrDefaultAsync(u => u.email == email);
         }
 
+        public async Task<User> getByPhoneAsync(string phone)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.phone == phone);
+        }
+
         public async Task<User> Register(User user)
         {
             _context.Users.Add(user);

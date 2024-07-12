@@ -40,7 +40,7 @@ namespace TestWebAPI.Controllers
                 var serviceResponse = await _authService.Login(authLoginDTO);
                 if (serviceResponse.statusCode == EHttpType.Success)
                 {                   
-                return Ok(new { serviceResponse.success, serviceResponse.message, serviceResponse.accessToken });
+                return Ok(new { serviceResponse.success, serviceResponse.message, serviceResponse.accessToken, serviceResponse.refreshToken });
                 }
                 else
                 {

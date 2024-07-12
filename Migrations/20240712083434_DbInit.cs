@@ -135,8 +135,8 @@ namespace TestWebAPI.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    email = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: false),
-                    phone = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: true),
+                    email = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: true),
+                    phone = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: false),
                     first_name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     last_name = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     password = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),

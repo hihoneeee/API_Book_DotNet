@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TestWebAPI.DTOs.ChatHub;
 using TestWebAPI.Services.Interfaces;
 using static TestWebAPI.Response.HttpStatus;
@@ -14,21 +15,6 @@ namespace TestWebAPI.Controllers
         public messagesController(IRealTimeServices realTimeServices)
         {
             _realTimeServices = realTimeServices;
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SendMessage([FromBody] MessageDTO messageDTO)
-        {
-
-            var serviceResponse = await _realTimeServices.SendMessage(messageDTO);
-            if (serviceResponse.statusCode == EHttpType.Success)
-            {
-                return Ok(new { serviceResponse.success, serviceResponse.message, serviceResponse.data });
-            }
-            else
-            {
-                return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
-            }
         }
 
         [HttpGet("{conversationId}")]
