@@ -6,11 +6,9 @@ namespace TestWebAPI.DTOs.Category
 {
     public class GetCategoryDTO
     {
-        [Required]
+        public int id { get; set; }
         public string title { get; set; }
-        [Required]
         public string description { get; set; }
-        [Required]
         public string avatar { get; set; }
         public List<GetPropertyDTO> dataProperties { get; set; }
     }

@@ -117,32 +117,36 @@ namespace TestWebAPI.Repositories
             _context.Properties.AddRange(properties);
             await _context.SaveChangesAsync();
 
-            var propertyHasDetailFaker = new Faker<PropertyHasDetail>()
-                .RuleFor(phd => phd.province, f => f.Address.State())
-                .RuleFor(phd => phd.city, f => f.Address.City())
-                .RuleFor(phd => phd.images, f =>
-                {
-                    var imageUrls = new List<string>();
-                    for (int i = 0; i < 5; i++)
+            var propertyHasDetails = properties.Select(property =>
+            {
+                return new Faker<PropertyHasDetail>()
+                    .RuleFor(phd => phd.province, f => f.Address.State())
+                    .RuleFor(phd => phd.city, f => f.Address.City())
+                    .RuleFor(phd => phd.images, f =>
                     {
-                        imageUrls.Add(f.Image.LoremFlickrUrl(1000, 500, "realestate"));
-                    }
-                    return imageUrls;
-                }).RuleFor(phd => phd.address, f => f.Address.FullAddress())
-                .RuleFor(phd => phd.bedroom, f => f.Random.Int(1, 10))
-                .RuleFor(phd => phd.bathroom, f => f.Random.Int(1, 5))
-                .RuleFor(phd => phd.yearBuild, f => f.Date.Past(50).Year)
-                .RuleFor(phd => phd.size, f => f.Random.Int(500, 10000))
-                .RuleFor(phd => phd.sellerId, f => f.PickRandom(users).id)
-                .RuleFor(phd => phd.seller, f => f.PickRandom(users))
-                .RuleFor(phd => phd.propertyId, f => f.PickRandom(properties).id)
-                .RuleFor(phd => phd.property, (f, phd) => properties.First(p => p.id == phd.propertyId))
-                .RuleFor(phd => phd.type, f => f.PickRandom<typeEnum>());
-
-            var propertyHasDetails = propertyHasDetailFaker.Generate(60);
+                        var imageUrls = new List<string>();
+                        for (int i = 0; i < 5; i++)
+                        {
+                            imageUrls.Add(f.Image.LoremFlickrUrl(1000, 500, "realestate"));
+                        }
+                        return imageUrls;
+                    })
+                    .RuleFor(phd => phd.address, f => f.Address.FullAddress())
+                    .RuleFor(phd => phd.bedroom, f => f.Random.Int(1, 10))
+                    .RuleFor(phd => phd.bathroom, f => f.Random.Int(1, 5))
+                    .RuleFor(phd => phd.yearBuild, f => f.Date.Past(50).Year)
+                    .RuleFor(phd => phd.size, f => f.Random.Int(500, 10000))
+                    .RuleFor(phd => phd.sellerId, f => f.PickRandom(users).id)
+                    .RuleFor(phd => phd.seller, f => f.PickRandom(users))
+                    .RuleFor(phd => phd.propertyId, property.id)
+                    .RuleFor(phd => phd.property, property)
+                    .RuleFor(phd => phd.type, f => f.PickRandom<typeEnum>())
+                    .Generate();
+            }).ToList();
 
             _context.PropertyHasDetails.AddRange(propertyHasDetails);
             await _context.SaveChangesAsync();
+
 
             var userMediaFaker = new Faker<User_Media>()
                 .RuleFor(um => um.provider, f => f.Company.CompanyName())

@@ -93,16 +93,15 @@ namespace TestWebAPI.Services
                 });
 
                 // Save refresh token in cookie
-                //string cookieName = "refresh_token";
-                //var cookieOptions = new CookieOptions
-                //{
-                //    HttpOnly = true,
-                //    MaxAge = TimeSpan.FromDays(30)
-                //};
-                //_httpContextAccessor.HttpContext.Response.Cookies.Append(cookieName, refresh_token, cookieOptions);
+                string cookieName = "refresh_token";
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    MaxAge = TimeSpan.FromDays(30)
+                };
+                _httpContextAccessor.HttpContext.Response.Cookies.Append(cookieName, refresh_token, cookieOptions);
                 serviceResponse.accessToken = token;
                 serviceResponse.refreshToken = refresh_token;
-
                 serviceResponse.SetSuccess("Login successfully!");
             }
             catch (Exception ex)

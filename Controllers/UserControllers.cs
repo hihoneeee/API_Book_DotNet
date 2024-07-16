@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
-using TestWebAPI.Services;
+using System.Security.Claims;
 using TestWebAPI.Services.Interfaces;
 using static TestWebAPI.Response.HttpStatus;
 
@@ -23,7 +23,9 @@ namespace TestWebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCurrentAsync(int id)
         {
-            var userIdClaim = HttpContext.User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+            var userIdClaim = HttpContext.User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value ??
+                              HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             if (userIdClaim == null)
             {
                 return Unauthorized(new { success = false, message = "Invalid token!" });
@@ -33,17 +35,20 @@ namespace TestWebAPI.Controllers
             {
                 return BadRequest(new { success = false, message = "Invalid user in token!" });
             }
-            var serviceResponse = await _userServices.GetCurrentAsync((int.Parse(userIdClaim)));
+
+            var serviceResponse = await _userServices.GetCurrentAsync(userId);
 
             if (serviceResponse.statusCode == EHttpType.Success)
             {
                 return Ok(new { serviceResponse.success, serviceResponse.message, serviceResponse.data });
             }
             else
-            {    
-                 return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
+            {
+                return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
             }
         }
+
+
 
         [HttpPost("connected")]
         public async Task<IActionResult> OnConnectedAsync(int id, string connectionId)

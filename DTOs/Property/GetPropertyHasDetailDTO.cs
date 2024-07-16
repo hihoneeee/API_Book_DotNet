@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using TestWebAPI.DTOs.User;
 
 namespace TestWebAPI.DTOs.Property
 {
@@ -13,7 +14,7 @@ namespace TestWebAPI.DTOs.Property
         public int bathroom { get; set; }
         public int yearBuild { get; set; }
         public int size { get; set; }
-        public int sellerId { get; set; }
+        public UserDTO userData { get; set; }
         public int propertyId { get; set; }
         public typeEnum type { get; set; }
     }

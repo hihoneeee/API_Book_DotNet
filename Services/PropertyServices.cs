@@ -10,8 +10,8 @@ using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
 using TestWebAPI.Configs;
 using Newtonsoft.Json;
-using CloudinaryDotNet.Actions;
-using TestWebAPI.DTOs.Category;
+using TestWebAPI.DTOs.Role;
+using TestWebAPI.DTOs.User;
 
 namespace TestWebAPI.Services
 {
@@ -189,7 +189,14 @@ namespace TestWebAPI.Services
                                     (!fields.Contains("-dataDetail") && p.PropertyHasDetail != null ? new GetPropertyHasDetailDTO
                                     {
                                         id = p.PropertyHasDetail.id,
-                                        sellerId = p.PropertyHasDetail.sellerId,
+                                        userData = p.PropertyHasDetail.seller != null ? new UserDTO
+                                        {
+                                            first_name = p.PropertyHasDetail.seller.first_name,
+                                            last_name = p.PropertyHasDetail.seller.last_name,
+                                            avatar = p.PropertyHasDetail.seller.avatar,
+                                            phone = p.PropertyHasDetail.seller.phone,
+                                            email = p.PropertyHasDetail.seller.email
+                                        } : null,
                                         propertyId = p.PropertyHasDetail.propertyId,
                                         province = p.PropertyHasDetail.province,
                                         city = p.PropertyHasDetail.city,
@@ -204,7 +211,14 @@ namespace TestWebAPI.Services
                                     (fields.Contains("dataDetail") && p.PropertyHasDetail != null ? new GetPropertyHasDetailDTO
                                     {
                                         id = p.PropertyHasDetail.id,
-                                        sellerId = p.PropertyHasDetail.sellerId,
+                                        userData = p.PropertyHasDetail.seller != null ? new UserDTO
+                                        {
+                                            first_name = p.PropertyHasDetail.seller.first_name,
+                                            last_name = p.PropertyHasDetail.seller.last_name,
+                                            avatar = p.PropertyHasDetail.seller.avatar,
+                                            phone = p.PropertyHasDetail.seller.phone,
+                                            email = p.PropertyHasDetail.seller.email
+                                        } : null,
                                         propertyId = p.PropertyHasDetail.propertyId,
                                         province = p.PropertyHasDetail.province,
                                         city = p.PropertyHasDetail.city,
@@ -236,7 +250,14 @@ namespace TestWebAPI.Services
                                 dataDetail = p.PropertyHasDetail != null ? new GetPropertyHasDetailDTO
                                 {
                                     id = p.PropertyHasDetail.id,
-                                    sellerId = p.PropertyHasDetail.sellerId,
+                                    userData = p.PropertyHasDetail.seller != null ? new UserDTO
+                                    {
+                                        first_name = p.PropertyHasDetail.seller.first_name,
+                                        last_name = p.PropertyHasDetail.seller.last_name,
+                                        avatar = p.PropertyHasDetail.seller.avatar,
+                                        phone = p.PropertyHasDetail.seller.phone,
+                                        email = p.PropertyHasDetail.seller.email
+                                    } : null,
                                     propertyId = p.PropertyHasDetail.propertyId,
                                     province = p.PropertyHasDetail.province,
                                     city = p.PropertyHasDetail.city,
@@ -250,6 +271,7 @@ namespace TestWebAPI.Services
                                 } : null
                             })
                             .ToListAsync();
+
                     }
 
                     // Save to Redis cache
@@ -267,6 +289,27 @@ namespace TestWebAPI.Services
                 serviceResponse.total = total;
                 serviceResponse.page = queryParams.page ?? 1;
                 serviceResponse.SetSuccess("Properties retrieved successfully!");
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.SetError(ex.Message);
+            }
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<GetPropertyDTO>> GetPropertyByID(int id)
+        {
+            var serviceResponse = new ServiceResponse<GetPropertyDTO>();
+            try
+            {
+                var checkExist = await _propertyRepo.GetPropertyByIdAsync(id);
+                if (checkExist == null)
+                {
+                    serviceResponse.SetNotFound("Property");
+                    return serviceResponse;
+                }
+                serviceResponse.data = _mapper.Map<GetPropertyDTO>(checkExist);
+                serviceResponse.SetSuccess("Property deleted successfully!");
             }
             catch (Exception ex)
             {

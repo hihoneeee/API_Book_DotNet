@@ -78,6 +78,27 @@ namespace TestWebAPI.Services
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse<GetCategoryDTO>> GetCategoryByIdAsync(int id)
+        {
+            var serviceResponse = new ServiceResponse<GetCategoryDTO>();
+            try
+            {
+                var category = await _cateRepo.GetCategoryByIdAsync(id);
+                if (category == null)
+                {
+                    serviceResponse.SetNotFound("Category");
+                    return serviceResponse;
+                }
+                serviceResponse.data = _mapper.Map<GetCategoryDTO>(category);
+                serviceResponse.SetSuccess("Get successfully!");
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.SetError(ex.Message);
+            }
+            return serviceResponse;
+        }
+
         public async Task<ServiceResponse<CategoryDTO>> UpdateCategoryAsync(int id, CategoryDTO categoryDTO)
         {
             var serviceResponse = new ServiceResponse<CategoryDTO>();

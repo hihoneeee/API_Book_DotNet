@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TestWebAPI.DTOs.Category;
-using TestWebAPI.DTOs.Common;
-using TestWebAPI.Services;
 using TestWebAPI.Services.Interfaces;
 using static TestWebAPI.Response.HttpStatus;
 
@@ -23,6 +21,19 @@ namespace TestWebAPI.Controllers
         public async Task<IActionResult> GetCategoriesAsync()
         {
             var serviceResponse = await _categoryServices.GetCategoriesAsync();
+            if (serviceResponse.statusCode == EHttpType.Success)
+            {
+                return Ok(new { serviceResponse.success, serviceResponse.message, serviceResponse.data });
+            }
+            else
+            {
+                return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
+            }
+        }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCategoryByIdAsync(int id)
+        {
+            var serviceResponse = await _categoryServices.GetCategoryByIdAsync(id);
             if (serviceResponse.statusCode == EHttpType.Success)
             {
                 return Ok(new { serviceResponse.success, serviceResponse.message, serviceResponse.data });

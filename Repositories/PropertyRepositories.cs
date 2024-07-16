@@ -62,7 +62,12 @@ namespace TestWebAPI.Repositories
                 query = query.Skip(skip).Take(limit);
             }
 
-            var total = await query.CountAsync();
+            var total = await _context.Properties
+                                                .Include(p => p.PropertyHasDetail)
+                                                .Where(p => string.IsNullOrEmpty(queryParams.address) || (p.PropertyHasDetail != null && p.PropertyHasDetail.address.ToLower().Contains(queryParams.address.ToLower())))
+                                                .Where(p => string.IsNullOrEmpty(queryParams.title) || p.title.ToLower().Contains(queryParams.title.ToLower()))
+                                                .CountAsync();
+
             return (query, total);
         }
 
