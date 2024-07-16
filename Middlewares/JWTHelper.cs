@@ -34,7 +34,7 @@ namespace TestWebAPI.Middlewares
             {
                 new Claim(JwtRegisteredClaimNames.Sub, id.ToString()),
                 new Claim("roleCode", roleCode),
-                new Claim("iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
             };
 
             // Fetch user permissions based on the role code
@@ -52,7 +52,7 @@ namespace TestWebAPI.Middlewares
             // Create token descriptor with the claims
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(claims.ToArray()),  // Convert List<Claim> to array
+                Subject = new ClaimsIdentity(claims),  // Convert List<Claim> to array
                 Expires = expire,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKeyBytes), SecurityAlgorithms.HmacSha256Signature)
             };

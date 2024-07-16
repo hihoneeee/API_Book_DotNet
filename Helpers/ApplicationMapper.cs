@@ -64,7 +64,14 @@ namespace TestWebAPI.Helpers
                     dataDetail = p.PropertyHasDetail != null ? new GetPropertyHasDetailDTO
                     {
                         id = p.PropertyHasDetail.id,
-                        sellerId = p.PropertyHasDetail.sellerId,
+                        userData = p.PropertyHasDetail.seller != null ? new UserDTO
+                        {
+                            first_name = p.PropertyHasDetail.seller.first_name,
+                            last_name = p.PropertyHasDetail.seller.last_name,
+                            avatar = p.PropertyHasDetail.seller.avatar,
+                            phone = p.PropertyHasDetail.seller.phone,
+                            email = p.PropertyHasDetail.seller.email
+                        } : null,
                         propertyId = p.PropertyHasDetail.propertyId,
                         province = p.PropertyHasDetail.province,
                         city = p.PropertyHasDetail.city,
@@ -86,7 +93,14 @@ namespace TestWebAPI.Helpers
                 .ForMember(dest => dest.dataDetail, opt => opt.MapFrom(src => src.PropertyHasDetail != null ? new GetPropertyHasDetailDTO
                 {
                     id = src.PropertyHasDetail.id,
-                    sellerId = src.PropertyHasDetail.sellerId,
+                    userData = src.PropertyHasDetail.seller != null ? new UserDTO
+                    {
+                        first_name = src.PropertyHasDetail.seller.first_name,
+                        last_name = src.PropertyHasDetail.seller.last_name,
+                        avatar = src.PropertyHasDetail.seller.avatar,
+                        phone = src.PropertyHasDetail.seller.phone,
+                        email = src.PropertyHasDetail.seller.email
+                    } : null,
                     propertyId = src.PropertyHasDetail.propertyId,
                     province = src.PropertyHasDetail.province,
                     city = src.PropertyHasDetail.city,

@@ -10,6 +10,6 @@ namespace TestWebAPI.Services.Interfaces
         Task<ServiceResponse<PropertyDTO>> CreatePropertyAsync(PropertyDTO propertyDTO, PropertyHasDetailDTO propertyHasDetailDTO);
         Task<ServiceResponse<PropertyDTO>> UpdatePropertyAsync(int id, PropertyDTO propertyDTO, PropertyHasDetailDTO propertyHasDetailDTO);
         Task<ServiceResponse<PropertyDTO>> DeletePropertyAsync(int id);
-
+        Task<ServiceResponse<GetPropertyDTO>> GetPropertyByID(int id);
     }
 }

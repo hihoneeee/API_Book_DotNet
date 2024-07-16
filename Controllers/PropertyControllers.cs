@@ -57,6 +57,25 @@ namespace TestWebAPI.Controllers
             }
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetPropertyById([FromQuery] int id )
+        {
+            var serviceResponse = await _propertyServices.GetPropertyByID(id);
+            if (serviceResponse.statusCode == EHttpType.Success)
+            {
+                return Ok(new
+                {
+                    serviceResponse.success,
+                    serviceResponse.message,
+                    serviceResponse.data
+                });
+            }
+            else
+            {
+                return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
+            }
+        }
+
         [HttpPut]
         public async Task<IActionResult> UpdatePropertyAysnc(int id, [FromForm] PropertyDTO propertyDTO, [FromForm] PropertyHasDetailDTO propertyHasDetailDTO)
         {

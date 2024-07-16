@@ -6,7 +6,7 @@ namespace TestWebAPI.Repositories.Interfaces
 {
     public interface IPropertyRepositories
     {
-        Task<(IQueryable<Property>, int)> GetPropertiesAsync(QueryParamsSetting queryParams);
+        Task<(IQueryable<Property> Query, int)> GetPropertiesAsync(QueryParamsSetting queryParams);
         Task<Property> GetPropertyByIdAsync(int id);
         Task<Property> CreatePropertyAsync(Property property);
         Task<Property> UpdatePropertyAsync(Property oldProperty, Property newProperty);
