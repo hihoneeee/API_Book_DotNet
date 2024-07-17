@@ -36,7 +36,16 @@ namespace TestWebAPI.Helpers
             CreateMap<User, AuthForgotPasswordDTO>().ReverseMap();
 
             //user
+            CreateMap<User, GetUserDTO>()
+                .ForMember(dest => dest.dataMedia, opt => opt.MapFrom(src => src.User_Medias.Select(um => new GetUserMediaDTO
+                {
+                    icon = um.icon,
+                    link = um.link,
+                    provider = um.provider,
+                }).ToList())).ReverseMap();
+            CreateMap<User_Media, GetUserMediaDTO>();
             CreateMap<User, UserDTO>().ReverseMap();
+            CreateMap<User, AvatarUserDTO>().ReverseMap();
 
             //JWT
             CreateMap<JWT, jwtDTO>().ReverseMap();
@@ -64,7 +73,7 @@ namespace TestWebAPI.Helpers
                     dataDetail = p.PropertyHasDetail != null ? new GetPropertyHasDetailDTO
                     {
                         id = p.PropertyHasDetail.id,
-                        userData = p.PropertyHasDetail.seller != null ? new UserDTO
+                        userData = p.PropertyHasDetail.seller != null ? new GetUserDTO
                         {
                             first_name = p.PropertyHasDetail.seller.first_name,
                             last_name = p.PropertyHasDetail.seller.last_name,
@@ -93,7 +102,7 @@ namespace TestWebAPI.Helpers
                 .ForMember(dest => dest.dataDetail, opt => opt.MapFrom(src => src.PropertyHasDetail != null ? new GetPropertyHasDetailDTO
                 {
                     id = src.PropertyHasDetail.id,
-                    userData = src.PropertyHasDetail.seller != null ? new UserDTO
+                    userData = src.PropertyHasDetail.seller != null ? new GetUserDTO
                     {
                         first_name = src.PropertyHasDetail.seller.first_name,
                         last_name = src.PropertyHasDetail.seller.last_name,

@@ -10,12 +10,15 @@ public class ChatHub : Hub
     private readonly IChatHubRepositories _chatHubRepo;
     private readonly IUserRepositories _userRepo;
     private readonly IMapper _mapper;
+    private readonly ILogger<ChatHub> _logger; // Thêm trường này
 
-    public ChatHub(IMapper mapper,IChatHubRepositories chatHubRepo, IUserRepositories userRepo)
+    public ChatHub(IMapper mapper,IChatHubRepositories chatHubRepo, IUserRepositories userRepo, ILogger<ChatHub> logger)
     {
         _chatHubRepo = chatHubRepo;
         _userRepo = userRepo;
         _mapper = mapper;
+        _logger = logger; 
+
     }
     public string GetConnectionId()
     {
@@ -51,7 +54,8 @@ public class ChatHub : Hub
         }
         catch (Exception ex)
         {
-            throw new Exception("An error occurred while doing something!", ex);
+            Console.Error.WriteLine($"Error in SendMessageAsync: {ex.Message}");
+            throw new HubException("An error occurred while sending the message.", ex);
         }
     }
 

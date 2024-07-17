@@ -5,5 +5,7 @@ namespace TestWebAPI.Repositories.Interfaces
     public interface IUserRepositories
     {   
         Task<User> GetCurrentAsync(int id);
+        Task<User> UpdateProfileUserAsync(User oldProfile, User newProfile);
+        Task<User> UpdateAvatarUserAsync(User oldProfile, User newProfile);
     }
 }
