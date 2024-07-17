@@ -24,7 +24,6 @@ namespace TestWebAPI.Services
         {
             var serviceResponse = new ServiceResponse<CategoryDTO>();
             string publicId = null;
-
             try
             {
                 var existingCate = await _cateRepo.GetCategoryByTitleAsync(categoryDTO.title);

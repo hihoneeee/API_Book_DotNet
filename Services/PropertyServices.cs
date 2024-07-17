@@ -189,7 +189,7 @@ namespace TestWebAPI.Services
                                     (!fields.Contains("-dataDetail") && p.PropertyHasDetail != null ? new GetPropertyHasDetailDTO
                                     {
                                         id = p.PropertyHasDetail.id,
-                                        userData = p.PropertyHasDetail.seller != null ? new UserDTO
+                                        userData = p.PropertyHasDetail.seller != null ? new GetUserDTO
                                         {
                                             first_name = p.PropertyHasDetail.seller.first_name,
                                             last_name = p.PropertyHasDetail.seller.last_name,
@@ -211,7 +211,7 @@ namespace TestWebAPI.Services
                                     (fields.Contains("dataDetail") && p.PropertyHasDetail != null ? new GetPropertyHasDetailDTO
                                     {
                                         id = p.PropertyHasDetail.id,
-                                        userData = p.PropertyHasDetail.seller != null ? new UserDTO
+                                        userData = p.PropertyHasDetail.seller != null ? new GetUserDTO
                                         {
                                             first_name = p.PropertyHasDetail.seller.first_name,
                                             last_name = p.PropertyHasDetail.seller.last_name,
@@ -250,7 +250,7 @@ namespace TestWebAPI.Services
                                 dataDetail = p.PropertyHasDetail != null ? new GetPropertyHasDetailDTO
                                 {
                                     id = p.PropertyHasDetail.id,
-                                    userData = p.PropertyHasDetail.seller != null ? new UserDTO
+                                    userData = p.PropertyHasDetail.seller != null ? new GetUserDTO
                                     {
                                         first_name = p.PropertyHasDetail.seller.first_name,
                                         last_name = p.PropertyHasDetail.seller.last_name,

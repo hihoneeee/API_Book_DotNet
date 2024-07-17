@@ -5,6 +5,8 @@ namespace TestWebAPI.Services.Interfaces
 {
     public interface IUserServices
     {
-        Task<ServiceResponse<UserDTO>> GetCurrentAsync(int id);
+        Task<ServiceResponse<GetUserDTO>> GetCurrentAsync(int id);
+        Task<ServiceResponse<UserDTO>> UpdateProfileUserAsync(int id, UserDTO userDTO);
+        Task<ServiceResponse<AvatarUserDTO>> UpdateAvatarUserAsync(int id, AvatarUserDTO avatarUserDTO);
     }
 }

@@ -118,15 +118,15 @@
 
         function connect() {
             const token = document.getElementById("authToken").value;
-            connection = new signalR.HubConnectionBuilder()
-                .withUrl("/chathub", {
-                    accessTokenFactory: () => {
-                        return { token };
-                    }
-                })
-                .build();
-            
+
         }
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chathub", {
+                accessTokenFactory: () => {
+                    return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMyIsInJvbGVDb2RlIjoiRDIyTUQyIiwiaWF0IjoxNzIxMTk2NDEyLCJwZXJtaXNzaW9uIjpbImFkZC1yb2xlIiwiZ2V0LXJvbGUiLCJ1cGRhdGUtcm9sZSIsImRlbGV0ZS1yb2xlIiwiYXNzaWduLXBlcm1pc3Npb24iLCJhZGQtcGVybWlzc2lvbiIsImdldC1wZXJtaXNzaW9uIiwidXBkYXRlLXBlcm1pc3Npb24iLCJkZWxldGUtcGVybWlzc2lvbiIsImFkZC1jYXRlZ29yeSIsImdldC1jYXRlZ29yeSIsInVwZGF0ZS1jYXRlZ29yeSIsImRlbGV0ZS1jYXRlZ29yeSJdLCJuYmYiOjE3MjExOTY0MTIsImV4cCI6MTcyMTE5ODIxMn0.HoUz8RCqOLgb0CGRuj0GEqnApKrQLumqE88T-pr-O48";
+                }
+            })
+            .build();
 
         connection.on("ReceiveMessage", function (userId, messageContent, timestamp) {
             const li = document.createElement("li");
