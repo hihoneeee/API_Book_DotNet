@@ -12198,6 +12198,7 @@
       "Microsoft.EntityFrameworkCore.Tools >= 8.0.6",
       "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 8.0.2",
       "NETCore.MailKit >= 2.1.0",
+      "Newtonsoft.Json >= 13.0.3",
       "StackExchange.Redis >= 2.8.0",
       "Swashbuckle.AspNetCore >= 6.6.2",
       "System.Linq.Dynamic.Core >= 1.4.2"
@@ -12309,6 +12310,10 @@
           "NETCore.MailKit": {
             "target": "Package",
             "version": "[2.1.0, )"
+          },
+          "Newtonsoft.Json": {
+            "target": "Package",
+            "version": "[13.0.3, )"
           },
           "StackExchange.Redis": {
             "target": "Package",

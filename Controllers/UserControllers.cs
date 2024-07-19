@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using TestWebAPI.DTOs.Auth;
 using TestWebAPI.DTOs.User;
+using TestWebAPI.Services;
 using TestWebAPI.Services.Interfaces;
 using static TestWebAPI.Response.HttpStatus;
 
@@ -13,12 +15,13 @@ namespace TestWebAPI.Controllers
     {
         private readonly IUserServices _userServices;
         private readonly IRealTimeServices _realTimeServices;
+        private readonly ISendMailServices _sendMailService;
 
-        public userController(IUserServices userServices, IRealTimeServices realTimeServices)
+        public userController(IUserServices userServices, IRealTimeServices realTimeServices, ISendMailServices sendMailService)
         {
             _userServices = userServices;
             _realTimeServices = realTimeServices;
-
+            _sendMailService = sendMailService;
         }
 
         [HttpGet]
@@ -104,6 +107,65 @@ namespace TestWebAPI.Controllers
                 return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
             }
         }
+
+        [HttpPost("change-email")]
+        public async Task<IActionResult> ChangeEmailUserAysnc([FromBody] EmailUSerDTO emailUSerDTO)
+        {
+            var userIdClaim = HttpContext.User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value ??
+                              HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userIdClaim == null)
+            {
+                return Unauthorized(new { success = false, message = "Invalid token!" });
+            }
+
+            if (!int.TryParse(userIdClaim, out int userId))
+            {
+                return BadRequest(new { success = false, message = "Invalid user in token!" });
+            }
+
+            var serviceResponse = await _userServices.ChangeEmailUserAsync(userId, emailUSerDTO);
+            if (serviceResponse.statusCode != EHttpType.Success)
+            {
+                return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
+            }
+            var emailBody = $"Please, click on the link below to change your email. This link will expire after 15 minutes: <a href='https://localhost:7107/api/auth/comfirm-change-email/{serviceResponse.accessToken}'>Change here!</a>";
+            await _sendMailService.SendEmailAsync(emailUSerDTO.mewEmail, "Password Reset Request", emailBody);
+
+            return Ok(new { serviceResponse.success, serviceResponse.message });
+
+
+        }
+
+        [HttpPost("comfirm-change-email")]
+        public async Task<IActionResult> ConfirmChangeEmailUserAsync([FromQuery] string token)
+        {
+            var userIdClaim = HttpContext.User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value ??
+                    HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userIdClaim == null)
+            {
+                return Unauthorized(new { success = false, message = "Invalid token!" });
+            }
+
+            if (!int.TryParse(userIdClaim, out int userId))
+            {
+                return BadRequest(new { success = false, message = "Invalid user in token!" });
+            }
+
+            var serviceResponse = await _userServices.ConfirmChangeEmailUserAsync(userId, token);
+
+            if (serviceResponse.statusCode == EHttpType.Success)
+            {
+                return Ok(new { serviceResponse.success, serviceResponse.message });
+            }
+            else
+            {
+                return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
+            }
+
+        }
+
         [HttpPost("connected")]
         public async Task<IActionResult> OnConnectedAsync(int id, string connectionId)
         {

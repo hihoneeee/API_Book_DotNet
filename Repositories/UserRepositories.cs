@@ -14,12 +14,23 @@ namespace TestWebAPI.Repositories
         public UserRepositories(ApplicationDbContext context) {
             _context = context;
         }
+        public async Task<User> getByEmail(string email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.email == email);
+        }
 
         public async Task<User> GetCurrentAsync(int id)
         {
             return await _context.Users
                 .Include(u => u.User_Medias)
                 .FirstOrDefaultAsync(u => u.id == id);
+        }
+
+        public async Task<User> ChangeEmailUSerAsync(User oldEmail, string newEmail)
+        {
+            oldEmail.email = newEmail;
+            await _context.SaveChangesAsync();
+            return oldEmail;
         }
 
         public async Task<User> UpdateProfileUserAsync(User oldProfile, User newProfile)

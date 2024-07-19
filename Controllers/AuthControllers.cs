@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using TestWebAPI.DTOs.Auth;
 using TestWebAPI.Services.Interfaces;
 using static TestWebAPI.Response.HttpStatus;
@@ -98,7 +100,8 @@ namespace TestWebAPI.Controllers
         [HttpPost("change-password")]
         public async Task<IActionResult> ChangePasswordasync([FromBody] AuthChangePasswordDTO authChangePasswordDTO)
         {
-            var userIdClaim = HttpContext.User.FindFirst("id")?.Value;
+            var userIdClaim = HttpContext.User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value ??
+                                HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userIdClaim == null)
             {
                 return Unauthorized(new { success = false, message = "Invalid token!" });

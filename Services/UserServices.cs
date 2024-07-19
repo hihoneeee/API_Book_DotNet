@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
+using TestWebAPI.DTOs.Auth;
 using TestWebAPI.DTOs.Category;
 using TestWebAPI.DTOs.User;
 using TestWebAPI.Helpers;
+using TestWebAPI.Helpers.IHelpers;
+using TestWebAPI.Middlewares;
 using TestWebAPI.Models;
 using TestWebAPI.Repositories.Interfaces;
 using TestWebAPI.Response;
@@ -15,13 +18,15 @@ namespace TestWebAPI.Services
         private readonly IMapper _mapper;
         private readonly IUserRepositories _userRepo;
         private readonly ICloudinaryServices _cloudinaryServices;
-
-        public UserServices(IUserRepositories userRepo, IMapper mapper, ICloudinaryServices cloudinaryServices)
+        private readonly IHashPasswordHelper _hashPasswordHelper;
+        private readonly IJWTHelper _jWTHelper;
+        public UserServices(IUserRepositories userRepo, IMapper mapper, ICloudinaryServices cloudinaryServices, IHashPasswordHelper hashPasswordHelper, IJWTHelper jWTHelper)
         {
             _mapper = mapper;
             _userRepo = userRepo;
             _cloudinaryServices = cloudinaryServices;
-
+            _hashPasswordHelper = hashPasswordHelper;
+            _jWTHelper = jWTHelper;
         }
 
         public async Task<ServiceResponse<GetUserDTO>> GetCurrentAsync(int id)
@@ -98,6 +103,66 @@ namespace TestWebAPI.Services
             {
                 serviceResponse.SetError($"An unexpected error occurred: {ex.Message}");
                 await _cloudinaryServices.DeleteImage(publicId);
+            }
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<UserDTO>> ChangeEmailUserAsync (int id, EmailUSerDTO emailUSerDTO)
+        {
+            var serviceResponse = new ServiceResponse<UserDTO>();
+            try
+            {
+                var checkUser = await _userRepo.GetCurrentAsync(id);
+                if (checkUser == null)
+                {
+                    serviceResponse.SetNotFound("User");
+                    return serviceResponse;
+                }
+                var checkNewEmail = await _userRepo.getByEmail(emailUSerDTO.mewEmail);
+                if (checkNewEmail != null) {
+                    serviceResponse.SetExisting("Email");
+                    return serviceResponse;
+                }
+                if (!_hashPasswordHelper.VerifyPassword(emailUSerDTO.currentPassword, checkUser.password))
+                {
+                    serviceResponse.SetUnauthorized("Password is wrong!");
+                    return serviceResponse;
+                }
+                string accessToken = await _jWTHelper.GenerateJWTTokenForEmail(checkUser.id, emailUSerDTO.mewEmail, checkUser.email, DateTime.UtcNow.AddMinutes(10));
+                serviceResponse.accessToken = accessToken;
+                serviceResponse.SetSuccess("Send email succssefully!");
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.SetError($"An unexpected error occurred: {ex.Message}");
+
+            }
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<UserDTO>> ConfirmChangeEmailUserAsync(int id, string token)
+        {
+            var serviceResponse = new ServiceResponse<UserDTO>();
+            try
+            {
+                var tokenNewEmail =  _jWTHelper.GetNewEmailFromToken(token);
+                var tokenOldEmail = _jWTHelper.GetOldEmailFromToken(token);
+                var tokenUserId = _jWTHelper.GetUserIdFromToken(token);
+                var checkUser = await _userRepo.GetCurrentAsync(tokenUserId);
+
+                if (tokenUserId != id)
+                {
+                    serviceResponse.SetUnauthorized("Token Invalid!");
+                    return serviceResponse;
+                }
+
+                var changeEmail = await _userRepo.ChangeEmailUSerAsync(checkUser, tokenNewEmail);
+                serviceResponse.SetSuccess("Password change succssefully!");
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.SetError($"An unexpected error occurred: {ex.Message}");
+
             }
             return serviceResponse;
         }

@@ -10,6 +10,7 @@ namespace TestWebAPI.DTOs.Auth
         [Required]
         public string phone { get; set; }
         [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must contain atleast 8 character")]
+        [Required]
         public string password { get; set; }
     }
 }

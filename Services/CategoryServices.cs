@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using TestWebAPI.DTOs.Category;
-using TestWebAPI.DTOs.Property;
 using TestWebAPI.Helpers;
 using TestWebAPI.Models;
 using TestWebAPI.Repositories.Interfaces;
