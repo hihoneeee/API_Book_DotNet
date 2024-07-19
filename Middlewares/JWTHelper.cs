@@ -62,6 +62,32 @@ namespace TestWebAPI.Middlewares
             return tokenHandler.WriteToken(token);
         }
 
+        public async Task<string> GenerateJWTTokenForEmail(int id, string newEmail, string oldEmail, DateTime expire)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var secretKeyBytes = Encoding.UTF8.GetBytes(_tokenSetting.Secret);
+
+            // Initialize claims as a List<Claim> to allow dynamic additions
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, id.ToString()),
+                new Claim("newEmail", newEmail),
+                new Claim("oldEmail", oldEmail),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
+            };
+            // Create token descriptor with the claims
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),  // Convert List<Claim> to array
+                Expires = expire,
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKeyBytes), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            // Create the token
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
         public async Task<string> GenerateJWTRefreshToken(int id, string roleCode, DateTime expire)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -173,6 +199,44 @@ namespace TestWebAPI.Middlewares
             var jwtToken = (JwtSecurityToken)validatedToken;
             var roleClaim = jwtToken.Claims.FirstOrDefault(x => x.Type == "roleCode");
             return roleClaim != null ? roleClaim.Value : "";
+        }
+
+        public string GetNewEmailFromToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_tokenSetting.Secret);
+
+            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero
+            }, out SecurityToken validatedToken);
+
+            var jwtToken = (JwtSecurityToken)validatedToken;
+            var emailClaim = jwtToken.Claims.FirstOrDefault(x => x.Type == "newEmail");
+            return emailClaim != null ? emailClaim.Value : "";
+        }
+
+        public string GetOldEmailFromToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_tokenSetting.Secret);
+
+            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero
+            }, out SecurityToken validatedToken);
+
+            var jwtToken = (JwtSecurityToken)validatedToken;
+            var emailClaim = jwtToken.Claims.FirstOrDefault(x => x.Type == "oldEmail");
+            return emailClaim != null ? emailClaim.Value : "";
         }
     }
 }

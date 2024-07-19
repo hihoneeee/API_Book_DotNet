@@ -73,7 +73,7 @@ namespace TestWebAPI.Controllers
             }
         }
 
-        [Authorize(Policy = "delete-category")]
+        //[Authorize(Policy = "delete-category")]
         [HttpDelete]
         public async Task<IActionResult> DeleteCategoryAsync(int id)
         {

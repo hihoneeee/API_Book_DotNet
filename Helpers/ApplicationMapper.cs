@@ -46,6 +46,7 @@ namespace TestWebAPI.Helpers
             CreateMap<User_Media, GetUserMediaDTO>();
             CreateMap<User, UserDTO>().ReverseMap();
             CreateMap<User, AvatarUserDTO>().ReverseMap();
+            CreateMap<User, EmailUSerDTO>().ReverseMap();
 
             //JWT
             CreateMap<JWT, jwtDTO>().ReverseMap();
