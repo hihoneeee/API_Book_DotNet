@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using TestWebAPI.DTOs.Auth;
 using TestWebAPI.DTOs.User;
-using TestWebAPI.Services;
 using TestWebAPI.Services.Interfaces;
 using static TestWebAPI.Response.HttpStatus;
 
@@ -25,7 +24,7 @@ namespace TestWebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetCurrentAsync(int id)
+        public async Task<IActionResult> GetCurrentAsync()
         {
             var userIdClaim = HttpContext.User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value ??
                               HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -108,6 +107,7 @@ namespace TestWebAPI.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost("change-email")]
         public async Task<IActionResult> ChangeEmailUserAysnc([FromBody] EmailUSerDTO emailUSerDTO)
         {
@@ -129,31 +129,17 @@ namespace TestWebAPI.Controllers
             {
                 return StatusCode((int)serviceResponse.statusCode, new { serviceResponse.success, serviceResponse.message });
             }
-            var emailBody = $"Please, click on the link below to change your email. This link will expire after 15 minutes: <a href='https://localhost:7107/api/auth/comfirm-change-email/{serviceResponse.accessToken}'>Change here!</a>";
+            var emailBody = $"Please, click on the link below to change your email. This link will expire after 15 minutes: <a href='http://localhost:5173/confirm-change-email/{serviceResponse.accessToken}'>Change here!</a>";
             await _sendMailService.SendEmailAsync(emailUSerDTO.mewEmail, "Password Reset Request", emailBody);
 
             return Ok(new { serviceResponse.success, serviceResponse.message });
 
 
         }
-
-        [HttpPost("comfirm-change-email")]
-        public async Task<IActionResult> ConfirmChangeEmailUserAsync([FromQuery] string token)
+        [HttpPost("confirm-change-email/{token}")]
+        public async Task<IActionResult> ConfirmChangeEmailUserAsync(string token)
         {
-            var userIdClaim = HttpContext.User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value ??
-                    HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (userIdClaim == null)
-            {
-                return Unauthorized(new { success = false, message = "Invalid token!" });
-            }
-
-            if (!int.TryParse(userIdClaim, out int userId))
-            {
-                return BadRequest(new { success = false, message = "Invalid user in token!" });
-            }
-
-            var serviceResponse = await _userServices.ConfirmChangeEmailUserAsync(userId, token);
+            var serviceResponse = await _userServices.ConfirmChangeEmailUserAsync(token);
 
             if (serviceResponse.statusCode == EHttpType.Success)
             {

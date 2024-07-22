@@ -15,7 +15,7 @@ namespace TestWebAPI.Helpers
         public static void SetUnauthorized(this IServiceResponse response, string message)
         {
             response.Success = false;
-            response.Message = $"{message} Invalid!";
+            response.Message = $"{message}";
             response.StatusCode = EHttpType.NotFound;
         }
 
