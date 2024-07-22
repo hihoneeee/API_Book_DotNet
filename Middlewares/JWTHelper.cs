@@ -95,7 +95,7 @@ namespace TestWebAPI.Middlewares
             var key = Encoding.UTF8.GetBytes(_tokenSetting.Secret);
             var claims = new List<Claim>
             {
-                new Claim("id", id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub, id.ToString()),
                 new Claim("roleCode", roleCode),
                 new Claim("iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
             };
@@ -131,7 +131,7 @@ namespace TestWebAPI.Middlewares
                 var jwtToken = (JwtSecurityToken)validatedToken;
 
                 // Lấy id từ claims
-                var idClaim = jwtToken.Claims.FirstOrDefault(x => x.Type == "id");
+                var idClaim = jwtToken.Claims.FirstOrDefault(x => x.Type == "sub");
                 if (idClaim == null)
                 {
                     return false;
@@ -178,8 +178,8 @@ namespace TestWebAPI.Middlewares
             }, out SecurityToken validatedToken);
 
             var jwtToken = (JwtSecurityToken)validatedToken;
-            var userIdClaim = jwtToken.Claims.FirstOrDefault(x => x.Type == "id");
-            return userIdClaim != null ? int.Parse(userIdClaim.Value) : 0;
+            var subClaim = jwtToken.Claims.FirstOrDefault(x => x.Type == "sub");
+            return subClaim != null ? int.Parse(subClaim.Value) : 0;
         }
 
         public string GetUserRoleFromToken(string token)

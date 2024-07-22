@@ -97,7 +97,7 @@ namespace TestWebAPI.Services
                 newProfile.avatar = avatarUploadResult.Url.ToString();
                 publicId = avatarUploadResult.PublicId;
                 var updatedCategory = await _userRepo.UpdateAvatarUserAsync(existingUser, newProfile);
-                serviceResponse.SetSuccess("Get current user successfully!");
+                serviceResponse.SetSuccess("Change avatar successfully!");
             }
             catch (Exception ex)
             {
@@ -140,7 +140,7 @@ namespace TestWebAPI.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<UserDTO>> ConfirmChangeEmailUserAsync(int id, string token)
+        public async Task<ServiceResponse<UserDTO>> ConfirmChangeEmailUserAsync(string token)
         {
             var serviceResponse = new ServiceResponse<UserDTO>();
             try
@@ -148,16 +148,21 @@ namespace TestWebAPI.Services
                 var tokenNewEmail =  _jWTHelper.GetNewEmailFromToken(token);
                 var tokenOldEmail = _jWTHelper.GetOldEmailFromToken(token);
                 var tokenUserId = _jWTHelper.GetUserIdFromToken(token);
-                var checkUser = await _userRepo.GetCurrentAsync(tokenUserId);
 
-                if (tokenUserId != id)
+                var checkUser = await _userRepo.GetCurrentAsync(tokenUserId);
+                if (checkUser == null)
                 {
-                    serviceResponse.SetUnauthorized("Token Invalid!");
+                    serviceResponse.SetNotFound("User");
                     return serviceResponse;
                 }
-
+                var checkOldEmail = _userRepo.getByEmail(tokenOldEmail);
+                if (checkOldEmail == null)
+                {
+                    serviceResponse.SetNotFound("Old email");
+                    return serviceResponse;
+                }
                 var changeEmail = await _userRepo.ChangeEmailUSerAsync(checkUser, tokenNewEmail);
-                serviceResponse.SetSuccess("Password change succssefully!");
+                serviceResponse.SetSuccess("Gmail change succssefully!");
             }
             catch (Exception ex)
             {

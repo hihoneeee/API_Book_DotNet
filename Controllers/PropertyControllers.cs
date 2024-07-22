@@ -58,7 +58,7 @@ namespace TestWebAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetPropertyById([FromQuery] int id )
+        public async Task<IActionResult> GetPropertyById(int id )
         {
             var serviceResponse = await _propertyServices.GetPropertyByID(id);
             if (serviceResponse.statusCode == EHttpType.Success)
