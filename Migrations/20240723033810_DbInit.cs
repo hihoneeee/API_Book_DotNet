@@ -88,7 +88,7 @@ namespace TestWebAPI.Migrations
                     price = table.Column<int>(type: "int", nullable: false),
                     avatar = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     categoryId = table.Column<int>(type: "int", nullable: false),
-                    status = table.Column<int>(type: "int", nullable: false),
+                    type = table.Column<int>(type: "int", nullable: false),
                     createdAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -291,7 +291,7 @@ namespace TestWebAPI.Migrations
                     size = table.Column<int>(type: "int", nullable: false),
                     sellerId = table.Column<int>(type: "int", nullable: false),
                     propertyId = table.Column<int>(type: "int", nullable: false),
-                    type = table.Column<int>(type: "int", nullable: false)
+                    status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-public enum statusEnum 
+public enum TypeEnum 
 {
-   sale,
-   rental
+    sale = 1,
+    rental = 2
 };
 
 namespace TestWebAPI.Models
@@ -25,7 +25,7 @@ namespace TestWebAPI.Models
         [ForeignKey("categoryId")]
         public virtual Category category { get; set; }
         [Required]
-        public statusEnum status { get; set; }
+        public TypeEnum type { get; set; }
         [Required]
         public DateTime createdAt { get; set; } = DateTime.Now;
         [Required]

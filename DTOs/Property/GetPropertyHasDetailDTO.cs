@@ -16,6 +16,6 @@ namespace TestWebAPI.DTOs.Property
         public int size { get; set; }
         public GetUserDTO userData { get; set; }
         public int propertyId { get; set; }
-        public typeEnum type { get; set; }
+        public statusEnum status { get; set; }
     }
 }

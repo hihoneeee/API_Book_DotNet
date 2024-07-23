@@ -39,10 +39,12 @@ namespace TestWebAPI.Helpers
             CreateMap<User, GetUserDTO>()
                 .ForMember(dest => dest.dataMedia, opt => opt.MapFrom(src => src.User_Medias.Select(um => new GetUserMediaDTO
                 {
+                    id = um.id,
                     icon = um.icon,
                     link = um.link,
                     provider = um.provider,
                 }).ToList())).ReverseMap();
+
             CreateMap<User_Media, GetUserMediaDTO>();
             CreateMap<User, UserDTO>().ReverseMap();
             CreateMap<User, AvatarUserDTO>().ReverseMap();
@@ -68,7 +70,7 @@ namespace TestWebAPI.Helpers
                     avatar = p.avatar,
                     price = p.price,
                     categoryId = p.categoryId,
-                    status = p.status,
+                    type = p.type,
                     createdAt = p.createdAt,
                     updatedAt = p.updatedAt,
                     dataDetail = p.PropertyHasDetail != null ? new GetPropertyHasDetailDTO
@@ -76,6 +78,7 @@ namespace TestWebAPI.Helpers
                         id = p.PropertyHasDetail.id,
                         userData = p.PropertyHasDetail.seller != null ? new GetUserDTO
                         {
+                            id = p.PropertyHasDetail.seller.id,
                             first_name = p.PropertyHasDetail.seller.first_name,
                             last_name = p.PropertyHasDetail.seller.last_name,
                             avatar = p.PropertyHasDetail.seller.avatar,
@@ -91,7 +94,7 @@ namespace TestWebAPI.Helpers
                         bathroom = p.PropertyHasDetail.bathroom,
                         yearBuild = p.PropertyHasDetail.yearBuild,
                         size = p.PropertyHasDetail.size,
-                        type = p.PropertyHasDetail.type
+                        status = p.PropertyHasDetail.status
                     } : null
                 }).ToList()))
                     .ReverseMap();
@@ -105,6 +108,7 @@ namespace TestWebAPI.Helpers
                     id = src.PropertyHasDetail.id,
                     userData = src.PropertyHasDetail.seller != null ? new GetUserDTO
                     {
+                        id = src.PropertyHasDetail.seller.id,
                         first_name = src.PropertyHasDetail.seller.first_name,
                         last_name = src.PropertyHasDetail.seller.last_name,
                         avatar = src.PropertyHasDetail.seller.avatar,
@@ -120,12 +124,10 @@ namespace TestWebAPI.Helpers
                     bathroom = src.PropertyHasDetail.bathroom,
                     yearBuild = src.PropertyHasDetail.yearBuild,
                     size = src.PropertyHasDetail.size,
-                    type = src.PropertyHasDetail.type
+                    status = src.PropertyHasDetail.status
                 } : null))
                 .ReverseMap();
-
             CreateMap<Property, PropertyDTO>().ReverseMap();
-            CreateMap<Property, GetPropertyDTO>().ReverseMap();
             CreateMap<PropertyHasDetail, PropertyHasDetailDTO>().ReverseMap();
             CreateMap<PropertyHasDetail, GetPropertyHasDetailDTO>().ReverseMap();
 

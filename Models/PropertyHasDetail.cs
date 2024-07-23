@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-public enum typeEnum
+public enum statusEnum
 {
-    pending,
-    complete,
-    available
+    available = 1,
+    pending = 2,
+    complete = 3
 }
 
 namespace TestWebAPI.Models
@@ -39,6 +39,6 @@ namespace TestWebAPI.Models
         [ForeignKey("propertyId")]
         public virtual Property property { get; set; }
         [Required]
-        public typeEnum type { get; set; } = typeEnum.available;
+        public statusEnum status { get; set; } = statusEnum.available;
     }
 }

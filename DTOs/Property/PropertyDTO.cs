@@ -15,6 +15,6 @@ namespace TestWebAPI.DTOs.Property
         [Required]
         public int categoryId { get; set; }
         [Required]
-        public EnumStatus status { get; set; }
+        public TypeEnum type { get; set; }
     }
 }

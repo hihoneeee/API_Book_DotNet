@@ -182,7 +182,7 @@ namespace TestWebAPI.Services
                                 price = isExclude ? (!fields.Contains("-price") ? p.price : 0) : (fields.Contains("price") ? p.price : 0),
                                 avatar = isExclude ? (!fields.Contains("-avatar") ? p.avatar : null) : (fields.Contains("avatar") ? p.avatar : null),
                                 categoryId = isExclude ? (!fields.Contains("-categoryId") ? p.categoryId : 0) : (fields.Contains("categoryId") ? p.categoryId : 0),
-                                status = isExclude ? (!fields.Contains("-status") ? p.status : 0) : (fields.Contains("status") ? p.status : 0),
+                                type = isExclude ? (!fields.Contains("-type") ? p.type : 0) : (fields.Contains("type") ? p.type : 0),
                                 createdAt = isExclude ? (!fields.Contains("-createdAt") ? p.createdAt : DateTime.MinValue) : (fields.Contains("createdAt") ? p.createdAt : DateTime.MinValue),
                                 updatedAt = isExclude ? (!fields.Contains("-updatedAt") ? p.updatedAt : DateTime.MinValue) : (fields.Contains("updatedAt") ? p.updatedAt : DateTime.MinValue),
                                 dataDetail = isExclude ?
@@ -206,7 +206,7 @@ namespace TestWebAPI.Services
                                         bathroom = p.PropertyHasDetail.bathroom,
                                         yearBuild = p.PropertyHasDetail.yearBuild,
                                         size = p.PropertyHasDetail.size,
-                                        type = p.PropertyHasDetail.type
+                                        status = p.PropertyHasDetail.status
                                     } : null) :
                                     (fields.Contains("dataDetail") && p.PropertyHasDetail != null ? new GetPropertyHasDetailDTO
                                     {
@@ -228,7 +228,7 @@ namespace TestWebAPI.Services
                                         bathroom = p.PropertyHasDetail.bathroom,
                                         yearBuild = p.PropertyHasDetail.yearBuild,
                                         size = p.PropertyHasDetail.size,
-                                        type = p.PropertyHasDetail.type
+                                        status = p.PropertyHasDetail.status
                                     } : null)
                             })
                             .ToListAsync();
@@ -244,7 +244,7 @@ namespace TestWebAPI.Services
                                 price = p.price,
                                 avatar = p.avatar,
                                 categoryId = p.categoryId,
-                                status = p.status,
+                                type = p.type,
                                 createdAt = p.createdAt,
                                 updatedAt = p.updatedAt,
                                 dataDetail = p.PropertyHasDetail != null ? new GetPropertyHasDetailDTO
@@ -267,7 +267,7 @@ namespace TestWebAPI.Services
                                     bathroom = p.PropertyHasDetail.bathroom,
                                     yearBuild = p.PropertyHasDetail.yearBuild,
                                     size = p.PropertyHasDetail.size,
-                                    type = p.PropertyHasDetail.type
+                                    status = p.PropertyHasDetail.status
                                 } : null
                             })
                             .ToListAsync();
@@ -302,14 +302,14 @@ namespace TestWebAPI.Services
             var serviceResponse = new ServiceResponse<GetPropertyDTO>();
             try
             {
-                var checkExist = await _propertyRepo.GetPropertyByIdAsync(id);
-                if (checkExist == null)
+                var property = await _propertyRepo.GetPropertyByIdAsync(id);
+                if (property == null)
                 {
                     serviceResponse.SetNotFound("Property");
                     return serviceResponse;
-                }
-                serviceResponse.data = _mapper.Map<GetPropertyDTO>(checkExist);
-                serviceResponse.SetSuccess("Property deleted successfully!");
+                }   
+                serviceResponse.data = _mapper.Map<GetPropertyDTO>(property);
+                serviceResponse.SetSuccess("Property get successfully!");
             }
             catch (Exception ex)
             {

@@ -12,7 +12,7 @@ using TestWebAPI.Data;
 namespace TestWebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240718061539_DbInit")]
+    [Migration("20240723033810_DbInit")]
     partial class DbInit
     {
         /// <inheritdoc />
@@ -385,12 +385,12 @@ namespace TestWebAPI.Migrations
                     b.Property<int>("price")
                         .HasColumnType("int");
 
-                    b.Property<int>("status")
-                        .HasColumnType("int");
-
                     b.Property<string>("title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("type")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("updatedAt")
                         .HasColumnType("datetime2");
@@ -441,7 +441,7 @@ namespace TestWebAPI.Migrations
                     b.Property<int>("size")
                         .HasColumnType("int");
 
-                    b.Property<int>("type")
+                    b.Property<int>("status")
                         .HasColumnType("int");
 
                     b.Property<int>("yearBuild")
