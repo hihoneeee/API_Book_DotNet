@@ -80,7 +80,7 @@ namespace TestWebAPI.Services
                     return serviceResponse;
                 }
                 // Generate JWT token and refresh token
-                string token = await _jWTHelper.GenerateJWTToken(existingUser.id, existingUser.roleCode, DateTime.UtcNow.AddSeconds(20));
+                string token = await _jWTHelper.GenerateJWTToken(existingUser.id, existingUser.roleCode, DateTime.UtcNow.AddMinutes(30));
                 string refresh_token = await _jWTHelper.GenerateJWTRefreshToken(existingUser.id, existingUser.roleCode, DateTime.UtcNow.AddMonths(30));
 
                 // Insert refresh token into JWT table

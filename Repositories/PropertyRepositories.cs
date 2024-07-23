@@ -73,9 +73,7 @@ namespace TestWebAPI.Repositories
 
         public async Task<Property> GetPropertyByIdAsync(int id)
         {
-            return await _context.Properties
-                     .Include(p => p.PropertyHasDetail)
-                     .FirstOrDefaultAsync(p => p.id == id);
+            return await _context.Properties.Include(p => p.PropertyHasDetail).ThenInclude(phd=>phd.seller).FirstOrDefaultAsync(p => p.id == id);
         }
         public async Task<Property> CreatePropertyAsync(Property property)
         {
@@ -90,7 +88,7 @@ namespace TestWebAPI.Repositories
             oldProperty.description = newProperty.description;
             oldProperty.price = newProperty.price;
             oldProperty.avatar = newProperty.avatar;
-            oldProperty.status = newProperty.status;
+            oldProperty.type = newProperty.type;
             oldProperty.categoryId = newProperty.categoryId;
             oldProperty.updatedAt = DateTime.Now;
 

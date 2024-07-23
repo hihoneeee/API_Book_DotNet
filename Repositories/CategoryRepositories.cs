@@ -43,7 +43,7 @@ namespace TestWebAPI.Repositories
 
         public async Task<Category> GetCategoryByIdAsync(int id)
         {
-            return await _context.Categories.FirstOrDefaultAsync(c => c.id == id);
+            return await _context.Categories.Include(c => c.Properties).FirstOrDefaultAsync(c => c.id == id);
         }
         public async Task<Category> GetFindAvatarAsync(string avatar)
         {

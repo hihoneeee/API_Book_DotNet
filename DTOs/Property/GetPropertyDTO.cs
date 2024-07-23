@@ -18,7 +18,7 @@ namespace TestWebAPI.DTOs.Property
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int categoryId { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public statusEnum status { get; set; }
+        public TypeEnum type { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public DateTime createdAt { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]

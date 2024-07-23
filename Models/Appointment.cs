@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 public enum EnumStatus
 {
-    pending,
-    rejected,
-    accepted,
+    pending = 1,
+    rejected = 2,
+    accepted = 3,
 };
 
 

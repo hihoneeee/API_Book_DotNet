@@ -89,14 +89,13 @@ namespace TestWebAPI.Repositories
             _context.Users.AddRange(users);
             await _context.SaveChangesAsync();
 
-            var categoryFaker = new Faker<Category>()
-                .RuleFor(p => p.title, f => f.Commerce.Categories(1)[0])
-                .RuleFor(p => p.description, f => "Newest " + f.Commerce.Categories(1)[0] + " sale today")
-                .RuleFor(p => p.avatar, f => f.Image.LoremFlickrUrl(1000, 500, "House"))
-                .RuleFor(p => p.createAt, f => f.Date.Past())
-                .RuleFor(p => p.updateAt, f => f.Date.Recent());
-
-            var categories = categoryFaker.Generate(3);
+            var categories = new List<Category>
+            {
+                new Category { title = "Apartment", description = "Apartment is the best 2024", avatar = "https://res.cloudinary.com/da7u0cpve/image/upload/v1721703483/BDS.com/png-clipart-civil-engineering-building-apartment-business-building-building-condominium_wggff9.png", createAt = DateTime.Now, updateAt = DateTime.Now },
+                new Category { title = "House", description = "House is the best 2024", avatar = "https://res.cloudinary.com/da7u0cpve/image/upload/v1721703516/BDS.com/png-transparent-kerala-house_cvpth2.png", createAt = DateTime.Now, updateAt = DateTime.Now },
+                new Category { title = "Office", description = "Office spaces for business", avatar = "https://res.cloudinary.com/da7u0cpve/image/upload/v1721703962/BDS.com/png-transparent-building-branch-office-building-office-microsoft-office_wu49ja.png", createAt = DateTime.Now, updateAt = DateTime.Now },
+                new Category { title = "Villa", description = "Luxurious villas for comfortable living", avatar = "https://res.cloudinary.com/da7u0cpve/image/upload/v1721704000/BDS.com/real-estate-villa-house-3d-computer-graphics-3d-modeling-renting-building-architecture-png-clipart_fiifvm.jpg", createAt = DateTime.Now, updateAt = DateTime.Now }
+            };
 
             _context.Categories.AddRange(categories);
             await _context.SaveChangesAsync();
@@ -105,7 +104,7 @@ namespace TestWebAPI.Repositories
                 .RuleFor(p => p.title, f => f.Commerce.ProductName())
                 .RuleFor(p => p.price, f => f.Random.Int(1000, 1000000))
                 .RuleFor(p => p.avatar, f => f.Image.LoremFlickrUrl(1000, 500, "realestate"))
-                .RuleFor(p => p.status, f => f.PickRandom<statusEnum>())
+                .RuleFor(p => p.type, f => f.PickRandom<TypeEnum>())
                 .RuleFor(p => p.description, f => f.Lorem.Paragraph())
                 .RuleFor(p => p.categoryId, f => f.PickRandom(categories).id)
                 .RuleFor(p => p.category, f => f.PickRandom(categories))
@@ -140,7 +139,6 @@ namespace TestWebAPI.Repositories
                     .RuleFor(phd => phd.seller, f => f.PickRandom(users))
                     .RuleFor(phd => phd.propertyId, property.id)
                     .RuleFor(phd => phd.property, property)
-                    .RuleFor(phd => phd.type, f => f.PickRandom<typeEnum>())
                     .Generate();
             }).ToList();
 
