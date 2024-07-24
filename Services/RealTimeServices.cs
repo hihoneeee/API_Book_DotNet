@@ -147,38 +147,5 @@ namespace TestWebAPI.Services
             }
             return serviceResponse;
         }
-
-        public async Task<ServiceResponse<List<GetNotificationDTO>>> GetNotificationsForUser(int userId)
-        {
-            var serviceResponse = new ServiceResponse<List<GetNotificationDTO>>();
-            try
-            {
-                var notifications = await _notificationRepo.GetNotificationsForUser(userId);
-                serviceResponse.data = _mapper.Map<List<GetNotificationDTO>>(notifications);
-                serviceResponse.SetSuccess("Notifications fetched successfully!");
-            }
-            catch (Exception ex)
-            {
-                serviceResponse.SetError(ex.Message);
-            }
-            return serviceResponse;
-        }
-
-        public async Task<ServiceResponse<bool>> MarkNotificationsAsRead(int userId)
-        {
-            var serviceResponse = new ServiceResponse<bool>();
-            try
-            {
-                await _notificationRepo.MarkNotificationsAsRead(userId);
-                serviceResponse.data = true;
-                serviceResponse.SetSuccess("Notifications marked as read successfully!");
-            }
-            catch (Exception ex)
-            {
-                serviceResponse.SetError(ex.Message);
-                serviceResponse.data = false;
-            }
-            return serviceResponse;
-        }
     }
 }

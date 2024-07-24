@@ -149,7 +149,13 @@ namespace TestWebAPI.Helpers
             CreateMap<Message, GetMessageDTO>().ReverseMap();
 
             CreateMap<Notification, NotificationDTO>().ReverseMap();
-            CreateMap<Notification, GetNotificationDTO>().ReverseMap();
+            CreateMap<Notification, GetNotificationDTO>().ForMember(dest => dest.dataUser, opt => opt.MapFrom(src => src.user != null ? new GetUserDTO
+            {
+                id = src.user.id,
+                avatar = src.user.avatar,
+                first_name = src.user.first_name,
+                last_name = src.user.last_name,
+            } : null)).ReverseMap();
 
             //Appointment
             CreateMap<Appointment, AppointmentDTO>().ReverseMap();

@@ -264,14 +264,8 @@ namespace TestWebAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<int?>("Conversationid")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
-
-                    b.Property<int?>("Propertyid")
-                        .HasColumnType("int");
 
                     b.Property<int>("buyerId")
                         .HasColumnType("int");
@@ -291,11 +285,7 @@ namespace TestWebAPI.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("Conversationid");
-
-                    b.HasIndex("Propertyid");
-
-                    b.HasIndex("userId");
+                    b.HasIndex("buyerId");
 
                     b.ToTable("Notifications");
                 });
@@ -712,17 +702,9 @@ namespace TestWebAPI.Migrations
 
             modelBuilder.Entity("TestWebAPI.Models.Notification", b =>
                 {
-                    b.HasOne("TestWebAPI.Models.Conversation", null)
-                        .WithMany("Notifications")
-                        .HasForeignKey("Conversationid");
-
-                    b.HasOne("TestWebAPI.Models.Property", null)
-                        .WithMany("Notifications")
-                        .HasForeignKey("Propertyid");
-
                     b.HasOne("TestWebAPI.Models.User", "user")
                         .WithMany("Notifications")
-                        .HasForeignKey("userId")
+                        .HasForeignKey("buyerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -856,8 +838,6 @@ namespace TestWebAPI.Migrations
             modelBuilder.Entity("TestWebAPI.Models.Conversation", b =>
                 {
                     b.Navigation("Messages");
-
-                    b.Navigation("Notifications");
                 });
 
             modelBuilder.Entity("TestWebAPI.Models.Permission", b =>
@@ -870,8 +850,6 @@ namespace TestWebAPI.Migrations
                     b.Navigation("Appointments");
 
                     b.Navigation("Contracts");
-
-                    b.Navigation("Notifications");
 
                     b.Navigation("PropertyHasDetail")
                         .IsRequired();

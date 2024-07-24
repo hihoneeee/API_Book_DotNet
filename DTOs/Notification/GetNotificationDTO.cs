@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using TestWebAPI.DTOs.User;
 
 namespace TestWebAPI.DTOs.Notification
 {
@@ -10,5 +10,6 @@ namespace TestWebAPI.DTOs.Notification
         public string content { get; set; }
         public bool IsRead { get; set; } = false;
         public DateTime createdAt { get; set; } = DateTime.Now;
+        public virtual GetUserDTO dataUser { get; set; }
     }
 }

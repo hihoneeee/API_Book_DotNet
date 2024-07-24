@@ -250,26 +250,14 @@ namespace TestWebAPI.Migrations
                     IsRead = table.Column<bool>(type: "bit", nullable: false),
                     buyerId = table.Column<int>(type: "int", nullable: false),
                     createdAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Conversationid = table.Column<int>(type: "int", nullable: true),
-                    Propertyid = table.Column<int>(type: "int", nullable: true)
+                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Notifications", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Notifications_Conversations_Conversationid",
-                        column: x => x.Conversationid,
-                        principalTable: "Conversations",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "FK_Notifications_Properties_Propertyid",
-                        column: x => x.Propertyid,
-                        principalTable: "Properties",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "FK_Notifications_Users_userId",
-                        column: x => x.userId,
+                        name: "FK_Notifications_Users_buyerId",
+                        column: x => x.buyerId,
                         principalTable: "Users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -493,19 +481,9 @@ namespace TestWebAPI.Migrations
                 column: "userId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notifications_Conversationid",
+                name: "IX_Notifications_buyerId",
                 table: "Notifications",
-                column: "Conversationid");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notifications_Propertyid",
-                table: "Notifications",
-                column: "Propertyid");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notifications_userId",
-                table: "Notifications",
-                column: "userId");
+                column: "buyerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payments_contractId",

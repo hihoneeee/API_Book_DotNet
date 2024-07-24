@@ -9,8 +9,6 @@ namespace TestWebAPI.Services.Interfaces
     {
         Task<ServiceResponse<GetConversationDTO>> GetOrCreateConversation(ConversationDTO conversationDTO);
         Task<ServiceResponse<List<GetMessageDTO>>> GetMessagesForConversation(int conversationId);
-        Task<ServiceResponse<List<GetNotificationDTO>>> GetNotificationsForUser(int userId);
-        Task<ServiceResponse<bool>> MarkNotificationsAsRead(int userId);
         Task<ServiceResponse<NotificationDTO>> CreateAppointmentNotificationAsync(int propertyId, int buyerId);
 
         // Join and Connect
