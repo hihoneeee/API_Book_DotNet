@@ -27,7 +27,7 @@ namespace TestWebAPI.Services
                 var appointment = _mapper.Map<Appointment>(appointmentDTO);
                 var createdAppointment = await _appointmentRepo.CreateAppointmentAsync(appointment);
                 serviceResponse.data = _mapper.Map<GetAppointmentDTO>(createdAppointment);
-                serviceResponse.SetSuccess("Appointment created successfully!");
+                serviceResponse.SetSuccess("Send appointment successfully!");
 
                 var notificationResponse = await _realTimeServices.CreateAppointmentNotificationAsync(createdAppointment.propertyId, createdAppointment.buyerId);
                 if (!notificationResponse.success)

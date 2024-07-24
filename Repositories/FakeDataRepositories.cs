@@ -103,7 +103,7 @@ namespace TestWebAPI.Repositories
             var propertyFaker = new Faker<Property>()
                 .RuleFor(p => p.title, f => f.Commerce.ProductName())
                 .RuleFor(p => p.price, f => f.Random.Int(1000, 1000000))
-                .RuleFor(p => p.avatar, f => f.Image.LoremFlickrUrl(1000, 500, "realestate"))
+                .RuleFor(p => p.avatar, f => f.Image.LoremFlickrUrl(1000, 500, "house"))
                 .RuleFor(p => p.type, f => f.PickRandom<TypeEnum>())
                 .RuleFor(p => p.description, f => f.Lorem.Paragraph())
                 .RuleFor(p => p.categoryId, f => f.PickRandom(categories).id)
@@ -119,22 +119,22 @@ namespace TestWebAPI.Repositories
             var propertyHasDetails = properties.Select(property =>
             {
                 return new Faker<PropertyHasDetail>()
-                    .RuleFor(phd => phd.province, f => f.Address.State())
+                    .RuleFor(phd => phd.province, f => f.Address.StateAbbr())
                     .RuleFor(phd => phd.city, f => f.Address.City())
                     .RuleFor(phd => phd.images, f =>
                     {
                         var imageUrls = new List<string>();
                         for (int i = 0; i < 5; i++)
                         {
-                            imageUrls.Add(f.Image.LoremFlickrUrl(1000, 500, "realestate"));
+                            imageUrls.Add(f.Image.LoremFlickrUrl(1000, 500, "house"));
                         }
                         return imageUrls;
                     })
-                    .RuleFor(phd => phd.address, f => f.Address.FullAddress())
+                    .RuleFor(phd => phd.address, f => f.Address.StreetAddress())
                     .RuleFor(phd => phd.bedroom, f => f.Random.Int(1, 10))
                     .RuleFor(phd => phd.bathroom, f => f.Random.Int(1, 5))
                     .RuleFor(phd => phd.yearBuild, f => f.Date.Past(50).Year)
-                    .RuleFor(phd => phd.size, f => f.Random.Int(500, 10000))
+                    .RuleFor(phd => phd.size, f => f.Random.Int(10, 100))
                     .RuleFor(phd => phd.sellerId, f => f.PickRandom(users).id)
                     .RuleFor(phd => phd.seller, f => f.PickRandom(users))
                     .RuleFor(phd => phd.propertyId, property.id)

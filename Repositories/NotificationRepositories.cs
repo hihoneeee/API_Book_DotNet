@@ -29,7 +29,11 @@ namespace TestWebAPI.Repositories
 
         public async Task<List<Notification>> GetNotificationsForUser(int userId)
         {
-            return await _context.Notifications.Where(n => n.userId == userId).ToListAsync();
+            return await _context.Notifications
+                                 .Where(n => n.userId == userId)
+                                 .Include(n => n.user)
+                                 .OrderByDescending(n => n.createdAt)
+                                 .ToListAsync();
         }
 
         public async Task MarkNotificationsAsRead(int userId)

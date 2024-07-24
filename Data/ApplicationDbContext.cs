@@ -54,7 +54,7 @@ namespace TestWebAPI.Data
             modelBuilder.Entity<Notification>()
                 .HasOne(n => n.user)
                 .WithMany(u => u.Notifications)
-                .HasForeignKey(n => n.userId)
+                .HasForeignKey(n => n.buyerId)
                 .HasPrincipalKey(u => u.id);
 
             //Evaluate

@@ -116,14 +116,10 @@
             }
         }).render('#paypal-button-container');
 
-        function connect() {
-            const token = document.getElementById("authToken").value;
-
-        }
         var connection = new signalR.HubConnectionBuilder()
             .withUrl("/chathub", {
                 accessTokenFactory: () => {
-                    return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMyIsInJvbGVDb2RlIjoiRDIyTUQyIiwiaWF0IjoxNzIxMTk2NDEyLCJwZXJtaXNzaW9uIjpbImFkZC1yb2xlIiwiZ2V0LXJvbGUiLCJ1cGRhdGUtcm9sZSIsImRlbGV0ZS1yb2xlIiwiYXNzaWduLXBlcm1pc3Npb24iLCJhZGQtcGVybWlzc2lvbiIsImdldC1wZXJtaXNzaW9uIiwidXBkYXRlLXBlcm1pc3Npb24iLCJkZWxldGUtcGVybWlzc2lvbiIsImFkZC1jYXRlZ29yeSIsImdldC1jYXRlZ29yeSIsInVwZGF0ZS1jYXRlZ29yeSIsImRlbGV0ZS1jYXRlZ29yeSJdLCJuYmYiOjE3MjExOTY0MTIsImV4cCI6MTcyMTE5ODIxMn0.HoUz8RCqOLgb0CGRuj0GEqnApKrQLumqE88T-pr-O48";
+                    return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwicm9sZUNvZGUiOiJEMjJNRDIiLCJpYXQiOjE3MjE4MDc3MDksInBlcm1pc3Npb24iOlsiYWRkLXJvbGUiLCJnZXQtcm9sZSIsInVwZGF0ZS1yb2xlIiwiZGVsZXRlLXJvbGUiLCJhc3NpZ24tcGVybWlzc2lvbiIsImFkZC1wZXJtaXNzaW9uIiwiZ2V0LXBlcm1pc3Npb24iLCJ1cGRhdGUtcGVybWlzc2lvbiIsImRlbGV0ZS1wZXJtaXNzaW9uIiwiYWRkLWNhdGVnb3J5IiwiZ2V0LWNhdGVnb3J5IiwidXBkYXRlLWNhdGVnb3J5IiwiZGVsZXRlLWNhdGVnb3J5Il0sIm5iZiI6MTcyMTgwNzcwOSwiZXhwIjoxNzIxODA5NTA5fQ.5XY4UZIlP_kmnsRwLoNXaqo2AsnsWwZiuUw1OL_GEzA";
                 }
             })
             .build();
@@ -149,22 +145,12 @@
             document.getElementById("notificationList").appendChild(li);
         });
 
-        //connection.start().then(function () {
-        //    console.log("SignalR connected");
-        //    connection.invoke("GetConnectionId").then(function (connectionId) {
-        //        console.log("ConnectionId:", connectionId);
-        //        window.connectionId = connectionId;
-        //    });
-        //}).catch(function (err) {
-        //    return console.error(err.toString());
-        //});
-
         connection.start().then(function () {
             console.log("SignalR connected");
             connection.invoke("GetConnectionId").then(function (connectionId) {
                 console.log("ConnectionId:", connectionId);
                 window.connectionId = connectionId;
-                document.getElementById("sendMessageButton").disabled = false; // Enable send button when connected
+                document.getElementById("sendMessageButton").disabled = false;
             });
         }).catch(function (err) {
             return console.error(err.toString());
@@ -177,31 +163,34 @@
             const notificationIcon = document.getElementById("notificationIcon");
             notificationIcon.style.display = 'inline';
 
-            fetch(`/api/user/connected?id=${currentUserId}&connectionId=${connectionId}`, {
-                method: 'POST',
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to connected');
-                    }
-                    return fetch(`/api/notification/${currentUserId}`);
-                })
-                .then(response => response.json())
-                .then(result => {
-                    document.getElementById("notificationList").innerHTML = '';
-                    const notifications = result.data;
-                    if (notifications.length > 0) {
-                        document.getElementById("notificationCount").textContent = notifications.length;
-                        document.getElementById("notificationCount").style.display = 'inline';
-                    }
+            connection.invoke("OnConnectedAsync", currentUserId, connectionId).then(function () {
+                console.log(`User with ID ${currentUserId} has been added to the group.`);
 
-                    notifications.forEach(notification => {
-                        const li = document.createElement("li");
-                        li.textContent = notification.content;
-                        document.getElementById("notificationList").appendChild(li);
-                    });
+                fetch(`/api/notification/`, {
+                    headers: {
+                        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwicm9sZUNvZGUiOiJEMjJNRDIiLCJpYXQiOjE3MjE4MDg1NzYsInBlcm1pc3Npb24iOlsiYWRkLXJvbGUiLCJnZXQtcm9sZSIsInVwZGF0ZS1yb2xlIiwiZGVsZXRlLXJvbGUiLCJhc3NpZ24tcGVybWlzc2lvbiIsImFkZC1wZXJtaXNzaW9uIiwiZ2V0LXBlcm1pc3Npb24iLCJ1cGRhdGUtcGVybWlzc2lvbiIsImRlbGV0ZS1wZXJtaXNzaW9uIiwiYWRkLWNhdGVnb3J5IiwiZ2V0LWNhdGVnb3J5IiwidXBkYXRlLWNhdGVnb3J5IiwiZGVsZXRlLWNhdGVnb3J5Il0sIm5iZiI6MTcyMTgwODU3NiwiZXhwIjoxNzIxODEwMzc2fQ.K4pwJAeH3XLryg6WHhVNzlJHqd3p8qAyVz1wjGbdwVY"
+                    }
                 })
-                .catch(error => console.error('Error:', error));
+                    .then(response => response.json())
+                    .then(result => {
+                        document.getElementById("notificationList").innerHTML = '';
+                        const notifications = result.data;
+                        if (notifications.length > 0) {
+                            document.getElementById("notificationCount").textContent = notifications.length;
+                            document.getElementById("notificationCount").style.display = 'inline';
+                        }
+
+                        notifications.forEach(notification => {
+                            const li = document.createElement("li");
+                            li.textContent = notification.content;
+                            document.getElementById("notificationList").appendChild(li);
+                        });
+                    })
+                    .catch(error => console.error('Error:', error));
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+
         }
 
         function getOrCreateConversation() {
@@ -224,13 +213,10 @@
                 .then(data => {
                     const conversationId = data.data.id;
 
-                    return fetch(`/api/user/connected?id=${conversationId}&connectionId=${window.connectionId}`, {
-                        method: 'POST',
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Failed to connected');
-                            }
+                    connection.invoke("OnConnectedAsync", conversationId, connectionId)
+                        .then(() => {
+                            console.log(`User with connection ID ${window.connectionId} added to conversation group ${conversationId}.`);
+
                             return fetch(`/api/messages/${conversationId}`)
                         })
                         .then(response => response.json())
@@ -241,7 +227,8 @@
                                 li.textContent = `User ${message.userId}: ${message.content} [${message.createdAt}]`;
                                 document.getElementById("messagesList").appendChild(li);
                             });
-                        });
+                        })
+                        .catch(error => console.error('Error:', error));
                 })
                 .catch(error => console.error('Error:', error));
         }

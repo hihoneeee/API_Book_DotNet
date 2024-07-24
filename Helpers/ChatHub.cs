@@ -2,23 +2,29 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using TestWebAPI.DTOs.ChatHub;
+using TestWebAPI.DTOs.Notification;
+using TestWebAPI.Helpers;
 using TestWebAPI.Models;
 using TestWebAPI.Repositories.Interfaces;
+using TestWebAPI.Response;
 [Authorize]
 public class ChatHub : Hub
 {
     private readonly IChatHubRepositories _chatHubRepo;
     private readonly IUserRepositories _userRepo;
     private readonly IMapper _mapper;
-    private readonly ILogger<ChatHub> _logger; // Thêm trường này
+    private readonly IPropertyRepositories _propertyRepo;
+    private readonly IPropertyHasDetailRepositories _propertyHasDetailRepo;
+    private readonly INotificationRepositories _notificationRepo;
 
-    public ChatHub(IMapper mapper,IChatHubRepositories chatHubRepo, IUserRepositories userRepo, ILogger<ChatHub> logger)
+    public ChatHub(IMapper mapper,IChatHubRepositories chatHubRepo, IUserRepositories userRepo, IPropertyRepositories propertyRepo, IPropertyHasDetailRepositories propertyHasDetailRepo, INotificationRepositories notificationRepo)
     {
         _chatHubRepo = chatHubRepo;
         _userRepo = userRepo;
         _mapper = mapper;
-        _logger = logger; 
-
+        _propertyRepo = propertyRepo;
+        _propertyHasDetailRepo = propertyHasDetailRepo;
+        _notificationRepo = notificationRepo;
     }
     public string GetConnectionId()
     {
@@ -59,14 +65,62 @@ public class ChatHub : Hub
         }
     }
 
-    public override async Task OnConnectedAsync()
+    public async Task<ServiceResponse<NotificationDTO>> CreateAppointmentNotificationAsync(int propertyId, int buyerId)
     {
-        var userId = Context.GetHttpContext().Request.Query["userId"].ToString();
-        if (!string.IsNullOrEmpty(userId))
+        var serviceResponse = new ServiceResponse<NotificationDTO>();
+        try
         {
-            Context.Items["userId"] = userId;
-        }
+            var checkProperty = await _propertyRepo.GetPropertyByIdAsync(propertyId);
+            if (checkProperty != null)
+            {
+                var checkPropertyHasDetail = await _propertyHasDetailRepo.GetDetailByIdAsync(propertyId);
+                if (checkPropertyHasDetail != null)
+                {
+                    var checkUser = await _userRepo.GetCurrentAsync(checkPropertyHasDetail.sellerId);
+                    if (checkUser != null)
+                    {
+                        var notification = new Notification
+                        {
+                            userId = checkUser.id,
+                            content = $"Có một cuộc hẹn mới được đặt cho bất động sản: {checkProperty.title}",
+                            createdAt = DateTime.Now,
+                            buyerId = buyerId,
+                            IsRead = false
+                        };
+                        var createdNotification = await _notificationRepo.CreateNoficationsAsync(notification);
+                        serviceResponse.data = _mapper.Map<NotificationDTO>(createdNotification);
+                        serviceResponse.SetSuccess("Appointment notification created successfully!");
 
-        await base.OnConnectedAsync();
+                        await Clients.Group(checkUser.id.ToString()).SendAsync("ReceiveNotification", notification.content);
+                    }
+                    else
+                    {
+                        serviceResponse.SetError("User not found.");
+                    }
+                }
+                else
+                {
+                    serviceResponse.SetError("Property detail not found.");
+                }
+            }
+            else
+            {
+                serviceResponse.SetError("Property not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            serviceResponse.SetError(ex.Message);
+        }
+        return serviceResponse;
+    }
+    public async Task OnConnectedAsync(int id, string connectionId)
+    {
+        await Groups.AddToGroupAsync(connectionId, id.ToString());
+    }
+
+    public async Task OnDisconnectedAsync(int id, string connectionId)
+    {
+        await Groups.RemoveFromGroupAsync(connectionId, id.ToString());
     }
 }

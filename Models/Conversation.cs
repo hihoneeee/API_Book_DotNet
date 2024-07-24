@@ -12,7 +12,5 @@ namespace TestWebAPI.Models
         public int userId2 { get; set; }
         public DateTime createdAt { get; set; } = DateTime.Now;
         public virtual ICollection<Message>? Messages { get; set; }
-        public virtual ICollection<Notification>? Notifications { get; set; }
-
     }
 }

@@ -64,10 +64,18 @@ builder.Services.AddSwaggerGen(c =>
 
 
 // Set Cors
-builder.Services.AddCors(opt => opt.AddDefaultPolicy(policy =>
-    policy.WithOrigins(builder.Configuration["App:ClientRootAddress"])
-          .AllowAnyHeader()
-          .AllowAnyMethod()));
+var clientRootAddress = builder.Configuration["App:ClientRootAddress"];
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.WithOrigins(clientRootAddress)
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
 
 // Connect DB
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -226,6 +234,7 @@ builder.Services.AddScoped<IRealTimeServices, RealTimeServices>();
 builder.Services.AddScoped<IAppointmentServices, AppointmentServices>();
 builder.Services.AddScoped<IContractServices, ContractServices>();
 builder.Services.AddScoped<IPaymentServices, PaymentServices>();
+builder.Services.AddScoped<INotificationServices, NotificationServices>();
 
 // Add middleware and Helper to the container
 builder.Services.AddScoped<IJWTHelper, JWTHelper>();
@@ -278,7 +287,7 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseHttpsRedirection();
-app.UseCors();
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();  
 

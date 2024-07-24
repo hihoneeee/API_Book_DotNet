@@ -9,14 +9,14 @@ namespace TestWebAPI.Models
         public int id { get; set; }
         [Required]
         public int userId { get; set; }
-        [ForeignKey("userId")]
-        public virtual User user { get; set; }
         [Required]
         public string content { get; set; }
         [Required]
         public bool IsRead { get; set; } = false;
         [Required]
         public int buyerId { get; set; }
+        [ForeignKey("buyerId")]
+        public virtual User user { get; set; }
         public DateTime createdAt { get; set; } = DateTime.Now;
         [Required]
         public DateTime updatedAt { get; set; }
