@@ -1,6 +1,5 @@
 ﻿using TestWebAPI.DTOs.ChatHub;
 using TestWebAPI.DTOs.Notification;
-using TestWebAPI.Models;
 using TestWebAPI.Response;
 
 namespace TestWebAPI.Services.Interfaces
@@ -9,11 +8,6 @@ namespace TestWebAPI.Services.Interfaces
     {
         Task<ServiceResponse<GetConversationDTO>> GetOrCreateConversation(ConversationDTO conversationDTO);
         Task<ServiceResponse<List<GetMessageDTO>>> GetMessagesForConversation(int conversationId);
-        Task<ServiceResponse<NotificationDTO>> CreateAppointmentNotificationAsync(int propertyId, int buyerId);
-
-        // Join and Connect
-        Task OnDisconnectedAsync(int id, string connectionId);
-        Task OnConnectedAsync(int id, string connectionId);
-
+        Task<ServiceResponse<GetNotificationDTO>> CreateAppointmentNotificationAsync(int propertyId, int buyerId);
     }
 }

@@ -5,6 +5,7 @@ using TestWebAPI.Repositories.Interfaces;
 using TestWebAPI.Settings;
 using System.Linq.Dynamic.Core;
 using TestWebAPI.Configs;
+using Microsoft.IdentityModel.Tokens;
 
 namespace TestWebAPI.Repositories
 {
@@ -34,6 +35,12 @@ namespace TestWebAPI.Repositories
             if (!string.IsNullOrEmpty(queryParams.title))
             {
                 query = query.Where(p => p.title.ToLower().Contains(queryParams.title.ToLower()));
+            }
+
+            // category filtering
+            if (queryParams.categoryId.HasValue)
+            {
+                query = query.Where(p => p.categoryId == queryParams.categoryId);
             }
 
             // Sorting
@@ -66,6 +73,7 @@ namespace TestWebAPI.Repositories
                                                 .Include(p => p.PropertyHasDetail)
                                                 .Where(p => string.IsNullOrEmpty(queryParams.address) || (p.PropertyHasDetail != null && p.PropertyHasDetail.address.ToLower().Contains(queryParams.address.ToLower())))
                                                 .Where(p => string.IsNullOrEmpty(queryParams.title) || p.title.ToLower().Contains(queryParams.title.ToLower()))
+                                                .Where(p => !queryParams.categoryId.HasValue || p.categoryId == queryParams.categoryId)
                                                 .CountAsync();
 
             return (query, total);

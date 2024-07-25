@@ -10,6 +10,7 @@ namespace TestWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class userController : ControllerBase
     {
         private readonly IUserServices _userServices;
@@ -151,20 +152,5 @@ namespace TestWebAPI.Controllers
             }
 
         }
-
-        [HttpPost("connected")]
-        public async Task<IActionResult> OnConnectedAsync(int id, string connectionId)
-        {
-            await _realTimeServices.OnConnectedAsync(id, connectionId);
-            return Ok();
-        }
-
-        [HttpPost("disconnected")]
-        public async Task<IActionResult> OnDisconnectedAsync(int id, string connectionId)
-        {
-            await _realTimeServices.OnDisconnectedAsync(id, connectionId);
-            return Ok();
-        }
-
     }
 }

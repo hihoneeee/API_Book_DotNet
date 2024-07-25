@@ -119,7 +119,7 @@
         var connection = new signalR.HubConnectionBuilder()
             .withUrl("/chathub", {
                 accessTokenFactory: () => {
-                    return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwicm9sZUNvZGUiOiJEMjJNRDIiLCJpYXQiOjE3MjE4MDc3MDksInBlcm1pc3Npb24iOlsiYWRkLXJvbGUiLCJnZXQtcm9sZSIsInVwZGF0ZS1yb2xlIiwiZGVsZXRlLXJvbGUiLCJhc3NpZ24tcGVybWlzc2lvbiIsImFkZC1wZXJtaXNzaW9uIiwiZ2V0LXBlcm1pc3Npb24iLCJ1cGRhdGUtcGVybWlzc2lvbiIsImRlbGV0ZS1wZXJtaXNzaW9uIiwiYWRkLWNhdGVnb3J5IiwiZ2V0LWNhdGVnb3J5IiwidXBkYXRlLWNhdGVnb3J5IiwiZGVsZXRlLWNhdGVnb3J5Il0sIm5iZiI6MTcyMTgwNzcwOSwiZXhwIjoxNzIxODA5NTA5fQ.5XY4UZIlP_kmnsRwLoNXaqo2AsnsWwZiuUw1OL_GEzA";
+                    return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwicm9sZUNvZGUiOiJEMjJNRDIiLCJpYXQiOjE3MjE4NzMwMDUsInBlcm1pc3Npb24iOlsiYWRkLXJvbGUiLCJnZXQtcm9sZSIsInVwZGF0ZS1yb2xlIiwiZGVsZXRlLXJvbGUiLCJhc3NpZ24tcGVybWlzc2lvbiIsImFkZC1wZXJtaXNzaW9uIiwiZ2V0LXBlcm1pc3Npb24iLCJ1cGRhdGUtcGVybWlzc2lvbiIsImRlbGV0ZS1wZXJtaXNzaW9uIiwiYWRkLWNhdGVnb3J5IiwiZ2V0LWNhdGVnb3J5IiwidXBkYXRlLWNhdGVnb3J5IiwiZGVsZXRlLWNhdGVnb3J5Il0sIm5iZiI6MTcyMTg3MzAwNSwiZXhwIjoxNzIxODc0ODA1fQ.2Bomc_G-tJ1wXw5tFPtca81IUyLjkqNxd8s7Yyj52YA";
                 }
             })
             .build();
@@ -168,7 +168,7 @@
 
                 fetch(`/api/notification/`, {
                     headers: {
-                        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwicm9sZUNvZGUiOiJEMjJNRDIiLCJpYXQiOjE3MjE4MDg1NzYsInBlcm1pc3Npb24iOlsiYWRkLXJvbGUiLCJnZXQtcm9sZSIsInVwZGF0ZS1yb2xlIiwiZGVsZXRlLXJvbGUiLCJhc3NpZ24tcGVybWlzc2lvbiIsImFkZC1wZXJtaXNzaW9uIiwiZ2V0LXBlcm1pc3Npb24iLCJ1cGRhdGUtcGVybWlzc2lvbiIsImRlbGV0ZS1wZXJtaXNzaW9uIiwiYWRkLWNhdGVnb3J5IiwiZ2V0LWNhdGVnb3J5IiwidXBkYXRlLWNhdGVnb3J5IiwiZGVsZXRlLWNhdGVnb3J5Il0sIm5iZiI6MTcyMTgwODU3NiwiZXhwIjoxNzIxODEwMzc2fQ.K4pwJAeH3XLryg6WHhVNzlJHqd3p8qAyVz1wjGbdwVY"
+                        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwicm9sZUNvZGUiOiJEMjJNRDIiLCJpYXQiOjE3MjE4NzMwMDUsInBlcm1pc3Npb24iOlsiYWRkLXJvbGUiLCJnZXQtcm9sZSIsInVwZGF0ZS1yb2xlIiwiZGVsZXRlLXJvbGUiLCJhc3NpZ24tcGVybWlzc2lvbiIsImFkZC1wZXJtaXNzaW9uIiwiZ2V0LXBlcm1pc3Npb24iLCJ1cGRhdGUtcGVybWlzc2lvbiIsImRlbGV0ZS1wZXJtaXNzaW9uIiwiYWRkLWNhdGVnb3J5IiwiZ2V0LWNhdGVnb3J5IiwidXBkYXRlLWNhdGVnb3J5IiwiZGVsZXRlLWNhdGVnb3J5Il0sIm5iZiI6MTcyMTg3MzAwNSwiZXhwIjoxNzIxODc0ODA1fQ.2Bomc_G-tJ1wXw5tFPtca81IUyLjkqNxd8s7Yyj52YA"
                     }
                 })
                     .then(response => response.json())
@@ -190,7 +190,6 @@
             }).catch(function (err) {
                 return console.error(err.toString());
             });
-
         }
 
         function getOrCreateConversation() {
