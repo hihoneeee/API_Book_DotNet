@@ -8,6 +8,6 @@
         public string? fields { get; set; }
         public string? address { get; set; }
         public string? title { get; set; }
-
+        public int? categoryId { get; set; }
     }
 }

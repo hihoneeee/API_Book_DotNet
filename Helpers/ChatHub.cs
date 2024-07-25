@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using TestWebAPI.DTOs.ChatHub;
 using TestWebAPI.DTOs.Notification;
+using TestWebAPI.DTOs.User;
 using TestWebAPI.Helpers;
 using TestWebAPI.Models;
 using TestWebAPI.Repositories.Interfaces;
@@ -65,9 +66,9 @@ public class ChatHub : Hub
         }
     }
 
-    public async Task<ServiceResponse<NotificationDTO>> CreateAppointmentNotificationAsync(int propertyId, int buyerId)
+    public async Task<ServiceResponse<GetNotificationDTO>> CreateAppointmentNotificationAsync(int propertyId, int buyerId)
     {
-        var serviceResponse = new ServiceResponse<NotificationDTO>();
+        var serviceResponse = new ServiceResponse<GetNotificationDTO>();
         try
         {
             var checkProperty = await _propertyRepo.GetPropertyByIdAsync(propertyId);
@@ -76,26 +77,35 @@ public class ChatHub : Hub
                 var checkPropertyHasDetail = await _propertyHasDetailRepo.GetDetailByIdAsync(propertyId);
                 if (checkPropertyHasDetail != null)
                 {
+                    var checkBuyerId = await _userRepo.GetCurrentAsync(buyerId);
                     var checkUser = await _userRepo.GetCurrentAsync(checkPropertyHasDetail.sellerId);
                     if (checkUser != null)
                     {
-                        var notification = new Notification
+                        var notificationDTO = new GetNotificationDTO
                         {
                             userId = checkUser.id,
                             content = $"Có một cuộc hẹn mới được đặt cho bất động sản: {checkProperty.title}",
                             createdAt = DateTime.Now,
                             buyerId = buyerId,
-                            IsRead = false
+                            IsRead = false,
+                            dataUser = new GetUserDTO
+                            {
+                                avatar = checkBuyerId.avatar,
+                                first_name = checkBuyerId.first_name,
+                                last_name = checkBuyerId.last_name,
+                                id = checkBuyerId.id,
+                            }
                         };
+                        var notification =_mapper.Map<Notification>(notificationDTO);
                         var createdNotification = await _notificationRepo.CreateNoficationsAsync(notification);
-                        serviceResponse.data = _mapper.Map<NotificationDTO>(createdNotification);
+                        serviceResponse.data = _mapper.Map<GetNotificationDTO>(createdNotification);
                         serviceResponse.SetSuccess("Appointment notification created successfully!");
 
-                        await Clients.Group(checkUser.id.ToString()).SendAsync("ReceiveNotification", notification.content);
+                        await Clients.Group(checkUser.id.ToString()).SendAsync("ReceiveNotification", serviceResponse.data);
                     }
                     else
                     {
-                        serviceResponse.SetError("User not found.");
+                        serviceResponse.SetError("User not found."); 
                     }
                 }
                 else
@@ -114,6 +124,7 @@ public class ChatHub : Hub
         }
         return serviceResponse;
     }
+
     public async Task OnConnectedAsync(int id, string connectionId)
     {
         await Groups.AddToGroupAsync(connectionId, id.ToString());

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.SignalR;
 using TestWebAPI.DTOs.Appointment;
 using TestWebAPI.Helpers;
 using TestWebAPI.Models;
@@ -13,11 +14,13 @@ namespace TestWebAPI.Services
         private readonly IMapper _mapper;
         private readonly IAppointmentRepositories _appointmentRepo;
         private readonly IRealTimeServices _realTimeServices;
+        public IHubContext<ChatHub> _chatHub { get; }
 
-        public AppointmentServices(IMapper mapper, IAppointmentRepositories appointmentRepo, IRealTimeServices realTimeServices) {
+        public AppointmentServices(IMapper mapper, IAppointmentRepositories appointmentRepo, IRealTimeServices realTimeServices, IHubContext<ChatHub>  chatHub) {
             _mapper = mapper;
             _appointmentRepo = appointmentRepo;
             _realTimeServices = realTimeServices;
+            _chatHub = chatHub;
         }
         public async Task<ServiceResponse<GetAppointmentDTO>> CreateAppointmentAsync(AppointmentDTO appointmentDTO)
         {
@@ -33,6 +36,7 @@ namespace TestWebAPI.Services
                 if (!notificationResponse.success)
                 {
                     serviceResponse.SetError(notificationResponse.message);
+                    return serviceResponse;
                 }
             }
             catch (Exception ex)

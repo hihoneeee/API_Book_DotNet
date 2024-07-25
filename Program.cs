@@ -239,6 +239,7 @@ builder.Services.AddScoped<INotificationServices, NotificationServices>();
 // Add middleware and Helper to the container
 builder.Services.AddScoped<IJWTHelper, JWTHelper>();
 builder.Services.AddScoped<IHashPasswordHelper, HashPasswordHelper>();
+builder.Services.AddScoped<ChatHub>();
 
 //Htttp cookie
 builder.Services.AddHttpContextAccessor();
