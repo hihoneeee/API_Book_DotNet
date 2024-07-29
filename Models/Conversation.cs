@@ -11,6 +11,7 @@ namespace TestWebAPI.Models
         [Required]
         public int userId2 { get; set; }
         public DateTime createdAt { get; set; } = DateTime.Now;
+        public DateTime updatedAt { get; set; }
         public virtual ICollection<Message>? Messages { get; set; }
     }
 }

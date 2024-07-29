@@ -27,45 +27,6 @@ public class ChatHub : Hub
         _propertyHasDetailRepo = propertyHasDetailRepo;
         _notificationRepo = notificationRepo;
     }
-    public string GetConnectionId()
-    {
-        return Context.ConnectionId;
-    }
-    public async Task SendNotification(int userId, string content)
-    {
-        await Clients.Group(userId.ToString()).SendAsync("ReceiveNotification", content);
-    }
-
-    public async Task SendMessageAysnc(MessageDTO messageDTO)
-    {
-        try
-        {
-            var message = _mapper.Map<Message>(messageDTO);
-            var sendMessage = await _chatHubRepo.SendMessage(message);
-            var conversation = await _chatHubRepo.GetConversationById(messageDTO.conversationId);
-            var user1 = await _userRepo.GetCurrentAsync(conversation.userId1);
-            var user2 = await _userRepo.GetCurrentAsync(conversation.userId2);
-            if (conversation.userId1 != messageDTO.userId)
-            {
-                var content = $"{user2.first_name}{user2.last_name} has sent you a new message!";
-                await Clients.Group(conversation.userId1.ToString()).SendAsync("ReceiveNotification", content);
-            }
-
-            if (conversation.userId2 != messageDTO.userId)
-            {
-                var content = $"{user1.first_name}{user1.last_name} has sent you a new message!";
-                await Clients.Group(conversation.userId2.ToString()).SendAsync("ReceiveNotification", content);
-            }
-
-            await Clients.Group(messageDTO.conversationId.ToString()).SendAsync("ReceiveMessage", messageDTO.userId, messageDTO.content, messageDTO.createdAt);
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"Error in SendMessageAsync: {ex.Message}");
-            throw new HubException("An error occurred while sending the message.", ex);
-        }
-    }
-
     public async Task<ServiceResponse<GetNotificationDTO>> CreateAppointmentNotificationAsync(int propertyId, int buyerId)
     {
         var serviceResponse = new ServiceResponse<GetNotificationDTO>();
@@ -96,7 +57,7 @@ public class ChatHub : Hub
                                 id = checkBuyerId.id,
                             }
                         };
-                        var notification =_mapper.Map<Notification>(notificationDTO);
+                        var notification = _mapper.Map<Notification>(notificationDTO);
                         var createdNotification = await _notificationRepo.CreateNoficationsAsync(notification);
                         serviceResponse.data = _mapper.Map<GetNotificationDTO>(createdNotification);
                         serviceResponse.SetSuccess("Appointment notification created successfully!");
@@ -105,25 +66,76 @@ public class ChatHub : Hub
                     }
                     else
                     {
-                        serviceResponse.SetError("User not found."); 
+                        serviceResponse.SetError("User not found.");
+                        await Clients.Caller.SendAsync("ReceiveError", serviceResponse);
                     }
                 }
                 else
                 {
                     serviceResponse.SetError("Property detail not found.");
+                    await Clients.Caller.SendAsync("ReceiveError", serviceResponse);
                 }
             }
             else
             {
                 serviceResponse.SetError("Property not found.");
+                await Clients.Caller.SendAsync("ReceiveError", serviceResponse);
             }
         }
         catch (Exception ex)
         {
             serviceResponse.SetError(ex.Message);
+            await Clients.Caller.SendAsync("ReceiveError", serviceResponse);
+
         }
         return serviceResponse;
     }
+
+    public string GetConnectionId()
+    {
+        return Context.ConnectionId;
+    }
+    public async Task SendNotification(int userId, string content)
+    {
+        await Clients.Group(userId.ToString()).SendAsync("ReceiveNotification", content);
+    }
+
+    public async Task SendMessageAysnc(MessageDTO messageDTO)
+    {
+        try
+        {
+            var message = _mapper.Map<Message>(messageDTO);
+            var checkUserSend = await _chatHubRepo.CheckUserSendMessageAsync(message.userId);
+            if (!checkUserSend)
+            {
+                await Clients.Caller.SendAsync("ReceiveError", "User invalid!");
+                return;
+            }
+            var sendMessage = await _chatHubRepo.SendMessage(message);
+            var conversation = await _chatHubRepo.GetConversationById(messageDTO.conversationId);
+            var user1 = await _userRepo.GetCurrentAsync(conversation.userId1);
+            var user2 = await _userRepo.GetCurrentAsync(conversation.userId2);
+            if (conversation.userId1 != messageDTO.userId)
+            {
+                var content = $"{user2.first_name}{user2.last_name} has sent you a new message!";
+                await Clients.Group(conversation.userId1.ToString()).SendAsync("ReceiveNotification", content);
+            }
+
+            if (conversation.userId2 != messageDTO.userId)
+            {
+                var content = $"{user1.first_name}{user1.last_name} has sent you a new message!";
+                await Clients.Group(conversation.userId2.ToString()).SendAsync("ReceiveNotification", content);
+            }
+            var updatedConversation = await _chatHubRepo.UpdateConversationAsync(conversation);
+            await Clients.Group(messageDTO.conversationId.ToString()).SendAsync("ReceiveMessage", messageDTO.userId, messageDTO.content, messageDTO.createdAt);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error in SendMessageAsync: {ex.Message}");
+            throw new HubException("An error occurred while sending the message.", ex);
+        }
+    }
+
 
     public async Task OnConnectedAsync(int id, string connectionId)
     {

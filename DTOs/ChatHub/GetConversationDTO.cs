@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using TestWebAPI.DTOs.User;
 
 namespace TestWebAPI.DTOs.ChatHub
 {
@@ -11,7 +12,11 @@ namespace TestWebAPI.DTOs.ChatHub
         [Required]
         public int userId2 { get; set; }
         public DateTime createdAt { get; set; }
+        public DateTime updatedAt { get; set; }
+
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public List<GetMessageDTO> dataMessages { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public GetUserDTO datUser { get; set; }
     }
 }

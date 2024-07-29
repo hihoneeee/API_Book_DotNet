@@ -36,7 +36,8 @@ namespace TestWebAPI.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     userId1 = table.Column<int>(type: "int", nullable: false),
                     userId2 = table.Column<int>(type: "int", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -220,7 +221,8 @@ namespace TestWebAPI.Migrations
                     content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     userId = table.Column<int>(type: "int", nullable: false),
                     conversationId = table.Column<int>(type: "int", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {

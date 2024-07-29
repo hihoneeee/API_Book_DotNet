@@ -12,7 +12,7 @@ using TestWebAPI.Data;
 namespace TestWebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240724064008_DbInit")]
+    [Migration("20240729065942_DbInit")]
     partial class DbInit
     {
         /// <inheritdoc />
@@ -155,6 +155,9 @@ namespace TestWebAPI.Migrations
                     b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("updatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("userId1")
                         .HasColumnType("int");
 
@@ -245,6 +248,9 @@ namespace TestWebAPI.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("createdAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("updatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("userId")

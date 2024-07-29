@@ -152,6 +152,9 @@ namespace TestWebAPI.Migrations
                     b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("updatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("userId1")
                         .HasColumnType("int");
 
@@ -242,6 +245,9 @@ namespace TestWebAPI.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("createdAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("updatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("userId")

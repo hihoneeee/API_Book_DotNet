@@ -14,19 +14,27 @@ namespace TestWebAPI.Services
         private readonly IMapper _mapper;
         private readonly IAppointmentRepositories _appointmentRepo;
         private readonly IRealTimeServices _realTimeServices;
+        private readonly IPropertyRepositories _propertyRepo;
         public IHubContext<ChatHub> _chatHub { get; }
 
-        public AppointmentServices(IMapper mapper, IAppointmentRepositories appointmentRepo, IRealTimeServices realTimeServices, IHubContext<ChatHub>  chatHub) {
+        public AppointmentServices(IMapper mapper, IAppointmentRepositories appointmentRepo, IRealTimeServices realTimeServices, IHubContext<ChatHub>  chatHub, IPropertyRepositories propertyRepo) {
             _mapper = mapper;
             _appointmentRepo = appointmentRepo;
             _realTimeServices = realTimeServices;
             _chatHub = chatHub;
+            _propertyRepo = propertyRepo;
         }
         public async Task<ServiceResponse<GetAppointmentDTO>> CreateAppointmentAsync(AppointmentDTO appointmentDTO)
         {
             var serviceResponse = new ServiceResponse<GetAppointmentDTO>();
             try
             {
+                var property = await _propertyRepo.GetPropertyByIdAsync(appointmentDTO.propertyId);
+                if (property.PropertyHasDetail.sellerId == appointmentDTO.buyerId)
+                {
+                    serviceResponse.SetBadRequest("You cannot set your own schedule!");
+                    return serviceResponse;
+                }
                 var appointment = _mapper.Map<Appointment>(appointmentDTO);
                 var createdAppointment = await _appointmentRepo.CreateAppointmentAsync(appointment);
                 serviceResponse.data = _mapper.Map<GetAppointmentDTO>(createdAppointment);

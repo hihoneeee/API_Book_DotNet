@@ -9,5 +9,6 @@ namespace TestWebAPI.Repositories.Interfaces
         Task<User> UpdateProfileUserAsync(User oldProfile, User newProfile);
         Task<User> UpdateAvatarUserAsync(User oldProfile, User newProfile);
         Task<User> ChangeEmailUSerAsync(User oldEmail, string newEmail);
+        Task<List<User>> GetUsersByIds(IEnumerable<int> userIds);
     }
 }

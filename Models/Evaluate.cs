@@ -17,7 +17,6 @@ namespace TestWebAPI.Models
         [Required]
         public string review { get; set; }
         public DateTime createdAt { get; set; } = DateTime.Now;
-        [Required]
         public DateTime updatedAt { get; set; }
     }
 }
