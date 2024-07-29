@@ -26,6 +26,11 @@ namespace TestWebAPI.Repositories
                 .FirstOrDefaultAsync(u => u.id == id);
         }
 
+        public async Task<List<User>> GetUsersByIds(IEnumerable<int> userIds)
+        {
+            return await _context.Users.Where(u => userIds.Contains(u.id)).ToListAsync();
+        }
+
         public async Task<User> ChangeEmailUSerAsync(User oldEmail, string newEmail)
         {
             oldEmail.email = newEmail;

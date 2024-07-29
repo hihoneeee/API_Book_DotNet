@@ -16,5 +16,6 @@ namespace TestWebAPI.Models
         [Required]
         public string status { get; set; }
         public DateTime createdAt { get; set; } = DateTime.Now;
+
     }
 }

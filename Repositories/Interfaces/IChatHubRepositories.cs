@@ -9,5 +9,8 @@ namespace TestWebAPI.Repositories.Interfaces
         Task<Conversation> GetConversationById(int id);   
         Task<Message> SendMessage(Message message);
         Task<List<Message>> GetMessagesForConversation(int conversationId);
+        Task<List<Conversation>> GetConversationByUserId(int userId);
+        Task<bool> CheckUserSendMessageAsync(int userId);
+        Task<Conversation> UpdateConversationAsync(Conversation oldConversation);
     }
 }

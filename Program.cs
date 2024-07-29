@@ -235,6 +235,7 @@ builder.Services.AddScoped<IAppointmentServices, AppointmentServices>();
 builder.Services.AddScoped<IContractServices, ContractServices>();
 builder.Services.AddScoped<IPaymentServices, PaymentServices>();
 builder.Services.AddScoped<INotificationServices, NotificationServices>();
+builder.Services.AddScoped<IConversationServices, ConversationServices>();
 
 // Add middleware and Helper to the container
 builder.Services.AddScoped<IJWTHelper, JWTHelper>();

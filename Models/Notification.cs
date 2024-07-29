@@ -18,7 +18,6 @@ namespace TestWebAPI.Models
         [ForeignKey("buyerId")]
         public virtual User user { get; set; }
         public DateTime createdAt { get; set; } = DateTime.Now;
-        [Required]
         public DateTime updatedAt { get; set; }
     }
 }
