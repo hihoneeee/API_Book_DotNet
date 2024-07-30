@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using TestWebAPI.DTOs.User;
 
 namespace TestWebAPI.DTOs.ChatHub
 {

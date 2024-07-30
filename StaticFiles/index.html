@@ -21,8 +21,7 @@
     <!-- Existing Sections -->
     <p style="font-size: 1.5rem; font-style: italic; font-weight: 700; margin-top: 1rem; margin-bottom:1rem">Check Room</p>
     <div style="margin-bottom:1rem;">
-        <input type="text" id="userId1" placeholder="User ID" />
-        <input type="text" id="userId2" placeholder="Recipient ID" />
+        <input type="text" id="receiverId" placeholder="Receiver ID" />
         <button onclick="getOrCreateConversation()">Check Conversation</button>
     </div>
     <div>
@@ -46,8 +45,11 @@
         <input type="text" id="userIdInput" placeholder="Enter your User ID" />
         <button onclick="setUserId()">Set User ID</button>
     </div>
-    <i id="notificationIcon" class="ri-message-3-line" style="display: none;">
+    <i id="notificationIcon" class="ri-notification-4-line" style="display: none;">
         <span id="notificationCount" style="display: none;">0</span>
+    </i>
+    <i id="messageIcon" class="ri-message-3-line" style="display: none;">
+        <span id="messageCount" style="display: none;">0</span>
     </i>
     <ul id="notificationList"></ul>
 
@@ -119,20 +121,31 @@
         var connection = new signalR.HubConnectionBuilder()
             .withUrl("/chathub", {
                 accessTokenFactory: () => {
-                    return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4Iiwicm9sZUNvZGUiOiJEMjJNRDIiLCJpYXQiOjE3MjIyNDc3NzcsInBlcm1pc3Npb24iOlsiYWRkLXJvbGUiLCJnZXQtcm9sZSIsInVwZGF0ZS1yb2xlIiwiZGVsZXRlLXJvbGUiLCJhc3NpZ24tcGVybWlzc2lvbiIsImFkZC1wZXJtaXNzaW9uIiwiZ2V0LXBlcm1pc3Npb24iLCJ1cGRhdGUtcGVybWlzc2lvbiIsImRlbGV0ZS1wZXJtaXNzaW9uIiwiYWRkLWNhdGVnb3J5IiwiZ2V0LWNhdGVnb3J5IiwidXBkYXRlLWNhdGVnb3J5IiwiZGVsZXRlLWNhdGVnb3J5Il0sIm5iZiI6MTcyMjI0Nzc3NywiZXhwIjoxNzIyMjQ5NTc3fQ.yEOyDkmzzVLtC6PrvMSp-IYFSXjiEq7EIie7KxKqcFU";
+                    return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwicm9sZUNvZGUiOiJEMjJNRDIiLCJpYXQiOjE3MjIzMjgyNzcsInBlcm1pc3Npb24iOlsiYWRkLXJvbGUiLCJnZXQtcm9sZSIsInVwZGF0ZS1yb2xlIiwiZGVsZXRlLXJvbGUiLCJhc3NpZ24tcGVybWlzc2lvbiIsImFkZC1wZXJtaXNzaW9uIiwiZ2V0LXBlcm1pc3Npb24iLCJ1cGRhdGUtcGVybWlzc2lvbiIsImRlbGV0ZS1wZXJtaXNzaW9uIiwiYWRkLWNhdGVnb3J5IiwiZ2V0LWNhdGVnb3J5IiwidXBkYXRlLWNhdGVnb3J5IiwiZGVsZXRlLWNhdGVnb3J5Il0sIm5iZiI6MTcyMjMyODI3NywiZXhwIjoxNzIyNDE0Njc3fQ.35wvexuBavVskfDbO5zrpUZDS2UT4tb1nsV3IizJfsU";
                 }
             })
             .build();
 
-        connection.on("ReceiveMessage", function (userId, messageContent, timestamp) {
+        connection.on("ReceiveMessage", function (dataUser) {
             const li = document.createElement("li");
-            li.textContent = `User ${userId}: ${messageContent} [${timestamp}]`;
-            const check = `User ${userId}: ${messageContent} [${timestamp}]`;
-            console.log(check)
+
+            const img = document.createElement("img");
+            img.src = dataUser?.dataUser?.avatar;
+            img.alt = `${dataUser?.dataUser?.first_name}'s avatar`;
+            img.style.width = "30px";
+            img.style.borderRadius = "50%";
+
+            const span = document.createElement("span");
+            span.textContent = ` ${dataUser?.dataUser?.first_name}: ${dataUser?.content} [${dataUser?.createdAt}]`;
+
+            li.appendChild(img);
+            li.appendChild(span);
+
             document.getElementById("messagesList").appendChild(li);
         });
 
-        connection.on("ReceiveNotification", function (notificationContent) {
+
+        connection.on("ReceiveNotification", function (notificationContent, dataUser) {
             const notificationCountElem = document.getElementById("notificationCount");
             let count = parseInt(notificationCountElem.textContent) || 0;
             count++;
@@ -140,7 +153,21 @@
             notificationCountElem.style.display = 'inline';
 
             const li = document.createElement("li");
-            li.textContent = notificationContent;
+            li.textContent = `${dataUser.first_name} ${dataUser.last_name} ${notificationContent}`;
+            console.log(notificationContent);
+            document.getElementById("notificationList").appendChild(li);
+        });
+
+        connection.on("ReceiveNotificationMessage", function (dataUser) {
+            const messageCountElem = document.getElementById("messageCount");
+            let count = parseInt(messageCountElem.textContent) || 0;
+            count++;
+            messageCountElem.textContent = count;
+            messageCountElem.style.display = 'inline';
+
+            const li = document.createElement("li");
+            console.log(dataUser);
+            li.textContent = `${dataUser?.dataUser?.first_name} ${dataUser?.dataUser?.last_name} ${dataUser.content}`;
             console.log(notificationContent);
             document.getElementById("notificationList").appendChild(li);
         });
@@ -167,12 +194,15 @@
             const notificationIcon = document.getElementById("notificationIcon");
             notificationIcon.style.display = 'inline';
 
+            const messageIcon = document.getElementById("messageIcon");
+            messageIcon.style.display = 'inline';
+
             connection.invoke("OnConnectedAsync", currentUserId, connectionId).then(function () {
                 console.log(`User with ID ${currentUserId} has been added to the group.`);
 
                 fetch(`/api/notification/`, {
                     headers: {
-                        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4Iiwicm9sZUNvZGUiOiJEMjJNRDIiLCJpYXQiOjE3MjIyNDc3NzcsInBlcm1pc3Npb24iOlsiYWRkLXJvbGUiLCJnZXQtcm9sZSIsInVwZGF0ZS1yb2xlIiwiZGVsZXRlLXJvbGUiLCJhc3NpZ24tcGVybWlzc2lvbiIsImFkZC1wZXJtaXNzaW9uIiwiZ2V0LXBlcm1pc3Npb24iLCJ1cGRhdGUtcGVybWlzc2lvbiIsImRlbGV0ZS1wZXJtaXNzaW9uIiwiYWRkLWNhdGVnb3J5IiwiZ2V0LWNhdGVnb3J5IiwidXBkYXRlLWNhdGVnb3J5IiwiZGVsZXRlLWNhdGVnb3J5Il0sIm5iZiI6MTcyMjI0Nzc3NywiZXhwIjoxNzIyMjQ5NTc3fQ.yEOyDkmzzVLtC6PrvMSp-IYFSXjiEq7EIie7KxKqcFU"
+                        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwicm9sZUNvZGUiOiJEMjJNRDIiLCJpYXQiOjE3MjIzMjgyNzcsInBlcm1pc3Npb24iOlsiYWRkLXJvbGUiLCJnZXQtcm9sZSIsInVwZGF0ZS1yb2xlIiwiZGVsZXRlLXJvbGUiLCJhc3NpZ24tcGVybWlzc2lvbiIsImFkZC1wZXJtaXNzaW9uIiwiZ2V0LXBlcm1pc3Npb24iLCJ1cGRhdGUtcGVybWlzc2lvbiIsImRlbGV0ZS1wZXJtaXNzaW9uIiwiYWRkLWNhdGVnb3J5IiwiZ2V0LWNhdGVnb3J5IiwidXBkYXRlLWNhdGVnb3J5IiwiZGVsZXRlLWNhdGVnb3J5Il0sIm5iZiI6MTcyMjMyODI3NywiZXhwIjoxNzIyNDE0Njc3fQ.35wvexuBavVskfDbO5zrpUZDS2UT4tb1nsV3IizJfsU"
                     }
                 })
                     .then(response => response.json())
@@ -197,15 +227,15 @@
         }
 
         function getOrCreateConversation() {
-            const conversationSender = document.getElementById("userId1").value;
-            const conversationRecipient = document.getElementById("userId2").value;
+            const conversationRecipient = document.getElementById("receiverId").value;
 
             fetch('/api/conversations/GetOrCreate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwicm9sZUNvZGUiOiJEMjJNRDIiLCJpYXQiOjE3MjIzMjgyNzcsInBlcm1pc3Npb24iOlsiYWRkLXJvbGUiLCJnZXQtcm9sZSIsInVwZGF0ZS1yb2xlIiwiZGVsZXRlLXJvbGUiLCJhc3NpZ24tcGVybWlzc2lvbiIsImFkZC1wZXJtaXNzaW9uIiwiZ2V0LXBlcm1pc3Npb24iLCJ1cGRhdGUtcGVybWlzc2lvbiIsImRlbGV0ZS1wZXJtaXNzaW9uIiwiYWRkLWNhdGVnb3J5IiwiZ2V0LWNhdGVnb3J5IiwidXBkYXRlLWNhdGVnb3J5IiwiZGVsZXRlLWNhdGVnb3J5Il0sIm5iZiI6MTcyMjMyODI3NywiZXhwIjoxNzIyNDE0Njc3fQ.35wvexuBavVskfDbO5zrpUZDS2UT4tb1nsV3IizJfsU"
                 },
-                body: JSON.stringify({ userId1: conversationSender, userId2: conversationRecipient })
+                body: JSON.stringify({ receiverId: conversationRecipient })
             })
                 .then(response => {
                     if (!response.ok) {
@@ -220,14 +250,28 @@
                         .then(() => {
                             console.log(`User with connection ID ${window.connectionId} added to conversation group ${conversationId}.`);
 
-                            return fetch(`/api/messages/${conversationId}`)
-                        })
-                        .then(response => response.json())
-                        .then(result => {
+                            // Clear the messages list
                             document.getElementById("messagesList").innerHTML = '';
-                            result.data.forEach(message => {
+
+                            // Populate the messages list with the existing messages
+                            data.data.dataMessages.forEach(message => {
                                 const li = document.createElement("li");
-                                li.textContent = `User ${message.userId}: ${message.content} [${message.createdAt}]`;
+
+                                // Create img element for the avatar
+                                const img = document.createElement("img");
+                                img.src = message.dataUser.avatar;
+                                img.alt = `${message.dataUser.first_name}'s avatar`;
+                                img.style.width = "30px"; // Adjust the size as needed
+
+                                // Create span element for the message content
+                                const span = document.createElement("span");
+                                span.textContent = ` ${message.dataUser.first_name}: ${message.content} [${message.createdAt}]`;
+
+                                // Append img and span to the li element
+                                li.appendChild(img);
+                                li.appendChild(span);
+
+                                // Append the li element to the messages list
                                 document.getElementById("messagesList").appendChild(li);
                             });
                         })

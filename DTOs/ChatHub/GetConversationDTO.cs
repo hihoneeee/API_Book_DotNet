@@ -17,6 +17,8 @@ namespace TestWebAPI.DTOs.ChatHub
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public List<GetMessageDTO> dataMessages { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public GetUserDTO datUser { get; set; }
+        public virtual GetUserDTO dataUser { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public virtual GetUserDTO dataReceiver { get; set; }
     }
 }

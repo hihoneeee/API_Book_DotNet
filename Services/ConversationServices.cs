@@ -45,7 +45,7 @@ namespace TestWebAPI.Services
                     var otherUserId = conversationDTO.userId1 == userId ? conversationDTO.userId2 : conversationDTO.userId1;
                     var otherUser = users.FirstOrDefault(u => u.id == otherUserId);
 
-                    conversationDTO.datUser = otherUser != null ? new GetUserDTO
+                    conversationDTO.dataUser = otherUser != null ? new GetUserDTO
                     {
                         id = otherUser.id,
                         first_name = otherUser.first_name,

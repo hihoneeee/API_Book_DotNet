@@ -17,8 +17,8 @@ namespace TestWebAPI.Models
         public int conversationId { get; set; }
         [ForeignKey("conversationId")]
         public Conversation Conversation { get; set; }
+        public bool IsRead { get; set; } = false;
         public DateTime createdAt { get; set; } = DateTime.Now;
         public DateTime updatedAt { get; set; }
-
     }
 }

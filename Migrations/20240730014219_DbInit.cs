@@ -221,6 +221,7 @@ namespace TestWebAPI.Migrations
                     content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     userId = table.Column<int>(type: "int", nullable: false),
                     conversationId = table.Column<int>(type: "int", nullable: false),
+                    IsRead = table.Column<bool>(type: "bit", nullable: false),
                     createdAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
