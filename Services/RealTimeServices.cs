@@ -8,6 +8,7 @@ using TestWebAPI.Models;
 using TestWebAPI.Repositories.Interfaces;
 using TestWebAPI.Response;
 using TestWebAPI.Services.Interfaces;
+using static StackExchange.Redis.Role;
 
 namespace TestWebAPI.Services
 {
@@ -31,34 +32,51 @@ namespace TestWebAPI.Services
             _userRepo = userRepo;
         }
 
-        public async Task<ServiceResponse<GetConversationDTO>> GetOrCreateConversation(ConversationDTO conversationDTO)
+        public async Task<ServiceResponse<GetConversationDTO>> GetOrCreateConversation(int senderId, int receiverId)
         {
             var serviceResponse = new ServiceResponse<GetConversationDTO>();
             try
             {
-                var checkConversation = await _chatHubRepo.CheckkConversation(conversationDTO.userId1, conversationDTO.userId2);
+                var checkConversation = await _chatHubRepo.CheckkConversation(senderId, receiverId);
                 if (checkConversation != null)
                 {
-                    var messages = await _chatHubRepo.GetMessagesForConversation(checkConversation.id);
-                    var conversationWithMessages = new GetConversationDTO
+                    var getReceiver = await _userRepo.GetCurrentAsync(receiverId);
+                    if (getReceiver == null)
                     {
-                        id = checkConversation.id,
-                        userId1 = checkConversation.userId1,
-                        userId2 = checkConversation.userId2,
-                        createdAt = checkConversation.createdAt,
-                        dataMessages = messages.Select(m => new GetMessageDTO
-                        {
-                            conversationId = m.conversationId,
-                            userId = m.userId,
-                            content = m.content,
-                            createdAt = DateTime.UtcNow,
-                        }).ToList()
+                        serviceResponse.SetNotFound("Receiver");
+                        return serviceResponse;
+                    }
+                    var getConversation = _mapper.Map<GetConversationDTO>(checkConversation);
+                    getConversation.dataReceiver = new GetUserDTO
+                    {
+                        id = getReceiver.id,
+                        first_name = getReceiver.first_name,
+                        last_name = getReceiver.last_name,
+                        avatar = getReceiver.avatar
                     };
-                    serviceResponse.data = conversationWithMessages;
+                    serviceResponse.data = getConversation;
                     serviceResponse.SetSuccess("Conversation exists, returning messages.");
                 }
                 else
                 {
+                    var getReceiver = await _userRepo.GetCurrentAsync(receiverId);
+                    if (getReceiver == null)
+                    {
+                        serviceResponse.SetNotFound("Receiver");
+                        return serviceResponse;
+                    }
+                    var conversationDTO = new ConversationDTO()
+                    {
+                        userId1 = senderId,
+                        userId2 = receiverId,
+                        dataReceiver = new GetUserDTO
+                        {
+                            id = getReceiver.id,
+                            first_name = getReceiver.first_name,
+                            last_name = getReceiver.last_name,
+                            avatar = getReceiver.avatar
+                        }
+                    };
                     var conversation = _mapper.Map<Conversation>(conversationDTO);
                     var createConversation = await _chatHubRepo.CreateConversation(conversation);
                     serviceResponse.data = _mapper.Map<GetConversationDTO>(createConversation);
@@ -71,6 +89,7 @@ namespace TestWebAPI.Services
             }
             return serviceResponse;
         }
+
 
         public async Task<ServiceResponse<GetNotificationDTO>> CreateAppointmentNotificationAsync(int propertyId, int buyerId)
         {

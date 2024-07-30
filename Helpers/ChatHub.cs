@@ -100,42 +100,45 @@ public class ChatHub : Hub
         await Clients.Group(userId.ToString()).SendAsync("ReceiveNotification", content);
     }
 
-    public async Task SendMessageAysnc(MessageDTO messageDTO)
+    public async Task<ServiceResponse<GetMessageDTO>> SendMessageAysnc(MessageDTO messageDTO)
     {
+        var serviceResponse = new ServiceResponse<GetMessageDTO>();
         try
         {
-            var message = _mapper.Map<Message>(messageDTO);
-            var checkUserSend = await _chatHubRepo.CheckUserSendMessageAsync(message.userId);
+            var checkUserSend = await _chatHubRepo.CheckUserSendMessageAsync(messageDTO.userId);
             if (!checkUserSend)
             {
-                await Clients.Caller.SendAsync("ReceiveError", "User invalid!");
-                return;
+                serviceResponse.SetUnauthorized("User invalid!");
+                await Clients.Caller.SendAsync("ReceiveError", serviceResponse.message);
+                return serviceResponse;
             }
+            var message = _mapper.Map<Message>(messageDTO);
             var sendMessage = await _chatHubRepo.SendMessage(message);
+            serviceResponse.data = _mapper.Map<GetMessageDTO>(sendMessage);
             var conversation = await _chatHubRepo.GetConversationById(messageDTO.conversationId);
             var user1 = await _userRepo.GetCurrentAsync(conversation.userId1);
             var user2 = await _userRepo.GetCurrentAsync(conversation.userId2);
             if (conversation.userId1 != messageDTO.userId)
             {
                 var content = $"{user2.first_name}{user2.last_name} has sent you a new message!";
-                await Clients.Group(conversation.userId1.ToString()).SendAsync("ReceiveNotification", content);
+                await Clients.Group(conversation.userId1.ToString()).SendAsync("ReceiveNotificationMessage", serviceResponse.data);
             }
 
             if (conversation.userId2 != messageDTO.userId)
             {
                 var content = $"{user1.first_name}{user1.last_name} has sent you a new message!";
-                await Clients.Group(conversation.userId2.ToString()).SendAsync("ReceiveNotification", content);
+                await Clients.Group(conversation.userId2.ToString()).SendAsync("ReceiveNotificationMessage", serviceResponse.data);
             }
             var updatedConversation = await _chatHubRepo.UpdateConversationAsync(conversation);
-            await Clients.Group(messageDTO.conversationId.ToString()).SendAsync("ReceiveMessage", messageDTO.userId, messageDTO.content, messageDTO.createdAt);
+            await Clients.Group(messageDTO.conversationId.ToString()).SendAsync("ReceiveMessage", serviceResponse.data);
         }
         catch (Exception ex)
         {
             Console.Error.WriteLine($"Error in SendMessageAsync: {ex.Message}");
             throw new HubException("An error occurred while sending the message.", ex);
         }
+        return serviceResponse;
     }
-
 
     public async Task OnConnectedAsync(int id, string connectionId)
     {

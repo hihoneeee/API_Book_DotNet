@@ -12,7 +12,7 @@ using TestWebAPI.Data;
 namespace TestWebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240729065942_DbInit")]
+    [Migration("20240730014219_DbInit")]
     partial class DbInit
     {
         /// <inheritdoc />
@@ -239,6 +239,9 @@ namespace TestWebAPI.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
 
                     b.Property<string>("content")
                         .IsRequired()

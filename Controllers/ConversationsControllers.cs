@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol.Plugins;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using TestWebAPI.DTOs.ChatHub;
@@ -23,9 +24,21 @@ namespace TestWebAPI.Controllers
         }
 
         [HttpPost("GetOrCreate")]
-        public async Task<IActionResult> GetOrCreateConversation([FromBody] ConversationDTO conversationDTO)
+        public async Task<IActionResult> GetOrCreateConversation([FromBody] GetOrCreateConversation getOrCreateConversation)
         {
-            var serviceResponse = await _realTimeServices.GetOrCreateConversation(conversationDTO);
+            var userIdClaim = HttpContext.User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value ??
+                              HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userIdClaim == null)
+            {
+                return Unauthorized(new { success = false, message = "Invalid token!" });
+            }
+
+            if (!int.TryParse(userIdClaim, out int senderId))
+            {
+                return BadRequest(new { success = false, message = "Invalid user in token!" });
+            }
+            var serviceResponse = await _realTimeServices.GetOrCreateConversation(senderId, getOrCreateConversation.receiverId);
             if (serviceResponse.statusCode == EHttpType.Success)
             {
                 return Ok(new { serviceResponse.success, serviceResponse.message, serviceResponse.data });

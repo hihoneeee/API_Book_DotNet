@@ -139,6 +139,13 @@ namespace TestWebAPI.Helpers
                     userId = m.userId,
                     content = m.content,
                     createdAt = m.createdAt,
+                    dataUser = m.User != null ? new GetUserDTO
+                    {
+                        id = m.User.id,
+                        first_name = m.User.first_name,
+                        last_name = m.User.last_name,
+                        avatar = m.User.avatar,
+                    } : null
                 }).ToList()))
                 .ReverseMap()
                 .ForMember(dest => dest.Messages, opt => opt.Ignore());
@@ -146,7 +153,13 @@ namespace TestWebAPI.Helpers
             CreateMap<Conversation, ConversationDTO>().ReverseMap();
 
             CreateMap<Message, MessageDTO>().ReverseMap();
-            CreateMap<Message, GetMessageDTO>().ReverseMap();
+            CreateMap<Message, GetMessageDTO>().ForMember(dest => dest.dataUser, opt => opt.MapFrom(src => src.User != null ? new GetUserDTO
+            {
+                id = src.User.id,
+                avatar = src.User.avatar,
+                first_name = src.User.first_name,
+                last_name = src.User.last_name,
+            } : null)).ReverseMap();
 
             CreateMap<Notification, NotificationDTO>().ReverseMap();
             CreateMap<Notification, GetNotificationDTO>().ForMember(dest => dest.dataUser, opt => opt.MapFrom(src => src.user != null ? new GetUserDTO

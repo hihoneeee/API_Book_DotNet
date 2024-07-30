@@ -18,7 +18,7 @@ namespace TestWebAPI.Repositories
 
         public async Task<Conversation> CheckkConversation(int userId1, int userId2)
         {
-            return await _context.Conversations.Include(c => c.Messages)
+            return await _context.Conversations.Include(c => c.Messages).ThenInclude(m=>m.User)
                 .FirstOrDefaultAsync(c =>
                 (c.userId1 == userId1 && c.userId2 == userId2) ||
                 (c.userId1 == userId2 && c.userId2 == userId1));
@@ -53,14 +53,22 @@ namespace TestWebAPI.Repositories
 
         public async Task<Message> SendMessage(Message message)
         {
+            // Thêm thông báo vào ngữ cảnh dữ liệu
             _context.Messages.Add(message);
             await _context.SaveChangesAsync();
-            return message;
+
+            // Truy vấn lại thông báo cùng với dữ liệu người dùng liên quan
+            var messageWithUser = await _context.Messages
+                .Include(m => m.User)
+                .FirstOrDefaultAsync(m => m.id == message.id);
+
+            return messageWithUser;
         }
 
         public async Task<List<Message>> GetMessagesForConversation(int conversationId)
         {
             return await _context.Messages
+                                 .Include(m=>m.User)
                                  .Where(m => m.conversationId == conversationId)
                                  .OrderBy(m => m.createdAt)
                                  .ToListAsync();
