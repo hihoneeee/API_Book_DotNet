@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using System.Security.Claims;
 using TestWebAPI.DTOs.ChatHub;
 using TestWebAPI.DTOs.Notification;
 using TestWebAPI.DTOs.User;
@@ -62,7 +63,7 @@ public class ChatHub : Hub
                         serviceResponse.data = _mapper.Map<GetNotificationDTO>(createdNotification);
                         serviceResponse.SetSuccess("Appointment notification created successfully!");
 
-                        await Clients.Group(checkUser.id.ToString()).SendAsync("ReceiveNotification", serviceResponse.data);
+                        await Clients.Clients(checkUser.id.ToString()).SendAsync("ReceiveNotification", serviceResponse.data);
                     }
                     else
                     {
@@ -118,19 +119,19 @@ public class ChatHub : Hub
             var conversation = await _chatHubRepo.GetConversationById(messageDTO.conversationId);
             var user1 = await _userRepo.GetCurrentAsync(conversation.userId1);
             var user2 = await _userRepo.GetCurrentAsync(conversation.userId2);
+            await Clients.Group(messageDTO.conversationId.ToString()).SendAsync("ReceiveMessage", serviceResponse.data);
             if (conversation.userId1 != messageDTO.userId)
             {
-                var content = $"{user2.first_name}{user2.last_name} has sent you a new message!";
-                await Clients.Group(conversation.userId1.ToString()).SendAsync("ReceiveNotificationMessage", serviceResponse.data);
+                var content = $"{user2.first_name} {user2.last_name} has sent you a new message!";
+                await Clients.User(conversation.userId1.ToString()).SendAsync("ReceiveNotificationMessage", serviceResponse.data);
             }
 
             if (conversation.userId2 != messageDTO.userId)
             {
-                var content = $"{user1.first_name}{user1.last_name} has sent you a new message!";
-                await Clients.Group(conversation.userId2.ToString()).SendAsync("ReceiveNotificationMessage", serviceResponse.data);
+                var content = $"{user1.first_name} {user1.last_name} has sent you a new message!";
+                await Clients.User(conversation.userId2.ToString()).SendAsync("ReceiveNotificationMessage", serviceResponse.data);
             }
             var updatedConversation = await _chatHubRepo.UpdateConversationAsync(conversation);
-            await Clients.Group(messageDTO.conversationId.ToString()).SendAsync("ReceiveMessage", serviceResponse.data);
         }
         catch (Exception ex)
         {
@@ -140,13 +141,39 @@ public class ChatHub : Hub
         return serviceResponse;
     }
 
-    public async Task OnConnectedAsync(int id, string connectionId)
+    public async Task JoinRoomAsync(int conversationId, string connectionId)
     {
-        await Groups.AddToGroupAsync(connectionId, id.ToString());
+        await Groups.AddToGroupAsync(connectionId, conversationId.ToString());
     }
 
-    public async Task OnDisconnectedAsync(int id, string connectionId)
+    public async Task LeaveRoomAsync(int conversationId, string connectionId)
     {
-        await Groups.RemoveFromGroupAsync(connectionId, id.ToString());
+        await Groups.RemoveFromGroupAsync(connectionId, conversationId.ToString());
+    }
+
+    public override async Task OnConnectedAsync()
+    {
+        var httpContext = Context.GetHttpContext();
+        var userId = httpContext.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (userId != null)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, userId);
+        }
+
+        await base.OnConnectedAsync();
+    }
+
+    public override async Task OnDisconnectedAsync(Exception exception)
+    {
+        var httpContext = Context.GetHttpContext();
+        var userId = httpContext.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (userId != null)
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, userId);
+        }
+
+        await base.OnDisconnectedAsync(exception);
     }
 }

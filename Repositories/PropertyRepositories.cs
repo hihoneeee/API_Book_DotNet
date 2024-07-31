@@ -5,7 +5,6 @@ using TestWebAPI.Repositories.Interfaces;
 using TestWebAPI.Settings;
 using System.Linq.Dynamic.Core;
 using TestWebAPI.Configs;
-using Microsoft.IdentityModel.Tokens;
 
 namespace TestWebAPI.Repositories
 {
@@ -41,6 +40,40 @@ namespace TestWebAPI.Repositories
             if (queryParams.categoryId.HasValue)
             {
                 query = query.Where(p => p.categoryId == queryParams.categoryId);
+            }
+
+            if (queryParams.price != null && queryParams.price.Any())
+            {
+                var priceValues = queryParams.price.Where(p => decimal.TryParse(p, out _)).Select(decimal.Parse).ToArray();
+                var operators = queryParams.price.Except(priceValues.Select(p => p.ToString())).ToArray();
+
+                if (priceValues.Length == 2 && operators.Length == 0)
+                {
+                    query = query.Where(p => p.price >= priceValues[0] && p.price <= priceValues[1]);
+                }
+                else if (priceValues.Length == 1 && operators.Length == 1)
+                {
+                    var number = priceValues[0];
+                    var operatorStr = operators[0];
+
+                    switch (operatorStr)
+                    {
+                        case ">":
+                            query = query.Where(p => p.price > number);
+                            break;
+                        case ">=":
+                            query = query.Where(p => p.price >= number);
+                            break;
+                        case "<":
+                            query = query.Where(p => p.price < number);
+                            break;
+                        case "<=":
+                            query = query.Where(p => p.price <= number);
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
 
             // Sorting

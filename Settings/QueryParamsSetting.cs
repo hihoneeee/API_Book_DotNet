@@ -9,5 +9,6 @@
         public string? address { get; set; }
         public string? title { get; set; }
         public int? categoryId { get; set; }
+        public List<string>? price { get; set; }
     }
 }

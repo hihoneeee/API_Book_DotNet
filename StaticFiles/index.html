@@ -197,7 +197,7 @@
             const messageIcon = document.getElementById("messageIcon");
             messageIcon.style.display = 'inline';
 
-            connection.invoke("OnConnectedAsync", currentUserId, connectionId).then(function () {
+            connection.invoke("JoinRoomAsync", currentUserId, connectionId).then(function () {
                 console.log(`User with ID ${currentUserId} has been added to the group.`);
 
                 fetch(`/api/notification/`, {
