@@ -109,30 +109,44 @@ namespace TestWebAPI.Services
                     serviceResponse.SetNotFound("Category");
                     return serviceResponse;
                 }
-                var CheckValue = await _cateRepo.GetCategoryByTitleAsync(categoryDTO.title);
-                if (CheckValue != null)
+
+                var checkValue = await _cateRepo.GetCategoryByTitleAsync(categoryDTO.title);
+                if (checkValue != null && checkValue.id != id)
                 {
                     serviceResponse.SetExisting("Category");
                     return serviceResponse;
                 }
-                var oldImagePublicId = _cloudinaryServices.ExtractPublicIdFromUrl(checkExist.avatar);
-                await _cloudinaryServices.DeleteImage(oldImagePublicId);
-                var category = _mapper.Map<Category>(categoryDTO);
-                var avatarUploadResult = await _cloudinaryServices.UploadImage(categoryDTO.avatar);
-                if (avatarUploadResult == null || string.IsNullOrEmpty(avatarUploadResult.Url.ToString()))
+
+                checkExist.title = categoryDTO.title;
+                checkExist.description = categoryDTO.description;
+
+                if (categoryDTO.avatar != null)
                 {
-                    serviceResponse.SetError("Avatar upload failed");
-                    return serviceResponse;
+                    var oldImagePublicId = _cloudinaryServices.ExtractPublicIdFromUrl(checkExist.avatar);
+                    await _cloudinaryServices.DeleteImage(oldImagePublicId);
+                    var avatarUploadResult = await _cloudinaryServices.UploadImage(categoryDTO.avatar);
+                    if (avatarUploadResult == null || string.IsNullOrEmpty(avatarUploadResult.Url.ToString()))
+                    {
+                        serviceResponse.SetError("Avatar upload failed");
+                        return serviceResponse;
+                    }
+                    checkExist.avatar = avatarUploadResult.Url.ToString();
+                    publicId = avatarUploadResult.PublicId;
                 }
-                category.avatar = avatarUploadResult.Url.ToString();
-                publicId = avatarUploadResult.PublicId;
-                var updatedCategory = await _cateRepo.UpdateCategoryAsync(checkExist, category);
+
+                checkExist.updateAt = DateTime.Now;
+
+                await _cateRepo.UpdateCategoryAsync(checkExist);
+
                 serviceResponse.SetSuccess("Category updated successfully!");
             }
             catch (Exception ex)
             {
                 serviceResponse.SetError(ex.Message);
-                await _cloudinaryServices.DeleteImage(publicId);
+                if (publicId != null)
+                {
+                    await _cloudinaryServices.DeleteImage(publicId);
+                }
             }
             return serviceResponse;
         }

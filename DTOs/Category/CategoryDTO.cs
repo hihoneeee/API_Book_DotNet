@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-
+using TestWebAPI.Helpers;
 namespace TestWebAPI.DTOs.Category
 {
     public class CategoryDTO
@@ -9,6 +8,7 @@ namespace TestWebAPI.DTOs.Category
         public string title { get; set; }
         [Required]
         public string description { get; set; }
-        public IFormFile avatar { get; set; }
+        [ValidationFileImage]
+        public IFormFile? avatar { get; set; }
     }
 }

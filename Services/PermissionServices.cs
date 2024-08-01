@@ -28,7 +28,7 @@ namespace TestWebAPI.Services
                 var existsPermission = await _permisstionRepo.GetPermissionByValueAsyn(permisstionDTO.value);
                 if (existsPermission != null)
                 {
-                    serviceResponse.SetExisting("Permission already exists!");
+                    serviceResponse.SetExisting("Permission");
                     return serviceResponse;
                 }
                 var permission = _mapper.Map<Permission>(permisstionDTO);
@@ -43,7 +43,7 @@ namespace TestWebAPI.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<PermisstionDTO>> UpdatePermissionAsyn(int id, PermisstionDTO permisstionDTO)
+        public async Task<ServiceResponse<PermisstionDTO>> UpdatePermissionAsyn(int id, AddPermissionDTO permisstionDTO)
         {
             var serviceResponse = new ServiceResponse<PermisstionDTO>();
             try

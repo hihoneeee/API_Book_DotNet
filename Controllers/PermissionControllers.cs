@@ -45,9 +45,9 @@ namespace TestWebAPI.Controllers
             }
         }
 
-        [Authorize(Policy = "update-permission")]
+        //[Authorize(Policy = "update-permission")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePermissionAsync(int id, PermisstionDTO permisstionDTO)
+        public async Task<IActionResult> UpdatePermissionAsync(int id, AddPermissionDTO permisstionDTO)
         {
             var serviceResponse = await _permissionServices.UpdatePermissionAsyn(id, permisstionDTO);
             if (serviceResponse.statusCode == EHttpType.Success)
