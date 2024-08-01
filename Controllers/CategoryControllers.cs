@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TestWebAPI.DTOs.Category;
 using TestWebAPI.Services.Interfaces;
 using static TestWebAPI.Response.HttpStatus;
@@ -47,6 +46,11 @@ namespace TestWebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCategoryAsync([FromForm] CategoryDTO categoryDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var serviceResponse = await _categoryServices.CreateCategoryAsync(categoryDTO);
             if (serviceResponse.statusCode == EHttpType.Success)
             {

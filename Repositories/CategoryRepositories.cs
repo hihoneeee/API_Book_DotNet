@@ -50,15 +50,13 @@ namespace TestWebAPI.Repositories
             return await _context.Categories.FirstOrDefaultAsync(c => c.avatar == avatar);
         }
 
-        public async Task<Category> UpdateCategoryAsync(Category oldCate, Category newCate)
+        public async Task<Category> UpdateCategoryAsync(Category category)
         {
-            oldCate.title = newCate.title;
-            oldCate.description = newCate.description;
-            oldCate.avatar = newCate.avatar;
-            oldCate.updateAt = DateTime.Now;
-
+            category.updateAt = DateTime.Now;
+            _context.Categories.Update(category);
             await _context.SaveChangesAsync();
-            return oldCate;
+            return category;
         }
+
     }
 }

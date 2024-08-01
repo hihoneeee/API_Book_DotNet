@@ -8,7 +8,7 @@ namespace TestWebAPI.Repositories.Interfaces
         Task<Category> GetCategoryByTitleAsync(string value);
         Task<Category> GetCategoryByIdAsync(int id);
         Task<Category> CreateCategoryAsync(Category category);
-        Task<Category> UpdateCategoryAsync(Category oldCate, Category newCate );
+        Task<Category> UpdateCategoryAsync(Category category);
         Task<object> DeleteCategoryAsync(Category category);
     }
 }
