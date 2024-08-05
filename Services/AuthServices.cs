@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using System;
 using TestWebAPI.DTOs.Auth;
 using TestWebAPI.DTOs.JWT;
 using TestWebAPI.Helpers;
 using TestWebAPI.Helpers.IHelpers;
 using TestWebAPI.Middlewares;
+using TestWebAPI.Middlewares.Interfaces;
 using TestWebAPI.Models;
 using TestWebAPI.Repositories.Interfaces;
 using TestWebAPI.Response;
@@ -21,17 +23,20 @@ namespace TestWebAPI.Services
         private readonly IUserRepositories _userRepo;
         private readonly IRoleRepositories _roleRepo;
         private readonly IHashPasswordHelper _hashPasswordHelper;
+        private readonly ICookieHelper _cookieHelper;
 
-        public AuthServices(IMapper mapper, IAuthRepositories authRepo, IJWTHelper jWTHelper, IJwtServices jwtService, IHttpContextAccessor httpContextAccessor, IUserRepositories userRepo, IRoleRepositories roleRepo, IHashPasswordHelper hashPasswordHelper)
+        public AuthServices(IMapper mapper, IAuthRepositories authRepo, IJWTHelper jWTHelper, IJwtServices jwtService, IHttpContextAccessor httpContextAccessor, IUserRepositories userRepo, IRoleRepositories roleRepo, IHashPasswordHelper hashPasswordHelper, ICookieHelper cookieHelper)
+
         {
             _mapper = mapper;
             _jwtService = jwtService;
             _authRepo = authRepo ?? throw new ArgumentNullException(nameof(authRepo));
-            _jWTHelper = jWTHelper ?? throw new ArgumentNullException(nameof(jWTHelper));
+            _jWTHelper = jWTHelper;
             _httpContextAccessor = httpContextAccessor;
             _userRepo = userRepo;
             _roleRepo = roleRepo;
             _hashPasswordHelper = hashPasswordHelper;
+            _cookieHelper = cookieHelper;
         }
             
         public async Task<ServiceResponse<AuthRegisterDTO>> Register(AuthRegisterDTO authRegisterDTO)
@@ -103,6 +108,33 @@ namespace TestWebAPI.Services
                 serviceResponse.accessToken = token;
                 serviceResponse.refreshToken = refresh_token;
                 serviceResponse.SetSuccess("Login successfully!");
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.SetError(ex.Message);
+            }
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<AuthLoginDTO>> LoginMvc(AuthLoginDTO authLoginDTO)
+        {
+            var serviceResponse = new ServiceResponse<AuthLoginDTO>();
+            try
+            {
+                var existingUser = await _authRepo.getByPhoneAsync(authLoginDTO.phone);
+                if (existingUser == null)
+                {
+                    serviceResponse.SetNotFound("phone");
+                    return serviceResponse;
+                }
+                if (!_hashPasswordHelper.VerifyPassword(authLoginDTO.password, existingUser.password))
+                {
+                    serviceResponse.SetUnauthorized("Password is wrong!");
+                    return serviceResponse;
+                }
+                var getNameRole = await _roleRepo.GetRoleByCodeAsyn(existingUser.roleCode);
+                await _cookieHelper.GenerateCookie(existingUser.id, existingUser.phone, existingUser.email, existingUser.first_name, existingUser.last_name, existingUser.roleCode, existingUser.avatar, getNameRole.value, DateTime.UtcNow.AddMonths(1));
+                serviceResponse.SetSuccess("Login successful.");
             }
             catch (Exception ex)
             {
@@ -218,6 +250,5 @@ namespace TestWebAPI.Services
             }
             return serviceResponse;
         }
-        
     }
 }

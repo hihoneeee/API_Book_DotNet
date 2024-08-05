@@ -13,6 +13,7 @@ using TestWebAPI.Data;
 using TestWebAPI.Helpers;
 using TestWebAPI.Helpers.IHelpers;
 using TestWebAPI.Middlewares;
+using TestWebAPI.Middlewares.Interfaces;
 using TestWebAPI.Repositories;
 using TestWebAPI.Repositories.Interfaces;
 using TestWebAPI.Services;
@@ -238,6 +239,7 @@ builder.Services.AddScoped<INotificationServices, NotificationServices>();
 builder.Services.AddScoped<IConversationServices, ConversationServices>();
 
 // Add middleware and Helper to the container
+builder.Services.AddScoped<ICookieHelper, CookieHelper>();
 builder.Services.AddScoped<IJWTHelper, JWTHelper>();
 builder.Services.AddScoped<IHashPasswordHelper, HashPasswordHelper>();
 builder.Services.AddScoped<ChatHub>();

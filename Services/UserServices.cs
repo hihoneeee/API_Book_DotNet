@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using TestWebAPI.DTOs.Auth;
-using TestWebAPI.DTOs.Category;
 using TestWebAPI.DTOs.User;
 using TestWebAPI.Helpers;
 using TestWebAPI.Helpers.IHelpers;
@@ -63,8 +61,10 @@ namespace TestWebAPI.Services
                     serviceResponse.SetNotFound("User");
                     return serviceResponse;
                 }
-                var newProfile = _mapper.Map<User>(userDTO);
-                var updatedCategory = await _userRepo.UpdateProfileUserAsync(existingUser, newProfile);
+                existingUser.first_name = userDTO.first_name;
+                existingUser.last_name = userDTO.last_name;
+                existingUser.address = userDTO.address;
+                var updatedCategory = await _userRepo.UpdateProfileUserAsync(existingUser);
                 serviceResponse.SetSuccess("Get current user successfully!");
             }
             catch (Exception ex)

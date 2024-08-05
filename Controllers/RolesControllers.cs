@@ -9,6 +9,7 @@ namespace TestWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "D22MD2")]
     public class roleController : ControllerBase
     {
         private readonly IRoleService _roleService;
@@ -21,7 +22,7 @@ namespace TestWebAPI.Controllers
         }
 
         // GET: api/Roles
-        [Authorize(Policy = "get-role")]
+        //[Authorize(Policy = "get-role")]
         [HttpGet]
         public async Task<IActionResult> GetAllRoles()
         {
