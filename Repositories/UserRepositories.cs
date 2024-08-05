@@ -38,14 +38,11 @@ namespace TestWebAPI.Repositories
             return oldEmail;
         }
 
-        public async Task<User> UpdateProfileUserAsync(User oldProfile, User newProfile)
+        public async Task<User> UpdateProfileUserAsync(User user)
         {
-            oldProfile.first_name = newProfile.first_name;
-            oldProfile.last_name = newProfile.last_name;
-            oldProfile.address = newProfile.address;
-
+            _context.Users.Update(user);
             await _context.SaveChangesAsync();
-            return oldProfile;
+            return user;
         }
         public async Task<User> UpdateAvatarUserAsync(User oldProfile, User newProfile)
         {

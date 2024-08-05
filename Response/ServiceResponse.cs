@@ -24,8 +24,6 @@ namespace TestWebAPI.Response
             };
         }
 
-
-
         bool IServiceResponse.Success
         {
             get => success;

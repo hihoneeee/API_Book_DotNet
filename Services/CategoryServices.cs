@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Newtonsoft.Json;
+using TestWebAPI.Configs;
 using TestWebAPI.DTOs.Category;
 using TestWebAPI.Helpers;
 using TestWebAPI.Models;
@@ -13,11 +15,13 @@ namespace TestWebAPI.Services
         private readonly IMapper _mapper;
         private readonly ICategoryRepositories _cateRepo;
         private readonly ICloudinaryServices _cloudinaryServices;
-        public CategoryServices(IMapper mapper, ICategoryRepositories cateRepo, ICloudinaryServices cloudinaryServices)
+        private readonly RedisCacheConfig _redisCacheConfig;
+        public CategoryServices(IMapper mapper, ICategoryRepositories cateRepo, ICloudinaryServices cloudinaryServices, RedisCacheConfig redisCacheConfig)
         {
             _mapper = mapper;
             _cateRepo = cateRepo;
             _cloudinaryServices = cloudinaryServices;
+            _redisCacheConfig = redisCacheConfig;
         }
         public async Task<ServiceResponse<CategoryDTO>> CreateCategoryAsync(CategoryDTO categoryDTO)
         {
@@ -55,18 +59,63 @@ namespace TestWebAPI.Services
 
             return serviceResponse;
         }
+        //public async Task<ServiceResponse<List<GetCategoryDTO>>> GetCategoriesAsync()
+        //{
+        //    var serviceResponse = new ServiceResponse<List<GetCategoryDTO>>();
+        //    try
+        //    {
+        //        var categories = await _cateRepo.GetCategoryAllAsync();
+        //        if (categories == null)
+        //        {
+        //            serviceResponse.SetNotFound("List Categories");
+        //            return serviceResponse;
+        //        }
+        //        serviceResponse.data = _mapper.Map<List<GetCategoryDTO>>(categories);
+        //        serviceResponse.SetSuccess("Get successfully!");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        serviceResponse.SetError(ex.Message);
+        //    }
+        //    return serviceResponse;
+        //}
+
         public async Task<ServiceResponse<List<GetCategoryDTO>>> GetCategoriesAsync()
         {
             var serviceResponse = new ServiceResponse<List<GetCategoryDTO>>();
             try
             {
-                var categories = await _cateRepo.GetCategoryAllAsync();
-                if (categories == null)
+                // Generate cache key
+                var cacheKey = "categories_all";
+
+                // Check Redis cache
+                var cachedData = await _redisCacheConfig.GetCacheValueAsync(cacheKey);
+
+                List<GetCategoryDTO> categories;
+
+                if (!string.IsNullOrEmpty(cachedData))
                 {
-                    serviceResponse.SetNotFound("List Categories");
-                    return serviceResponse;
+                    // Deserialize cached data
+                    categories = JsonConvert.DeserializeObject<List<GetCategoryDTO>>(cachedData);
                 }
-                serviceResponse.data = _mapper.Map<List<GetCategoryDTO>>(categories);
+                else
+                {
+                    // Fetch from DB
+                    var categoriesFromDb = await _cateRepo.GetCategoryAllAsync();
+                    if (categoriesFromDb == null)
+                    {
+                        serviceResponse.SetNotFound("List Categories");
+                        return serviceResponse;
+                    }
+
+                    categories = _mapper.Map<List<GetCategoryDTO>>(categoriesFromDb);
+
+                    // Save to Redis cache
+                    var serializedData = JsonConvert.SerializeObject(categories);
+                    await _redisCacheConfig.SetCacheValueAsync(cacheKey, serializedData, TimeSpan.FromMinutes(60));
+                }
+
+                serviceResponse.data = categories;
                 serviceResponse.SetSuccess("Get successfully!");
             }
             catch (Exception ex)
@@ -75,6 +124,7 @@ namespace TestWebAPI.Services
             }
             return serviceResponse;
         }
+
 
         public async Task<ServiceResponse<GetCategoryDTO>> GetCategoryByIdAsync(int id)
         {

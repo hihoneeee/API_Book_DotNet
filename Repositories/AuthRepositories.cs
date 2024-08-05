@@ -56,6 +56,5 @@ namespace TestWebAPI.Repositories
             await _context.SaveChangesAsync();
             return user;
         }
-
     }
 }

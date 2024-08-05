@@ -1,7 +1,4 @@
-﻿using System.Security.Claims;
-using TestWebAPI.DTOs.User;
-
-namespace TestWebAPI.Middlewares
+﻿namespace TestWebAPI.Middlewares
 {
     public interface IJWTHelper
     {
