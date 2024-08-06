@@ -15,12 +15,29 @@ namespace TestWebAPI.Repositories
             _context = context;
         }
 
-        public async Task<Role_Permission> AssignPermissionAsync(Role_Permission roleHasPermission)
+        public async Task<Role_Permission> AssignPermissionAsync(Role_Permission rolePermission)
         {
-            _context.RolePermissions.Add(roleHasPermission);
+            _context.RolePermissions.Add(rolePermission);
             await _context.SaveChangesAsync();
-            return roleHasPermission;
+            return rolePermission;
         }
+
+        public async Task RemovePermissionAsync(Role_Permission rolePermission)
+        {
+            _context.RolePermissions.Remove(rolePermission);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<Role_Permission>> GetPermissionsByRoleCodeAsync(string roleCode)
+        {
+            return await _context.RolePermissions.Where(rp => rp.codeRole == roleCode).ToListAsync();
+        }
+
+        public async Task<Role_Permission> GetRoleByCodeAsync(string roleCode)
+        {
+            return await _context.RolePermissions.FirstOrDefaultAsync(p => p.codeRole == roleCode);
+        }
+
         public async Task<bool> CheckRoleHasPermissonAsync(string codeRole, string codePermisson)
         {
             return await _context.RolePermissions.AnyAsync(rp => rp.codeRole == codeRole && rp.codePermission == codePermisson);

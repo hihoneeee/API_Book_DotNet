@@ -1,8 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Data;
 using TestWebAPI.Data;
-using TestWebAPI.DTOs.Role;
-using TestWebAPI.Helpers;
 using TestWebAPI.Models;
 using TestWebAPI.Repositories.Interfaces;
 namespace TestWebAPI.Repositories
@@ -51,11 +48,12 @@ namespace TestWebAPI.Repositories
             return await _context.SaveChangesAsync();
         }
 
-        public async Task<Role> UpdateRoleAsync(Role oldRole, Role newRole)
+        public async Task<Role> UpdateRoleAsync(Role role)
         {
-            oldRole.value = newRole.value;
+            role.updateAt = DateTime.Now;
+            _context.Roles.Update(role);
             await _context.SaveChangesAsync();
-            return oldRole;
+            return role;
         }
 
         public async Task<Role> GetRoleByCodeAsyn(string code)

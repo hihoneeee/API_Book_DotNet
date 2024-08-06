@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using TestWebAPI.DTOs.Role;
 using TestWebAPI.DTOs.User;
 using TestWebAPI.Helpers;
 using TestWebAPI.Helpers.IHelpers;
@@ -162,6 +163,23 @@ namespace TestWebAPI.Services
                     return serviceResponse;
                 }
                 var changeEmail = await _userRepo.ChangeEmailUSerAsync(checkUser, tokenNewEmail);
+                serviceResponse.SetSuccess("Gmail change succssefully!");
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.SetError($"An unexpected error occurred: {ex.Message}");
+
+            }
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<List<GetUserDTO>>> GetUserInSystemAsync()
+        {
+            var serviceResponse = new ServiceResponse<List<GetUserDTO>>();
+            try
+            {
+                var users = await _userRepo.GetUserInSystemAsync();
+                serviceResponse.data = _mapper.Map<List<GetUserDTO>>(users);
                 serviceResponse.SetSuccess("Gmail change succssefully!");
             }
             catch (Exception ex)

@@ -59,6 +59,7 @@ namespace TestWebAPI.Helpers
 
             //role has permission
             CreateMap<Role_Permission, RoleHasPermissionDTO>().ReverseMap();
+            CreateMap<Role_Permission, AddRoleHasPermissionDTO>().ReverseMap();
 
             //category
             CreateMap<Category, GetCategoryDTO>()

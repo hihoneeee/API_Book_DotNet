@@ -15,7 +15,7 @@ namespace TestWebAPI.Controllers
         {
             _permissionServices = permissionServices;
         }
-        [Authorize(Policy = "get-permission")]
+        //[Authorize(Policy = "get-permission")]
         [HttpGet]
         public async Task<IActionResult> GetAllPermissonAsync()
         {

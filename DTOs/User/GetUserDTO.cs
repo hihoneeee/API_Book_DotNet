@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using TestWebAPI.DTOs.Role;
 
 namespace TestWebAPI.DTOs.User
 {
@@ -22,5 +23,7 @@ namespace TestWebAPI.DTOs.User
         public string avatar { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public List<GetUserMediaDTO> dataMedia { get; set; }
+        public RoleDTO dataRole { get; set; }
+
     }
 }
