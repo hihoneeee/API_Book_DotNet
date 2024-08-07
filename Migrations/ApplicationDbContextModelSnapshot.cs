@@ -521,6 +521,9 @@ namespace TestWebAPI.Migrations
                     b.Property<string>("avatar")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("createdAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("email")
                         .HasMaxLength(70)
                         .HasColumnType("nvarchar(70)");
@@ -557,6 +560,15 @@ namespace TestWebAPI.Migrations
                     b.Property<string>("roleCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("updatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("id");
 

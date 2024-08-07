@@ -22,7 +22,7 @@ namespace TestWebAPI.Controllers
         }
 
         // GET: api/Roles
-        //[Authorize(Policy = "get-role")]
+        [Authorize(Policy = "get-role")]
         [HttpGet]
         public async Task<IActionResult> GetAllRoles()
         {
@@ -54,7 +54,7 @@ namespace TestWebAPI.Controllers
         }
 
         // PUT: api/Roles/5
-        [Authorize(Policy = "update-role")]
+        // [Authorize(Policy = "update-role")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateRoleAsync(int id, AddRoleDTO roleDTO)
         {
@@ -88,7 +88,7 @@ namespace TestWebAPI.Controllers
 
 
         // DELETE: api/Roles/5
-        [Authorize(Policy = "delete-role")]
+        // [Authorize(Policy = "delete-role")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRole(int id)
         {
@@ -105,9 +105,9 @@ namespace TestWebAPI.Controllers
         //[Authorize(Policy = "assign-permission")]
         [Route("assign-permission")]
         [HttpPost]
-        public async Task<IActionResult> AssignPermissionAsyn([FromBody] RoleHasPermissionDTO roleHasPermissionDTO)
+        public async Task<IActionResult> AssignPermissionAsyn([FromBody] AddRoleHasPermissionDTO addRoleHasPermissionDTO)
         {
-            var serviceResponse = await _roleHasPermissionSv.AssignPermissionAsyn(roleHasPermissionDTO.codeRole, roleHasPermissionDTO.codePermission, roleHasPermissionDTO);
+            var serviceResponse = await _roleHasPermissionSv.AssignPermissionsAsync(addRoleHasPermissionDTO);
             if (serviceResponse.statusCode == EHttpType.Success)
             {
                 return Ok(new { serviceResponse.success, serviceResponse.message });

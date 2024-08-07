@@ -33,12 +33,12 @@ namespace TestWebAPI.Repositories
             return permission;
         }
 
-        public async Task<Permission> UpdatePermissionAsyn(Permission oldPer, Permission newPer)
+        public async Task<Permission> UpdatePermissionAsyn(Permission permission)
         {
-            oldPer.value = newPer.value;
-            oldPer.code = newPer.code;
+            permission.updatedAt = DateTime.Now;
+            _context.Permissions.Update(permission);
             await _context.SaveChangesAsync();
-            return oldPer;
+            return permission;
         }
 
         public async Task<object> DeletePermissionAsyn(Permission permission)

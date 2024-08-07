@@ -5,6 +5,6 @@ namespace TestWebAPI.Services.Interfaces
 {
     public interface IRoleHasPermissionServices
     {
-        Task<ServiceResponse<RoleHasPermissionDTO>> AssignPermissionAsyn(string roleCode, string permissionCode, RoleHasPermissionDTO roleHasPermissionDTO);
+        Task<ServiceResponse<AddRoleHasPermissionDTO>> AssignPermissionsAsync(AddRoleHasPermissionDTO addRoleHasPermissionDTO);
     }
 }

@@ -9,5 +9,6 @@ namespace TestWebAPI.Services.Interfaces
         Task<ServiceResponse<PermisstionDTO>> UpdatePermissionAsyn(int id, AddPermissionDTO permisstion);
         Task<ServiceResponse<PermisstionDTO>> DeletePermissionAsyn(int id);
         Task<ServiceResponse<List<PermisstionDTO>>> GetAllPermissionAsyn();
+        Task<ServiceResponse<PermisstionDTO>> GetPermissionByIdAsync(int id);
     }
 }

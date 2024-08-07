@@ -10,7 +10,7 @@ namespace TestWebAPI.Repositories.Interfaces
         Task<Role> GetRoleByValueAsync(string value);
         Task<Role> AddRoleAsync(Role role);
         Task<object> DeleteRoleAsync(Role role);
-        Task<Role> UpdateRoleAsync(Role oldRole, Role newRole);
+        Task<Role> UpdateRoleAsync(Role role);
         Task<Role> GetRoleByCodeAsyn(string code);
     }
 }

@@ -21,6 +21,7 @@ namespace TestWebAPI.Repositories
             var roles = new List<Role>
             {
                 new Role { code = "D22MD2", value = "Admin", createAt = DateTime.Now, updateAt = DateTime.Now },
+                new Role { code = CodeGenerator.GenerateCode("HRM"), value = "HRM", createAt = DateTime.Now, updateAt = DateTime.Now },
                 new Role { code = CodeGenerator.GenerateCode("Seller"), value = "Seller", createAt = DateTime.Now, updateAt = DateTime.Now },
                 new Role { code = CodeGenerator.GenerateCode("Buyer"), value = "Buyer", createAt = DateTime.Now, updateAt = DateTime.Now },
             };
@@ -45,6 +46,12 @@ namespace TestWebAPI.Repositories
                 new Permission { code = CodeGenerator.GenerateCode("get-category"), value = "get-category", createdAt = DateTime.Now, updatedAt = DateTime.Now },
                 new Permission { code = CodeGenerator.GenerateCode("update-category"), value = "update-category", createdAt = DateTime.Now, updatedAt = DateTime.Now },
                 new Permission { code = CodeGenerator.GenerateCode("delete-category"), value = "delete-category", createdAt = DateTime.Now, updatedAt = DateTime.Now },
+
+               new Permission { code = CodeGenerator.GenerateCode("add-user-system"), value = "add-user-system", createdAt = DateTime.Now, updatedAt = DateTime.Now },
+               new Permission { code = CodeGenerator.GenerateCode("update-user-system"), value = "update-user-system", createdAt = DateTime.Now, updatedAt = DateTime.Now },
+               new Permission { code = CodeGenerator.GenerateCode("get-user-system"), value = "get-user-system", createdAt = DateTime.Now, updatedAt = DateTime.Now },
+               //new Permission { code = CodeGenerator.GenerateCode("assign-role"), value = "assign-role", createdAt = DateTime.Now, updatedAt = DateTime.Now },
+               //new Permission { code = CodeGenerator.GenerateCode("set-type-user"), value = "set-type-user", createdAt = DateTime.Now, updatedAt = DateTime.Now },
             };
 
             _context.Permissions.AddRange(permissions);
@@ -69,6 +76,12 @@ namespace TestWebAPI.Repositories
                 new Role_Permission { codeRole = "D22MD2", codePermission = permission.First(p => p.value == "get-category").code },
                 new Role_Permission { codeRole = "D22MD2", codePermission = permission.First(p => p.value == "update-category").code },
                 new Role_Permission { codeRole = "D22MD2", codePermission = permission.First(p => p.value == "delete-category").code },
+
+                //new Role_Permission { codeRole = "D22MD2", codePermission = permission.First(p => p.value == "add-user-system").code },
+                //new Role_Permission { codeRole = "D22MD2", codePermission = permission.First(p => p.value == "update-user-system").code },
+                //new Role_Permission { codeRole = "D22MD2", codePermission = permission.First(p => p.value == "get-user-system").code },
+                //new Role_Permission { codeRole = "D22MD2", codePermission = permission.First(p => p.value == "assign-role").code },
+                //new Role_Permission { codeRole = "D22MD2", codePermission = permission.First(p => p.value == "set-type-user").code },
             };
 
             _context.RolePermissions.AddRange(roleHasPermission);
@@ -159,7 +172,6 @@ namespace TestWebAPI.Repositories
 
             _context.User_Medias.AddRange(userMedias);
             await _context.SaveChangesAsync();
-
         }
     }
 }

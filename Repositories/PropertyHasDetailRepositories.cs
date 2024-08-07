@@ -1,4 +1,5 @@
-﻿using TestWebAPI.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using TestWebAPI.Data;
 using TestWebAPI.Models;
 using TestWebAPI.Repositories.Interfaces;
 

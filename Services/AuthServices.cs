@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using System;
 using TestWebAPI.DTOs.Auth;
+using TestWebAPI.DTOs.Contract;
 using TestWebAPI.DTOs.JWT;
+using TestWebAPI.DTOs.User;
 using TestWebAPI.Helpers;
 using TestWebAPI.Helpers.IHelpers;
 using TestWebAPI.Middlewares;
@@ -116,9 +118,9 @@ namespace TestWebAPI.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<AuthLoginDTO>> LoginMvc(AuthLoginDTO authLoginDTO)
+        public async Task<ServiceResponse<GetUserDTO>> LoginMvc(AuthLoginDTO authLoginDTO)
         {
-            var serviceResponse = new ServiceResponse<AuthLoginDTO>();
+            var serviceResponse = new ServiceResponse<GetUserDTO>();
             try
             {
                 var existingUser = await _authRepo.getByPhoneAsync(authLoginDTO.phone);
@@ -133,7 +135,8 @@ namespace TestWebAPI.Services
                     return serviceResponse;
                 }
                 var getNameRole = await _roleRepo.GetRoleByCodeAsyn(existingUser.roleCode);
-                await _cookieHelper.GenerateCookie(existingUser.id, existingUser.phone, existingUser.email, existingUser.first_name, existingUser.last_name, existingUser.roleCode, existingUser.avatar, getNameRole.value, DateTime.UtcNow.AddMonths(1));
+                var user = _mapper.Map<GetUserDTO>(existingUser);
+                await _cookieHelper.GenerateCookie(user, DateTime.UtcNow.AddMonths(1));
                 serviceResponse.SetSuccess("Login successful.");
             }
             catch (Exception ex)

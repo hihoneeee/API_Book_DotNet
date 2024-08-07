@@ -2,8 +2,21 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using TestWebAPI.Helpers;
 
+public enum StatusUser
+{
+    connect = 1,
+    disconnect = 2
+};
+
+public enum TypeUser
+{
+    activity = 1,
+    canncel = 2
+};
+
 namespace TestWebAPI.Models
 {
+
     public class User
     {
         [Key]
@@ -33,7 +46,10 @@ namespace TestWebAPI.Models
         public string roleCode { get; set; }
         [ForeignKey("roleCode")]
         public virtual Role Role { get; set; }
-
+        public StatusUser status { get; set; } = StatusUser.disconnect;
+        public TypeUser type { get; set; } = TypeUser.activity;
+        public DateTime createdAt { get; set; } = DateTime.Now;
+        public DateTime updatedAt { get; set; }
         public DateTime? passwordChangeAt { get; set; }
         public string? passwordResetToken { get; set; }
         public DateTime? passwordResetExpires { get; set; }

@@ -20,7 +20,9 @@ namespace TestWebAPI.Repositories
 
         public async Task<User> getByPhoneAsync(string phone)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.phone == phone);
+            return await _context.Users.Include(u => u.Role).ThenInclude(r=>r.Role_Permissions).ThenInclude(rp=>rp.Permission)
+                                 .Include(u => u.User_Medias)
+                                 .FirstOrDefaultAsync(u => u.phone == phone);
         }
 
         public async Task<User> Register(User user)

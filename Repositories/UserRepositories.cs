@@ -50,5 +50,15 @@ namespace TestWebAPI.Repositories
             await _context.SaveChangesAsync();
             return oldProfile;
         }
+        public async Task<List<User>> GetUserInSystemAsync()
+        {
+            return await _context.Users
+                                 .Where(u => u.roleCode != "E8RLE8" && u.roleCode != "U02YU0")
+                                 .OrderByDescending(u => u.createdAt)
+                                 .Include(u => u.Role)
+                                 .Include(u => u.User_Medias)
+                                 .ToListAsync();
+        }
+
     }
 }

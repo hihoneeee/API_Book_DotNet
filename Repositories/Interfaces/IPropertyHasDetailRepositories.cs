@@ -8,6 +8,5 @@ namespace TestWebAPI.Repositories.Interfaces
         Task<PropertyHasDetail> GetDetailByIdAsync(int id);
         Task<PropertyHasDetail> UpdateDetailyAsync(PropertyHasDetail oldPropertyHasDetail, PropertyHasDetail newPropertyHasDetail);
         Task<object> DeleteDetailAsync(PropertyHasDetail propertyHasDetail);
-
     }
 }

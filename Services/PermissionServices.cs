@@ -60,9 +60,9 @@ namespace TestWebAPI.Services
                     serviceResponse.SetExisting("Permission already exists!");
                     return serviceResponse;
                 }
-                var permission = _mapper.Map<Permission>(permisstionDTO);
-                permission.code = CodeGenerator.GenerateCode(permisstionDTO.value);
-                var updatePermission = await _permisstionRepo.UpdatePermissionAsyn(oldPermission, permission);
+                oldPermission.value = permisstionDTO.value;
+                oldPermission.code = CodeGenerator.GenerateCode(permisstionDTO.value);
+                var updatePermission = await _permisstionRepo.UpdatePermissionAsyn(oldPermission);
                 serviceResponse.SetSuccess("Permission updated successfully!");
             }
             catch (Exception ex)
@@ -113,5 +113,27 @@ namespace TestWebAPI.Services
             }
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<PermisstionDTO>> GetPermissionByIdAsync(int id)
+        {
+            var serviceResponse = new ServiceResponse<PermisstionDTO>();
+            try
+            {
+                var permission = await _permisstionRepo.GetPermissionByIdAsyn(id);
+                if (permission == null)
+                {
+                    serviceResponse.SetNotFound("Permission not found!");
+                    return serviceResponse;
+                }
+                serviceResponse.data = _mapper.Map<PermisstionDTO>(permission);
+                serviceResponse.SetSuccess("Permission get successfully!");
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.SetError(ex.Message);
+            }
+            return serviceResponse;
+        }
+
     }
 }

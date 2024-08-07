@@ -10,6 +10,6 @@ namespace TestWebAPI.Services.Interfaces
         Task<ServiceResponse<AvatarUserDTO>> UpdateAvatarUserAsync(int id, AvatarUserDTO avatarUserDTO);
         Task<ServiceResponse<UserDTO>> ChangeEmailUserAsync(int id, EmailUSerDTO emailUSerDTO);
         Task<ServiceResponse<UserDTO>> ConfirmChangeEmailUserAsync(string token);
-
+        Task<ServiceResponse<List<GetUserSystemDTO>>> GetUserInSystemAsync();
     }
 }

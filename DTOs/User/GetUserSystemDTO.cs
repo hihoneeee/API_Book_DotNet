@@ -3,7 +3,7 @@ using TestWebAPI.DTOs.Role;
 
 namespace TestWebAPI.DTOs.User
 {
-    public class GetUserDTO
+    public class GetUserSystemDTO
     {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int id { get; set; }
@@ -24,7 +24,9 @@ namespace TestWebAPI.DTOs.User
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public StatusUser status { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public DateTime updatedAt { get; set; }
+        public TypeUser type { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public DateTime createdAt { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public List<GetUserMediaDTO> dataMedia { get; set; }
         public RoleDTO dataRole { get; set; }
