@@ -26,17 +26,13 @@ namespace TestWebAPI.Services
                 var existingRole = await _roleRepo.GetRoleByValueAsync(roleDTO.value);
                 if (existingRole != null)
                 {
-                    serviceResponse.statusCode = EHttpType.Conflict;
-                    serviceResponse.success = false;
-                    serviceResponse.message = "Role already exists.";
+                    serviceResponse.SetExisting("Role");
                     return serviceResponse;
                 }
                 var role = _mapper.Map<Role>(roleDTO);
                 role.code = CodeGenerator.GenerateCode(roleDTO.value);
                 var adddRole = await _roleRepo.AddRoleAsync(role);
-                serviceResponse.statusCode = EHttpType.Success;
-                serviceResponse.message = "Role added successfully.";
-                serviceResponse.success = true;
+                serviceResponse.SetSuccess("Role added successfully!");
             }
             catch (Exception ex)
             {
@@ -53,9 +49,7 @@ namespace TestWebAPI.Services
                 var roles = await _roleRepo.GetAllRoles();
                 if (roles == null)
                 {
-                    serviceResponse.success = false;
-                    serviceResponse.statusCode = EHttpType.NotFound;
-                    serviceResponse.message = "No roles found in the database.";
+                    serviceResponse.SetNotFound("Roles");
                     return serviceResponse;
                 }
                 serviceResponse.data = _mapper.Map<List<RoleDTO>>(roles);
@@ -126,9 +120,7 @@ namespace TestWebAPI.Services
                 var deletedRole = await _roleRepo.GetRolesById(id);
                 if (deletedRole == null)
                 {
-                    serviceResponse.success = false;
-                    serviceResponse.message = "Role not found.";
-                    serviceResponse.statusCode = EHttpType.NotFound;
+                    serviceResponse.SetNotFound("Role");
                     return serviceResponse;
                 }
                 await _roleRepo.DeleteRoleAsync(deletedRole);

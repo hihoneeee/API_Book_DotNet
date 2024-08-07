@@ -1,12 +1,14 @@
-﻿namespace TestWebAPI.Middlewares.Interfaces
+﻿using TestWebAPI.DTOs.User;
+
+namespace TestWebAPI.Middlewares.Interfaces
 {
     public interface ICookieHelper
     {
-        Task GenerateCookie(int id, string phone, string email, string firstName, string lastName, string roleCode, string avatar, string roleName, DateTime expire);
+        Task GenerateCookie(GetUserDTO userDto, DateTime expire);
         string GetUserRole();
         string GetUserAvatar();
         string GetUserFullName();
         string GetUserRoleName();
-
+        List<string> GetUserPermissions();
     }
 }

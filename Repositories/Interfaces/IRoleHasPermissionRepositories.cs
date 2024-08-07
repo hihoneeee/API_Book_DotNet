@@ -8,5 +8,6 @@ namespace TestWebAPI.Repositories.Interfaces
         Task<bool> CheckRoleHasPermissonAsync(string codeRole, string codePermisson);
         Task<List<Role_Permission>> GetPermissionsByRoleCodeAsync(string roleCode);
         Task RemovePermissionAsync(Role_Permission rolePermission);
+        Task<List<string>> GetRolePermissionsAsync(string roleCode);
     }
 }

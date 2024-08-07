@@ -42,6 +42,13 @@ namespace TestWebAPI.Repositories
         {
             return await _context.RolePermissions.AnyAsync(rp => rp.codeRole == codeRole && rp.codePermission == codePermisson);
         }
-
+        public async Task<List<string>> GetRolePermissionsAsync(string roleCode)
+        {
+            var userPermissions = await _context.RolePermissions
+                                    .Where(rp => rp.codeRole == roleCode)
+                                    .Select(rp => rp.Permission.value)
+                                    .ToListAsync();
+            return userPermissions;
+        }
     }
 }

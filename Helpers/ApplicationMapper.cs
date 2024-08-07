@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using System.Data.Common;
 using TestWebAPI.DTOs.Appointment;
 using TestWebAPI.DTOs.Auth;
 using TestWebAPI.DTOs.Category;
@@ -37,13 +38,33 @@ namespace TestWebAPI.Helpers
 
             //user
             CreateMap<User, GetUserDTO>()
-                .ForMember(dest => dest.dataMedia, opt => opt.MapFrom(src => src.User_Medias.Select(um => new GetUserMediaDTO
-                {
-                    id = um.id,
-                    icon = um.icon,
-                    link = um.link,
-                    provider = um.provider,
-                }).ToList())).ReverseMap();
+                 .ForMember(dest => dest.dataMedia, opt => opt.MapFrom(src => src.User_Medias.Select(um => new GetUserMediaDTO
+                 {
+                     id = um.id,
+                     icon = um.icon,
+                     link = um.link,
+                     provider = um.provider,
+                 }).ToList()))
+                 .ForMember(dest => dest.dataRole, opt => opt.MapFrom(src => src.Role != null ? new RoleDTO
+                 {
+                     id = src.Role.id,
+                     value = src.Role.value,
+                     code = src.Role.code,
+                     dataPermission = src.Role.Role_Permissions.Select(rp => new PermisstionDTO
+                     {
+                         code = rp.Permission.code,
+                         value = rp.Permission.value
+                     }).ToList()
+                 } : null))
+                 .ReverseMap();
+
+            CreateMap<User, GetUserSystemDTO>()
+             .ForMember(dest => dest.dataRole, opt => opt.MapFrom(src => src.Role != null ? new RoleDTO
+             {
+                 id = src.Role.id,
+                 value = src.Role.value,
+                 code = src.Role.code,
+             } : null)).ReverseMap();
 
             CreateMap<User_Media, GetUserMediaDTO>();
             CreateMap<User, UserDTO>().ReverseMap();

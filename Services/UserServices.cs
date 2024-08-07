@@ -173,13 +173,13 @@ namespace TestWebAPI.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<GetUserDTO>>> GetUserInSystemAsync()
+        public async Task<ServiceResponse<List<GetUserSystemDTO>>> GetUserInSystemAsync()
         {
-            var serviceResponse = new ServiceResponse<List<GetUserDTO>>();
+            var serviceResponse = new ServiceResponse<List<GetUserSystemDTO>>();
             try
             {
                 var users = await _userRepo.GetUserInSystemAsync();
-                serviceResponse.data = _mapper.Map<List<GetUserDTO>>(users);
+                serviceResponse.data = _mapper.Map<List<GetUserSystemDTO>>(users);
                 serviceResponse.SetSuccess("Gmail change succssefully!");
             }
             catch (Exception ex)

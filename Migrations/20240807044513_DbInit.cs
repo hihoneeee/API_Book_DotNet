@@ -144,6 +144,10 @@ namespace TestWebAPI.Migrations
                     address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     avatar = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     roleCode = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    status = table.Column<int>(type: "int", nullable: false),
+                    type = table.Column<int>(type: "int", nullable: false),
+                    createdAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    updatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     passwordChangeAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     passwordResetToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     passwordResetExpires = table.Column<DateTime>(type: "datetime2", nullable: true)
